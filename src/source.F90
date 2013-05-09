@@ -41,7 +41,7 @@ contains
       ! Read the source from a binary file instead of sampling from some
       ! assumed source distribution
 
-      call read_source_binary()
+      call read_source()
 
     else
       ! Generation source sites from specified distribution in user input
