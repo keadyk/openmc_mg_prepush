@@ -230,6 +230,9 @@ output.o: plot_header.o
 output.o: string.o
 output.o: tally_header.o
 
+output_interface.o: hdf5_interface.o
+output_interface.o: mpi_interface.o
+
 particle_header.o: constants.o
 
 plot.o: constants.o
@@ -271,7 +274,7 @@ state_point.o: math.o
 state_point.o: output.o
 state_point.o: string.o
 state_point.o: tally_header.o
-state_point.o: write_output_file.o
+state_point.o: output_interface.o
 
 string.o: constants.o
 string.o: error.o
@@ -296,6 +299,3 @@ tally_initialize.o: global.o
 tally_initialize.o: tally_header.o
 
 timer_header.o: constants.o
-
-write_output_file.o: hdf5_interface.o
-write_output_file.o: mpi_interface.o
