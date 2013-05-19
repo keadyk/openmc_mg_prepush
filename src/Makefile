@@ -43,6 +43,7 @@ MPI_DIR   = /home/keadyk/PETSC_src/petsc-3.4.0/arch-linux2-c-debug/
 #Note to self: install HDF5
 PETSC_DIR = /home/keadyk/PETSC_src/petsc-3.4.0
 
+
 #===============================================================================
 # Add git SHA-1 hash
 #===============================================================================
