@@ -92,7 +92,7 @@ contains
 
     ! Determine access type
     open_mode = H5F_ACC_RDONLY_F
-    if (trim(mode) == 'rw') then
+    if (trim(mode) == 'w') then
       open_mode = H5F_ACC_RDWR_F
     end if
 
@@ -156,7 +156,7 @@ contains
 
     ! Determine access type
     open_mode = H5F_ACC_RDONLY_F
-    if (trim(mode) == 'rw') then
+    if (trim(mode) == 'w') then
       open_mode = H5F_ACC_RDWR_F
     end if
 
