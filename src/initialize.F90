@@ -147,8 +147,16 @@ contains
       end if
     end if
 
-    ! check for particle restart run
+    ! Check for particle restart run
     if (particle_restart_run) run_mode = MODE_PARTICLE
+
+    ! Warn if overlap checking is on
+    if (check_overlaps) then
+      message = ""
+      call write_message()
+      message = "Cell overlap checking is ON"
+      call warning()
+    end if
 
     ! Stop initialization timer
     call time_initialize % stop()
@@ -321,6 +329,8 @@ contains
         select case (argv(i))
         case ('-p', '-plot', '--plot')
           run_mode = MODE_PLOTTING
+          check_overlaps = .true.
+
         case ('-n', '-n_particles', '--n_particles')
           ! Read number of particles per cycle
           i = i + 1
