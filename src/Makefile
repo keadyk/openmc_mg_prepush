@@ -43,7 +43,6 @@ MPI_DIR   = /home/keadyk/PETSC_src/petsc-3.4.0/arch-linux2-c-debug/
 #Note to self: install HDF5
 PETSC_DIR = /home/keadyk/PETSC_src/petsc-3.4.0
 
-
 #===============================================================================
 # Add git SHA-1 hash
 #===============================================================================
@@ -182,20 +181,21 @@ endif
 # Setup External Libraries
 #===============================================================================
 
-# MPI for distributed-memory parallelism
+# MPI for distributed-memory parallelism and HDF5 for I/O
 
 ifeq ($(MPI),yes)
-  F90 = $(MPI_DIR)/bin/mpif90
+  ifeq ($(HDF5),yes)
+    F90 = $(PHDF5_DIR)/bin/h5pfc
+    F90FLAGS += -DHDF5
+  else
+    F90 = $(MPI_DIR)/bin/mpif90
+  endif
   F90FLAGS += -DMPI
-endif
-
-# HDF5 for I/O
-
-ifeq ($(HDF5),yes)
-  F90FLAGS += -DHDF5 -I$(HDF5_DIR)/include
-  LDFLAGS += -L$(HDF5_DIR)/lib $(HDF5_DIR)/lib/libhdf5hl_fortran.a \
-             $(HDF5_DIR)/lib/libhdf5_hl.a $(HDF5_DIR)/lib/libhdf5_fortran.a \
-             $(HDF5_DIR)/lib/libhdf5.a -lz -lrt -lm -Wl,-rpath -Wl,$(HDF5_DIR)/lib
+else
+  ifeq ($(HDF5),yes)
+    F90 = $(HDF5_DIR)/bin/h5fc
+    F90FLAGS += -DHDF5
+  endif
 endif
 
 # PETSC for CMFD functionality
