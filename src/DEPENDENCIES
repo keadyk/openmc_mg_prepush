@@ -220,6 +220,7 @@ output.o: ace_header.o
 
 output.o: constants.o
 output.o: endf.o
+output.o: error.o
 output.o: geometry_header.o
 output.o: global.o
 output.o: math.o
