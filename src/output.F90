@@ -185,7 +185,6 @@ contains
       write(OUTPUT_UNIT,*) '  -p, --plot             Run in plotting mode'
       write(OUTPUT_UNIT,*) '  -r, --restart          Restart a previous run from a state point'
       write(OUTPUT_UNIT,*) '                         or a particle restart file'
-      write(OUTPUT_UNIT,*) '  -t, --tallies          Write tally results from state point'
       write(OUTPUT_UNIT,*) '  -v, --version          Show version information'
       write(OUTPUT_UNIT,*) '  -?, --help             Show this message'
     end if
@@ -1641,12 +1640,7 @@ contains
     score_names(abs(SCORE_EVENTS))        = "Events"
 
     ! Create filename for tally output
-    if (run_mode == MODE_TALLIES) then
-      filename = trim(path_output) // "tallies." // &
-           trim(to_str(restart_batch)) // ".out"
-    else
-      filename = trim(path_output) // "tallies.out"
-    end if
+    filename = trim(path_output) // "tallies.out"
 
     ! Open tally file for writing
     open(UNIT=UNIT_TALLY, FILE=filename, STATUS='replace', ACTION='write')
