@@ -4,11 +4,11 @@ module initialize
   use multigroup,       only: read_xs
 #else
   use ace,              only: read_xs
+  use energy_grid,      only: unionized_grid
 #endif
   use bank_header,      only: Bank
   use constants
   use dict_header,      only: DictIntInt, ElemKeyValueII
-  use energy_grid,      only: unionized_grid
   use error,            only: fatal_error
   use geometry,         only: neighbor_lists
   use geometry_header,  only: Cell, Universe, Lattice, BASE_UNIVERSE
@@ -102,13 +102,15 @@ contains
       call read_xs()
       call time_read_xs % stop()
 
+#ifndef MULTIGROUP
       ! Construct unionized energy grid from cross-sections
       if (grid_method == GRID_UNION) then
         call time_unionize % start()
         call unionized_grid()
         call time_unionize % stop()
       end if
-
+#endif
+      
       ! Allocate and setup tally stride, matching_bins, and tally maps
       call configure_tallies()
 

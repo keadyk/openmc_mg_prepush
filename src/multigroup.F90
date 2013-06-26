@@ -79,7 +79,7 @@ contains
         end if
       end do NUCLIDE_LOOP
     end do MATERIAL_LOOP
-  end subroutine read_mg_xs   
+  end subroutine read_xs   
   
 !===============================================================================
 ! READ_MG_TABLE reads a single cross section table in ASCII format.
@@ -89,7 +89,7 @@ contains
 
    subroutine read_mg_table(i_table, i_listing)
 
-    integer, intent(in) :: i_table   ! index in nuclides/sab_tables
+    integer, intent(in) :: i_table   ! index in nuclides
     integer, intent(in) :: i_listing ! index in xs_listings
 
     integer       :: i             ! loop index for XSS records
@@ -177,10 +177,8 @@ contains
     call read_erg(nuc)
     call read_nu_data(nuc)
     call read_chi_data(nuc)
-    call read_abs_data(nuc)
     call read_reactions(nuc)
-    call read_angular_dist(nuc)
-    call read_energy_dist(nuc)
+    call read_scattering(nuc)
 
     ! Currently subcritical fixed source calculations are not allowed. Thus,
     ! if any fissionable material is found in a fixed source calculation,
@@ -235,11 +233,11 @@ contains
 
     ! Read data from XSS -- energy grid first, then  then group masses
     XSS_index = 1
-    nuc % group_energy = get_real(NE)
+    nuc % group_energy = get_real(NG)
     ! Continue reading energy group widths
-    nuc % group_width = get_real(NE)
+    nuc % group_width = get_real(NG)
     ! Read energy group masses
-    nuc % group_mass = get_real(NE)
+    nuc % group_mass = get_real(NG)
 
   end subroutine read_erg
   
@@ -446,8 +444,9 @@ contains
     integer :: JXS16                ! location of XPN block locators
     integer :: JXS17                ! location of PN block locators
     integer :: length               ! length of records to grab
+    integer :: i                    ! scattering group iterator
     integer :: j                    ! iterator
-    integer :: k                    ! iterator
+    integer :: k                    ! scattering distribution iterator
     integer :: LP0                  ! location of incident particle P0 block
     integer :: LPN                  ! location of incident particle PN block
     integer :: LXPN                 ! location of incident particle XPN block
@@ -488,6 +487,12 @@ contains
       allocate(rxn % min_scatter(nuc % n_group))
       allocate(rxn % max_scatter(nuc % n_group))
       
+      ! initialize to zeros
+      rxn % group_index = ZERO
+      rxn % total_scatter = ZERO
+      rxn % min_scatter = ZERO
+      rxn % max_scatter = ZERO
+      
       ! set length of table -- see LANL report LA-12704, pg 119
       length = int(NXS5 * (1 + NXS7 + NXS6) - 0.5 * (NXS7 * (NXS7 + 1) + NXS6 &
                * (NXS6 + 1)))
@@ -513,15 +518,16 @@ contains
         rxn % group_index(k) = this_index
         
         ! determine min, max groups for outscatter
-        max_scatter(k) = max(1, k - NXS6)
-        min_scatter(k) = min(NXS5, k + NXS7)
+        rxn % max_scatter(k) = max(1, k - NXS6)
+        rxn % min_scatter(k) = min(NXS5, k + NXS7)
         
         ! sum up outscatter sigmas for this energy group 
-        rxn % total_scatter(k) = sum(rxn % sigma, MASK=(this_index:this_index &
-                                 + min_scatter(k) - max_scatter(k) - 1))
+        do i=this_index,(this_index + rxn % min_scatter(k) - rxn % max_scatter(k))
+          rxn % total_scatter(k) = rxn % total_scatter(k) + rxn % sigma(i)
+        end do
         
         ! update starting index for next group
-        this_index = this_index + (min_scatter(k) - max_scatter(k))
+        this_index = this_index + (rxn % min_scatter(k) - rxn % max_scatter(k))
       end do
       
       ! get location for incident particle XPN block (if one exists)
@@ -565,9 +571,9 @@ contains
           ! determine location (offset) where group data is located
           rxn % adist % location(j) = LPND(j)
           
-          ! If LPND = -1 or 0, no data in this block
+          ! If this LPND = -1 or 0, no data in this block
           ! Set scattering type to isotropic, then cycle
-          if(LPND <= 0) then
+          if(LPND(j) <= 0) then
             rxn % adist % type(j) = ANGLE_ISOTROPIC
             cycle
           end if
@@ -586,6 +592,30 @@ contains
     end if
     
   end subroutine read_scattering
+  
+!===============================================================================
+! GENERATE_NU_FISSION precalculates the microscopic nu-fission cross section for
+! a given nuclide. This is done so that the nu_total function does not need to
+! be called during cross section lookups.
+!===============================================================================
+
+  subroutine generate_nu_fission(nuc)
+
+    type(Nuclide), pointer :: nuc
+
+    integer :: i  ! nuclide energy group index
+    real(8) :: nu ! # of neutrons per fission
+
+    do i = 1, nuc % n_group
+
+      ! determine total nu at given energy
+      nu = nu_total(nuc, i)
+
+      ! determine nu-fission microscopic cross section
+      nuc % nu_fission(i) = nu * nuc % fission(i)
+    end do
+
+  end subroutine generate_nu_fission
   
 !===============================================================================
 ! GET_INT returns an array of integers read from the current position in the XSS

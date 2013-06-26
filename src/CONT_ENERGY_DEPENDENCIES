@@ -21,8 +21,12 @@ cross_section.o: material_header.o
 cross_section.o: random_lcg.o
 cross_section.o: search.o
 
-
 eigenvalue.o: physics.o
+
+energy_grid.o: constants.o
+energy_grid.o: global.o
+energy_grid.o: list_header.o
+energy_grid.o: output.o
 
 fission.o: ace_header.o
 
@@ -33,6 +37,7 @@ global.o: ace_header.o
 hdf5_interface.o: ace_header.o
 
 initialize.o: ace.o
+initialize.o: energy_grid.o
 
 output.o: ace_header.o
 

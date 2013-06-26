@@ -336,7 +336,7 @@ contains
         ! add to cumulative probability (no partial fissions)
         prob = prob + micro_xs(i_nuclide) % fission
 
-        ! Create fission bank sites if fission occus
+        ! Create fission bank sites if fission occurs
         if (prob > cutoff) then
           call create_fission_sites(i_nuclide, rxn)
 
@@ -359,9 +359,8 @@ contains
             p % event_MT = rxn % MT
             return
           end if
-        end do FISSION_REACTION_LOOP
-
-      end if
+        end if
+      end do FISSION_REACTION_LOOP
     end if
 
     ! ==========================================================================
@@ -401,7 +400,7 @@ contains
     rxn => nuc % reactions(1)
 
     ! Perform collision physics for multigroup scattering
-    call multigroup_scatter(i_nuclide, rxn)
+    call multigroup_scatter(rxn)
 
     p % event_MT = N_LEVEL
 
@@ -412,33 +411,130 @@ contains
   end subroutine sample_reaction
  
 !===============================================================================
-! MULTIGROUP_SCATTER treats the scattering of a neutron with a
-! target using multigroup cross sections.
+! CREATE_FISSION_SITES determines the average total (prompt)
+! neutrons produced from fission and creates appropriate bank sites.
 !===============================================================================
 
-  subroutine multigroup_scatter(i_nuclide, rxn)
+  subroutine create_fission_sites(i_nuclide, rxn)
 
     integer, intent(in)     :: i_nuclide
     type(Reaction), pointer :: rxn
 
-    real(8) :: awr     ! atomic weight ratio of target
+    integer :: i            ! loop index
+    integer :: j            ! index on nu energy grid / precursor group
+    integer :: lc           ! index before start of energies/nu values
+    integer :: NR           ! number of interpolation regions
+    integer :: NE           ! number of energies tabulated
+    integer :: nu           ! actual number of neutrons produced
+    integer :: ijk(3)       ! indices in ufs mesh
+    integer :: E            ! incoming energy group of neutron
+    integer :: E_out        ! outgoing energy group of fission neutron
+    real(8) :: nu_t         ! total nu
+    real(8) :: mu           ! fission neutron angular cosine
+    real(8) :: phi          ! fission neutron azimuthal angle
+    real(8) :: beta         ! delayed neutron fraction
+    real(8) :: xi           ! random number
+    real(8) :: prob         ! cumulative probability
+    real(8) :: weight       ! weight adjustment for ufs method
+    logical :: in_mesh      ! source site in ufs mesh?
+    type(Nuclide),    pointer :: nuc
+
+    ! Get pointer to nuclide
+    nuc => nuclides(i_nuclide)
+
+    ! copy energy of neutron
+    E = p % E
+
+    ! Determine total nu
+    nu_t = nu_total(nuc, E)
+
+    ! If uniform fission source weighting is turned on, we increase or decrease
+    ! the expected number of fission sites produced
+
+    if (ufs) then
+      ! Determine indices on ufs mesh for current location
+      call get_mesh_indices(ufs_mesh, p % coord0 % xyz, ijk, in_mesh)
+      if (.not. in_mesh) then
+        message = "Source site outside UFS mesh!"
+        call fatal_error()
+      end if
+
+      if (source_frac(1,ijk(1),ijk(2),ijk(3)) /= ZERO) then
+        weight = ufs_mesh % volume_frac / source_frac(1,ijk(1),ijk(2),ijk(3))
+      else
+        weight = ONE
+      end if
+    else
+      weight = ONE
+    end if
+
+    ! Sample number of neutrons produced
+    if (survival_biasing) then
+      ! Need to use the weight before survival biasing
+      nu_t = (p % wgt + p % absorb_wgt) * micro_xs(i_nuclide) % fission / &
+           (keff * micro_xs(i_nuclide) % total) * nu_t * weight
+    else 
+      nu_t = p % wgt / keff * nu_t * weight
+    end if
+    if (prn() > nu_t - int(nu_t)) then
+      nu = int(nu_t)
+    else
+      nu = int(nu_t) + 1
+    end if
+
+    ! Bank source neutrons
+    if (nu == 0 .or. n_bank == 3*work) return
+    do i = int(n_bank,4) + 1, int(min(n_bank + nu, 3*work),4)
+      ! Bank source neutrons by copying particle data
+      fission_bank(i) % xyz = p % coord0 % xyz
+
+      ! Set weight of fission bank site
+      fission_bank(i) % wgt = ONE/weight
+
+      ! Sample cosine of angle -- fission neutrons are always emitted
+      ! isotropically. Sometimes in ACE data, fission reactions actually have
+      ! an angular distribution listed, but for those that do, it's simply just
+      ! a uniform distribution in mu
+      mu = TWO * prn() - ONE
+
+      ! sample from prompt neutron energy distribution
+      ! (for now, we're just setting the energy group to 1!
+      E_out = 1
+
+      ! Sample azimuthal angle uniformly in [0,2*pi)
+      phi = TWO*PI*prn()
+      fission_bank(i) % uvw(1) = mu
+      fission_bank(i) % uvw(2) = sqrt(ONE - mu*mu) * cos(phi)
+      fission_bank(i) % uvw(3) = sqrt(ONE - mu*mu) * sin(phi)
+
+      ! set energy of fission neutron
+      fission_bank(i) % E = E_out
+    end do
+
+    ! increment number of bank sites
+    n_bank = min(n_bank + nu, 3*work)
+
+    ! Store total weight banked for analog fission tallies
+    p % n_bank   = nu
+    p % wgt_bank = nu/weight
+
+  end subroutine create_fission_sites  
+  
+!===============================================================================
+! MULTIGROUP_SCATTER treats the scattering of a neutron with a
+! target using multigroup cross sections.
+!===============================================================================
+
+  subroutine multigroup_scatter(rxn)
+
+    type(Reaction), pointer :: rxn
+
     real(8) :: mu      ! cosine of polar angle
-    real(8) :: vel     ! magnitude of velocity
-    real(8) :: v_n(3)  ! velocity of neutron
-    real(8) :: v_cm(3) ! velocity of center-of-mass
-    real(8) :: v_t(3)  ! velocity of target nucleus
     real(8) :: u       ! x-direction
     real(8) :: v       ! y-direction
     real(8) :: w       ! z-direction
-    real(8) :: E       ! energy GROUP
-    real(8) :: E_new   ! outgoing energy GROUP
-    type(Nuclide), pointer :: nuc => null()
-
-    ! get pointer to nuclide
-    nuc => nuclides(i_nuclide)
-
-    vel = sqrt(p % E)
-    awr = nuc % awr
+    integer :: E       ! energy GROUP
+    integer :: E_new   ! outgoing energy GROUP
 
     ! sample outgoing group
     E_new = sample_group(rxn, p % E)
@@ -446,12 +542,17 @@ contains
     ! Sample scattering angle, given incoming, outgoing group
     mu = sample_angle(rxn, p % E, E_new)
 
-    ! Change direction cosines according to mu
-    call rotate_angle(u, v, w, mu)
+    ! copy directional cosines
+    u = p % coord0 % uvw(1)
+    v = p % coord0 % uvw(2)
+    w = p % coord0 % uvw(3)
 
-    ! Set energy and direction of particle in LAB frame
+    ! change direction of particle
+    call rotate_angle(u, v, w, mu)
+    
+    ! Set energy group and direction of particle
     p % E = E_new
-    p % coord0 % uvw = v_n / vel
+    p % coord0 % uvw = (/ u, v, w /)
 
     ! Copy scattering cosine for tallies
     p % mu = mu
@@ -465,16 +566,17 @@ contains
   function sample_group(rxn, E) result(E_new)
   
   type(Reaction), pointer    :: rxn        ! sampled reaction (scattering)
-  real(8),        intent(in) :: E          ! incoming energy bin
+  integer,        intent(in) :: E          ! incoming energy group
+  integer         :: E_new      ! outgoing energy group
   real(8)         :: k = 0.0    ! cumulative probability
   real(8)         :: cutoff     ! random number
   integer         :: offset = 0 ! group search offset
   
   ! sample cutoff as fraction of total sigma_s for this energy group
-  cutoff = prn() * rxn % adist % total_scatter(E)
+  cutoff = prn() * rxn % total_scatter(E)
   
   ! determine outgoing energy group
-  E_new = max_scatter(E) - 1 
+  E_new = rxn % max_scatter(E) - 1 
   do while(k < cutoff) 
     E_new = E_new + 1
     ! add this group's cross section
@@ -493,18 +595,15 @@ contains
   function sample_angle(rxn, E, E_new) result(mu)
 
     type(Reaction), pointer    :: rxn   ! reaction
-    real(8),        intent(in) :: E     ! incoming energy group
-    real(8),        intent(in) :: E_new ! outgoing energy group
+    integer,        intent(in) :: E     ! incoming energy group
+    integer,        intent(in) :: E_new ! outgoing energy group
     real(8)        :: xi      ! random number on [0,1)
     integer        :: index   ! index of distribution type for this g -> g' combo
-    integer        :: interp  ! type of interpolation
     integer        :: type    ! angular distribution type
-    integer        :: n       ! number of incoming energy bins
+    integer        :: NT       ! number of total data points in ang distribution
     integer        :: lc      ! location in data array
-    integer        :: NP      ! number of points in cos distribution
+    integer        :: NP      ! number of prob. data points in ang distribution
     integer        :: k       ! index on cosine grid
-    real(8)        :: r       ! interpolation factor on incoming energy
-    real(8)        :: frac    ! interpolation fraction on cosine
     real(8)        :: mu0     ! cosine in bin k
     real(8)        :: mu1     ! cosine in bin k+1
     real(8)        :: mu      ! final cosine sampled
@@ -520,7 +619,7 @@ contains
     end if
 
     ! determine number of distribution data points
-    n = rxn % adist % n_data
+    NT = rxn % adist % n_data
 
     ! set index for this initial/final group combo (already determined)
     ! group_index(E) is the index for scattering OUT of group E into the
@@ -545,16 +644,16 @@ contains
     elseif (type == ANGLE_NLEG_EQUI) then
       ! sample cosine bin
       xi = prn()
-      k = 1 + int(n *xi)
+      k = 1 + int(NT *xi)
 
       ! calculate cosine
       mu0 = rxn % adist % data(lc + k)
       mu1 = rxn % adist % data(lc + k+1)
-      mu = mu0 + (n * xi - k) * (mu1 - mu0)
+      mu = mu0 + (NT * xi - k) * (mu1 - mu0)
 
     elseif (type == ANGLE_TABULAR) then
       ! NP = number of cum. probabilities listed
-      NP = (n - 1)/2
+      NP = (NT - 1)/2
 
       ! determine outgoing cosine bin
       xi = prn()
@@ -589,5 +688,56 @@ contains
     end if
 
   end function sample_angle
-  
+
+!===============================================================================
+! ROTATE_ANGLE rotates direction cosines through a polar angle whose cosine is
+! mu and through an azimuthal angle sampled uniformly. Note that this is done
+! with direct sampling rather than rejection as is done in MCNP and SERPENT.
+!===============================================================================
+
+  subroutine rotate_angle(u, v, w, mu)
+
+    real(8), intent(inout) :: u
+    real(8), intent(inout) :: v
+    real(8), intent(inout) :: w
+    real(8), intent(in)    :: mu ! cosine of angle in lab or CM
+
+    real(8) :: phi    ! azimuthal angle
+    real(8) :: sinphi ! sine of azimuthal angle
+    real(8) :: cosphi ! cosine of azimuthal angle
+    real(8) :: a      ! sqrt(1 - mu^2)
+    real(8) :: b      ! sqrt(1 - w^2)
+    real(8) :: u0     ! original cosine in x direction
+    real(8) :: v0     ! original cosine in y direction
+    real(8) :: w0     ! original cosine in z direction
+
+    ! Copy original directional cosines
+    u0 = u
+    v0 = v
+    w0 = w
+
+    ! Sample azimuthal angle in [0,2pi)
+    phi = TWO * PI * prn()
+
+    ! Precompute factors to save flops
+    sinphi = sin(phi)
+    cosphi = cos(phi)
+    a = sqrt(max(ZERO, ONE - mu*mu))
+    b = sqrt(max(ZERO, ONE - w0*w0))
+
+    ! Need to treat special case where sqrt(1 - w**2) is close to zero by
+    ! expanding about the v component rather than the w component
+    if (b > 1e-10) then
+      u = mu*u0 + a*(u0*w0*cosphi - v0*sinphi)/b
+      v = mu*v0 + a*(v0*w0*cosphi + u0*sinphi)/b
+      w = mu*w0 - a*b*cosphi
+    else
+      b = sqrt(ONE - v0*v0)
+      u = mu*u0 + a*(u0*v0*cosphi + w0*sinphi)/b
+      v = mu*v0 - a*b*cosphi
+      w = mu*w0 + a*(v0*w0*cosphi - u0*sinphi)/b
+    end if
+
+  end subroutine rotate_angle
+
 end module multigroup_physics

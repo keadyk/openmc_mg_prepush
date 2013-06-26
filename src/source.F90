@@ -8,9 +8,9 @@ module source
   use output,             only: write_message
   use particle_header,    only: deallocate_coord
 #ifdef MULTIGROUP
-  use multigroup_physics,            only: maxwell_spectrum, watt_spectrum
+  ! not sure we need to include anything here!
 #else
-  use physics, only: maxwell_spectrum, watt_spectrum
+  use physics,            only: maxwell_spectrum, watt_spectrum
 #endif
   use random_lcg,         only: prn, set_particle_seed
   use string,             only: to_str
@@ -114,6 +114,9 @@ contains
       call fatal_error()
     end select
 
+#ifdef MULTIGROUP
+    site % E = 1 ! this is arbitrary, just for now!
+#else
     ! Sample energy distribution
     select case (external_source % type_energy)
     case (SRC_ENERGY_MONO)
@@ -125,7 +128,6 @@ contains
       do
         ! Sample Maxwellian fission spectrum
         site % E = maxwell_spectrum(a)
-
         ! resample if energy is >= 20 MeV
         if (site % E < 20) exit
       end do
@@ -140,12 +142,11 @@ contains
         ! resample if energy is >= 20 MeV
         if (site % E < 20) exit
       end do
-
     case default
       message = "No energy distribution specified for external source!"
       call fatal_error()
     end select
-
+#endif
   end subroutine sample_external_source
 
 !===============================================================================

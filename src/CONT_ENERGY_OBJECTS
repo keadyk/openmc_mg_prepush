@@ -2,4 +2,5 @@ objects += \
 ace.o \
 ace_header.o \
 cross_section.o \
+energy_grid.o \
 physics.o

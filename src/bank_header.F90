@@ -17,7 +17,11 @@ module bank_header
     real(8)    :: wgt    ! weight of bank site
     real(8)    :: xyz(3) ! location of bank particle
     real(8)    :: uvw(3) ! diretional cosines
+#ifdef MULTIGROUP
+    integer    :: E      ! energy group
+#else
     real(8)    :: E      ! energy
+#endif
   end type Bank
 
 end module bank_header

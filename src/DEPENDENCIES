@@ -91,11 +91,6 @@ eigenvalue.o: tally.o
 endf.o: constants.o
 endf.o: string.o
 
-energy_grid.o: constants.o
-energy_grid.o: global.o
-energy_grid.o: list_header.o
-energy_grid.o: output.o
-
 error.o: global.o
 
 finalize.o: cmfd_output.o
@@ -158,7 +153,6 @@ hdf5_interface.o: tally_header.o
 initialize.o: bank_header.o
 initialize.o: constants.o
 initialize.o: dict_header.o
-initialize.o: energy_grid.o
 initialize.o: error.o
 initialize.o: geometry.o
 initialize.o: geometry_header.o

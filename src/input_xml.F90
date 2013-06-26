@@ -366,9 +366,11 @@ contains
     call lower_case(survival_)
     if (survival_ == 'true' .or. survival_ == '1') survival_biasing = .true.
 
+#ifndef MULTIGROUP
     ! Probability tables
     call lower_case(ptables_)
     if (ptables_ == 'false' .or. ptables_ == '0') urr_ptables_on = .false.
+#endif    
     
     ! Cutoffs
     if (size(cutoff_) > 0) then
@@ -1288,6 +1290,10 @@ contains
 
       n_sab = size(material_(i) % sab)
       if (n_sab > 0) then
+#ifdef MULTIGROUP
+        message = "S(a,b) data not valid for multigroup simulation!"
+        call fatal_error()
+#else
         ! Set number of S(a,b) tables
         mat % n_sab = n_sab
 
@@ -1332,6 +1338,7 @@ contains
             mat % i_sab_tables(j) = sab_dict % get_key(name)
           end if
         end do
+#endif
       end if
 
       ! Add material to dictionary
@@ -1340,8 +1347,10 @@ contains
 
     ! Set total number of nuclides and S(a,b) tables
     n_nuclides_total = index_nuclide
+#ifndef MULTIGROUP
     n_sab_tables     = index_sab
-
+#endif
+    
   end subroutine read_materials_xml
 
 !===============================================================================

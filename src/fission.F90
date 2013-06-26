@@ -23,7 +23,11 @@ contains
   function nu_total(nuc, E) result(nu)
 
     type(Nuclide), pointer :: nuc ! nuclide from which to find nu
+#ifdef MULTIGROUP
+    integer, intent(in)    :: E   ! energy group of incoming neutron
+#else
     real(8), intent(in)    :: E   ! energy of incoming neutron
+#endif
     real(8)                :: nu  ! number of total neutrons emitted per fission
 
     integer :: i  ! loop index
@@ -33,6 +37,11 @@ contains
     if (nuc % nu_t_type == NU_NONE) then
       message = "No neutron emission data for table: " // nuc % name
       call fatal_error()
+#ifdef MULTIGROUP
+    else ! (all MG nu data is tabular)
+      nu = nuc % nu_t_data(E)
+    end if
+#else
     elseif (nuc % nu_t_type == NU_POLYNOMIAL) then
       ! determine number of coefficients
       NC = int(nuc % nu_t_data(1))
@@ -47,6 +56,7 @@ contains
       ! use ENDF interpolation laws to determine nu
       nu = interpolate_tab1(nuc % nu_t_data, E)
     end if
+#endif
 
   end function nu_total
 
@@ -58,7 +68,11 @@ contains
   function nu_prompt(nuc, E) result(nu)
 
     type(Nuclide), pointer :: nuc ! nuclide from which to find nu
+#ifdef MULTIGROUP
+    integer, intent(in)    :: E   ! energy group of incoming neutron
+#else
     real(8), intent(in)    :: E   ! energy of incoming neutron
+#endif
     real(8)                :: nu  ! number of prompt neutrons emitted per fission
 
     integer :: i  ! loop index
@@ -71,6 +85,11 @@ contains
       ! routine needs to know this situation is occurring since we don't want
       ! to call nu_total unnecessarily if it's already been called
       nu = ZERO
+#ifdef MULTIGROUP
+    else  ! (all MG nu data is tabular)
+      nu = nuc % nu_p_data(E)
+    end if
+#else
     elseif (nuc % nu_p_type == NU_POLYNOMIAL) then
       ! determine number of coefficients
       NC = int(nuc % nu_p_data(1))
@@ -85,7 +104,8 @@ contains
       ! use ENDF interpolation laws to determine nu
       nu = interpolate_tab1(nuc % nu_p_data, E)
     end if
-
+#endif
+    
   end function nu_prompt
 
 ! (No delayed neutron treatment in multigroup simulation)

@@ -2088,7 +2088,6 @@ contains
 ! Maxwellian is given as p(x) = 2/(T*sqrt(pi))*sqrt(x/T)*exp(-x/T). This PDF can
 ! be sampled using rule C64 in the Monte Carlo Sampler LA-9721-MS.
 !===============================================================================
-
   function maxwell_spectrum(T) result(E_out)
 
     real(8), intent(in)  :: T     ! tabulated function of incoming E

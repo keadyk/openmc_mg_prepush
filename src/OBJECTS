@@ -17,7 +17,6 @@ doppler.o \
 eigenvalue.o \
 endf.o \
 endf_header.o \
-energy_grid.o \
 error.o \
 finalize.o \
 fission.o \

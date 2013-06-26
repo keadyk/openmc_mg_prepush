@@ -46,7 +46,11 @@ module particle_header
 
     ! Other physical data
     real(8)    :: wgt           ! particle weight
+#ifdef MULTIGROUP
+    integer    :: E             ! energy group
+#else
     real(8)    :: E             ! energy
+#endif
     real(8)    :: mu            ! angle of scatter
     logical    :: alive         ! is particle alive?
 
