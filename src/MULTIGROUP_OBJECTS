@@ -1,0 +1,5 @@
+objects += \
+multigroup.o \
+multigroup_header.o \
+multigroup_cross_section.o \
+multigroup_physics.o

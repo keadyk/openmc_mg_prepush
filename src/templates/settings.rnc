@@ -49,8 +49,6 @@ element settings {
 
   element run_cmfd { xsd:boolean }? &
 
-  element multigroup { xsd:boolean }? &
-
   element seed { xsd:positiveInteger }? &
 
   element source {

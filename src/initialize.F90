@@ -1,7 +1,7 @@
 module initialize
 
 #ifdef MULTIGROUP
-  use multigroup,       only: read_mg_xs
+  use multigroup,       only: read_xs
 #else
   use ace,              only: read_xs
 #endif

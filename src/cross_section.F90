@@ -1,13 +1,13 @@
 module cross_section
 
-  use ace_header,      only: Nuclide, SAlphaBeta, Reaction, UrrData
+  use ace_header,        only: Nuclide, SAlphaBeta, Reaction, UrrData
   use constants
-  use error,           only: fatal_error
-  use fission,         only: nu_total
+  use error,             only: fatal_error
+  use fission,           only: nu_total
   use global
-  use material_header, only: Material
-  use random_lcg,      only: prn
-  use search,          only: binary_search
+  use material_header,   only: Material
+  use random_lcg,        only: prn
+  use search,            only: binary_search
 
   implicit none
 
@@ -22,7 +22,7 @@ contains
 
     integer :: i             ! loop index over nuclides
     integer :: i_nuclide     ! index into nuclides array
-    integer :: i_sab         ! index into sab_tables array
+    integer :: i_sab = 0     ! index into sab_tables array
     integer :: j             ! index in mat % i_sab_nuclides
     real(8) :: atom_density  ! atom density of a nuclide
     logical :: check_sab     ! should we check for S(a,b) table?
@@ -43,7 +43,7 @@ contains
 
     ! Find energy index on unionized grid
     if (grid_method == GRID_UNION) call find_energy_index()
-
+   
     ! Determine if this material has S(a,b) tables
     check_sab = (mat % n_sab > 0)
 
@@ -75,7 +75,7 @@ contains
           if (j > mat % n_sab) check_sab = .false.
         end if
       end if
-
+      
       ! ========================================================================
       ! CALCULATE MICROSCOPIC CROSS SECTION
 
@@ -100,7 +100,7 @@ contains
       ! Add contributions to material macroscopic scattering cross section
       material_xs % elastic = material_xs % elastic + &
            atom_density * micro_xs(i_nuclide) % elastic
-
+           
       ! Add contributions to material macroscopic absorption cross section
       material_xs % absorption = material_xs % absorption + & 
            atom_density * micro_xs(i_nuclide) % absorption
@@ -112,7 +112,7 @@ contains
       ! Add contributions to material macroscopic nu-fission cross section
       material_xs % nu_fission = material_xs % nu_fission + &
            atom_density * micro_xs(i_nuclide) % nu_fission
-           
+ 
       ! Add contributions to material macroscopic energy release from fission
       material_xs % kappa_fission = material_xs % kappa_fission + &
            atom_density * micro_xs(i_nuclide) % kappa_fission
@@ -199,7 +199,7 @@ contains
       ! Calculate microscopic nuclide nu-fission cross section
       micro_xs(i_nuclide) % nu_fission = (ONE - f) * nuc % nu_fission( &
            i_grid) + f * nuc % nu_fission(i_grid+1)
-           
+               
       ! Calculate microscopic nuclide kappa-fission cross section
       ! The ENDF standard (ENDF-102) states that MT 18 stores
       ! the fission energy as the Q_value (fission(1))
@@ -232,7 +232,7 @@ contains
     else
       micro_xs(i_nuclide) % last_E = ZERO
     end if
-
+    
   end subroutine calculate_nuclide_xs
 
 !===============================================================================
@@ -319,7 +319,7 @@ contains
     micro_xs(i_nuclide) % elastic_sab = elastic
 
   end subroutine calculate_sab_xs
-
+  
 !===============================================================================
 ! CALCULATE_URR_XS determines cross sections in the unresolved resonance range
 ! from probability tables

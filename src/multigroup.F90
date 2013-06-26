@@ -26,12 +26,12 @@ module multigroup
 contains
 
 !===============================================================================
-! READ_MG_XS reads all the cross sections for the problem (if multi-group  
+! READ_XS reads all the cross sections for the problem (if multi-group  
 ! treatment is specified) and stores them in arrays. S(a,b) data is assumed
 ! to be taken into account in the multi-group cross section set.
 !===============================================================================
 
-  subroutine read_mg_xs()
+  subroutine read_xs()
       
     integer :: i            ! index in materials array
     integer :: j            ! index over nuclides in material
@@ -78,6 +78,7 @@ contains
           call already_read % add(alias)
         end if
       end do NUCLIDE_LOOP
+    end do MATERIAL_LOOP
   end subroutine read_mg_xs   
   
 !===============================================================================
@@ -198,7 +199,7 @@ contains
     deallocate(XSS)
     if(associated(nuc)) nullify(nuc)
 
-  end subroutine read_ace_table
+  end subroutine read_mg_table
   
 !===============================================================================
 ! READ_ERG - reads through the ERG block. This block contains the energy grid,
@@ -209,25 +210,25 @@ contains
 
     type(Nuclide), pointer :: nuc
 
-    integer :: NE ! number of energy groups
+    integer :: NG ! number of energy groups
 
     ! determine number of energy groups
-    NE = NXS(5)
-    nuc % n_group = NE
+    NG = NXS(5)
+    nuc % n_group = NG
 
     ! allocate storage for energy grid and cross section arrays
-    allocate(nuc % group_energy(NE))
-    allocate(nuc % group_width(NE))
-    allocate(nuc % group_mass(NE))
-    allocate(nuc % total(NE))
-    allocate(nuc % scattering(NE))
-    allocate(nuc % fission(NE))
-    allocate(nuc % nu_fission(NE))
-    allocate(nuc % absorption(NE))
+    ! skip scattering for now!
+    allocate(nuc % group_energy(NG))
+    allocate(nuc % group_width(NG))
+    allocate(nuc % group_mass(NG))
+    
+    allocate(nuc % total(NG))
+    allocate(nuc % fission(NG))
+    allocate(nuc % nu_fission(NG))
+    allocate(nuc % absorption(NG))
 
     ! initialize cross sections
     nuc % total      = ZERO
-    nuc % scattering = ZERO
     nuc % fission    = ZERO
     nuc % nu_fission = ZERO
     nuc % absorption = ZERO
@@ -245,7 +246,7 @@ contains
 !===============================================================================
 ! READ_NU_DATA reads data given on the number of neutrons emitted from fission
 ! as a function of the incoming group of a neutron. This data may be broken
-! down into prompt and delayed neutrons based on the value of NXS(10)
+! down into prompt and total data depending on value of NXS10
 !===============================================================================
 
   subroutine read_nu_data(nuc)
@@ -262,7 +263,6 @@ contains
     JXS4  = JXS(4)
     NXS10 = NXS(10)
     length = nuc % n_group ! Number of energy groups
-    nuc % nu_d_type = NU_NONE ! No delayed nu data for multigroup (only total and/or prompt)
     
     if (JXS3 == 0) then
       ! =======================================================================
@@ -298,7 +298,7 @@ contains
       nuc % nu_p_data = get_real(length)
       ! Read total nu data
       nuc % nu_t_data = get_real(length)
-    end
+    end if
 
   end subroutine read_nu_data
  
@@ -334,7 +334,7 @@ contains
       ! read chi data
       nuc % chi_data = get_real(length)
     end if  
-  end subroutine
+  end subroutine read_chi_data
   
 !===============================================================================
 ! READ_REACTIONS currently reads the fission, absorption, and total cross
@@ -357,30 +357,22 @@ contains
       length = nuc % n_group
       
       ! allocate 3 reactions: fission, absorption, scattering
+      ! remember, 'total' isn't a reaction, dummy! :)
       nuc % n_reaction = 3
       allocate(nuc % reactions(3)) 
       
+      ! default value
       nuc % fissionable = .false.
 
       if (JXS2 == 0) then 
         ! =======================================================================
         ! NO TOTAL XS DATA
-        ! what do we do here?
       else 
         ! =======================================================================
         ! TABULAR TOTAL XS DATA
-        rxn => nuc % reactions(1)
-
-        ! set defaults
-        rxn % has_angle_dist  = .false.
-        rxn % MT = TOTAL_XS
-        
-        ! allocate space
-        allocate(nuc % total(length))
         ! set index
-        rxn
         XSS_index = JXS2
-        ! read total x section data
+        ! read total x section data (space already allocated)
         nuc % total = get_real(length)
       endif
       
@@ -396,34 +388,40 @@ contains
         rxn % MT = N_FISSION
         
         nuc % fissionable = .true.
+        nuc % has_partial_fission = .false.
+        nuc % n_fission = 1
         ! allocate space
-        allocate(nuc % fission(length))  
+        allocate(rxn % sigma(length)) 
+        allocate(nuc % index_fission(1))
         ! set index
         XSS_index = JXS3
         ! read fission x section data
-        nuc % fission = get_real(length)
+        rxn % sigma = get_real(length)
+        nuc % fission = rxn % sigma
       endif
       
       if (JXS6 == 0) then 
         ! =======================================================================
         ! NO ABS DATA
-          ! what do we do here?
       else 
         ! =======================================================================
         ! TABULAR ABS DATA
         
         rxn => nuc % reactions(3)
         rxn % has_angle_dist  = .false.
-        rxn % MT = TOTAL_XS
+        rxn % MT = N_DISAPPEAR
         ! allocate space
-        allocate(nuc % absorption(length))
+        allocate(rxn % sigma(length))
         ! set index
         XSS_index = JXS6
         ! read abs x section data
-        nuc % absorption = get_real(length)
+        rxn % sigma = get_real(length)
+        nuc % absorption = rxn % sigma
       endif
+      
+      ! skip reading secondary particle reactions for now! :)
 
-  end subroutine read_reactions(nuc)
+  end subroutine read_reactions
   
 !===============================================================================
 ! READ_SCATTERING reads in the P0 scattering matrix for each nuclide, as well as
@@ -431,58 +429,192 @@ contains
 !===============================================================================
   
   subroutine read_scattering(nuc)
-    integer :: NXS3                 ! number of angular distribution variables
+    
+    type(Nuclide), pointer :: nuc
+    
+    integer :: NLEG                 ! number of angular distribution variables
     integer :: NXS5                 ! total number of energy groups
     integer :: NXS6                 ! number of upscatter groups
     integer :: NXS7                 ! number of downscatter groups
-    integer :: NXS8                 ! number of secondary particles
-    integer :: NXS9                 ! type of angular distribution (EPB/discrete cosine)
+    ! integer :: NXS8                 ! number of secondary particles
+    integer :: ISANG                ! type of angular distribution (EPB/discrete cosine)
     integer :: NXS12                ! incident particle identifier (used for check only)
-    integer :: JXS11                ! location of secondary particle types
-    integer :: JXS12                ! location of secondary group structure locators
+    ! integer :: JXS11                ! location of secondary particle types
+    ! integer :: JXS12                ! location of secondary group structure locators
     integer :: JXS13                ! location of P0 scattering table locators 
     integer :: JXS14                ! location of ang distribution types
+    integer :: JXS16                ! location of XPN block locators
+    integer :: JXS17                ! location of PN block locators
     integer :: length               ! length of records to grab
-    integer :: P0_index             ! location of incident particle P0 block
-    integer :: PN_index             ! location of incident particle PN block
-    integer, allocatable :: XPN(:)  ! locations for angular dist. blocks
-    
+    integer :: j                    ! iterator
+    integer :: k                    ! iterator
+    integer :: LP0                  ! location of incident particle P0 block
+    integer :: LPN                  ! location of incident particle PN block
+    integer :: LXPN                 ! location of incident particle XPN block
+    integer :: base_type            ! base ang. dist. type for this nuclide
+    integer :: this_index           ! index where data for this grp begins
+    integer :: I1                   ! highest possible group for outscatter
+    integer :: I2                   ! lowest possible group for outscatter
+    integer, allocatable :: LPND(:)  ! locations of PND angular dist. blocks
+    type(Reaction), pointer :: rxn => null()
+          
+    NLEG = NXS(3)
     NXS5 = NXS(5)
     NXS6 = NXS(6)
     NXS7 = NXS(7)
-    NXS9 = NXS(9)
+    ISANG = NXS(9)
     JXS13 = JXS(13)
     JXS16 = JXS(16)
+    JXS17 = JXS(17)
     
-    ! start by only reading/considering initial (incident) particle P0 scattering
+    ! associate scattering with reaction 1
+    rxn => nuc % reactions(1)
+    
+    ! MG xsections are in lab frame
+    rxn % scatter_in_cm = .false.
+    
+    ! start by only reading/considering initial (incident) particle scattering
     if(JXS13 == 0) then
       !=========================================================================
-      ! NO P0 SCATTERING DATA
+      ! NO P0 SCATTERING DATA AT ALL -- MUST BE PURE ABSORBER
+      rxn % has_angle_dist = .false.
+      
     else
       !=========================================================================
       ! TABULAR P0 SCATTERING DATA
+      ! allocate group indices, total scattering, min/max scatter groups  
+      allocate(rxn % group_index(nuc % n_group))
+      allocate(rxn % total_scatter(nuc % n_group))
+      allocate(rxn % min_scatter(nuc % n_group))
+      allocate(rxn % max_scatter(nuc % n_group))
+      
       ! set length of table -- see LANL report LA-12704, pg 119
-      length = int(NXS5 * (1 + NXS7 + NXS6) - 0.5 * (NXS7 * (NXS7 + 1) + NXS6 * (NXS6 + 1)))
+      length = int(NXS5 * (1 + NXS7 + NXS6) - 0.5 * (NXS7 * (NXS7 + 1) + NXS6 &
+               * (NXS6 + 1)))
+      
+      ! allocate scattering cross sections, reaction cross sections
       allocate(nuc % scattering(length))
-      ! set XSS_index to location of incident particle PO_block
+      allocate(rxn % sigma(length))
+      
+      ! set XSS_index to location of incident particle PO xsects
       XSS_index = JXS13
-      P0_index = get_int(1)
-      XSS_index = P0_index
-      ! read correct number of values
-      nuc % scattering = get_real(length)
+      LP0 = int(XSS(XSS_index))
+      XSS_index = LP0
+      
+      ! read correct number of P0 values, copy to reaction
+      rxn % sigma = get_real(length)
+      nuc % scattering = rxn % sigma
+      
+      ! sum up total P0 values (total scattering for each group)
+      ! also store array index where each group's outscatter xs start
+      this_index = 1
+      do k=1,nuc % n_group
+        ! store starting index for group
+        rxn % group_index(k) = this_index
+        
+        ! determine min, max groups for outscatter
+        max_scatter(k) = max(1, k - NXS6)
+        min_scatter(k) = min(NXS5, k + NXS7)
+        
+        ! sum up outscatter sigmas for this energy group 
+        rxn % total_scatter(k) = sum(rxn % sigma, MASK=(this_index:this_index &
+                                 + min_scatter(k) - max_scatter(k) - 1))
+        
+        ! update starting index for next group
+        this_index = this_index + (min_scatter(k) - max_scatter(k))
+      end do
       
       ! get location for incident particle XPN block (if one exists)
       XSS_index = JXS16
-      PN_index = get_int(1)
-      if(PN_index > 0) then
-        XSS_index = PN_index
-        allocate(nuc % )
+      LXPN = int(XSS(XSS_index))
+      
+      ! get location for incident particle PN block (if one exists)
+      XSS_index = JXS17
+      LPN = int(XSS(XSS_index))
+
+      if(LXPN > 0 .and. LPN > 0) then
+        ! at least one ang distribution exists
+        rxn % has_angle_dist = .true.
+        allocate(rxn % adist % location(length))
+        allocate(rxn % adist % type(length))
+        
+        ! allocate, then read in locations for PND blocks
+        XSS_index = LXPN
+        allocate(LPND(length))
+        LPND = get_real(length)
+        
+        ! determine base distribution type
+        if(ISANG == 1) then
+          base_type = ANGLE_TABULAR
+        else if(ISANG == 0) then
+          base_type = ANGLE_NLEG_EQUI
+        else
+          message = "Invalid angular distribution (ISANG = " // trim(to_str   &
+                    (ISANG)) // ")."
+          call fatal_error()
+        end if
+        
+        ! set # of data points per angular distribution
+        rxn % adist % n_data = NLEG
+
+        ! allocate space for all possible g->g' combo angular distributions
+        allocate(rxn % adist % data(length * NLEG))
+        
+        do j = 1,length
+
+          ! determine location (offset) where group data is located
+          rxn % adist % location(j) = LPND(j)
+          
+          ! If LPND = -1 or 0, no data in this block
+          ! Set scattering type to isotropic, then cycle
+          if(LPND <= 0) then
+            rxn % adist % type(j) = ANGLE_ISOTROPIC
+            cycle
+          end if
+          
+          ! We made it here-- there must be data!
+          rxn % adist % type(j) = base_type
+          XSS_index = LPN + LPND(j)
+          rxn % adist % data((j - 1) * NLEG + 1:j * NLEG) = get_real(NLEG)
+          
+        end do
       else
         !=======================================================================
-        ! ALL SCATTERING IS ISOTROPIC-- DO NOTHING
+        ! ALL SCATTERING IS ISOTROPIC IN LAB SYSTEM-- DO NOTHING
+        rxn % has_angle_dist = .false.
       end if
     end if
     
-  end subroutine read_scattering(nuc)
+  end subroutine read_scattering
+  
+!===============================================================================
+! GET_INT returns an array of integers read from the current position in the XSS
+! array
+!===============================================================================
+
+  function get_int(n_values) result(array)
+
+    integer, intent(in) :: n_values        ! number of values to read
+    integer             :: array(n_values) ! array of values
+
+    array = int(XSS(XSS_index:XSS_index + n_values - 1))
+    XSS_index = XSS_index + n_values
+
+  end function get_int
+
+!===============================================================================
+! GET_REAL returns an array of real(8)s read from the current position in the
+! XSS array
+!===============================================================================
+
+  function get_real(n_values) result(array)
+
+    integer, intent(in) :: n_values        ! number of values to read
+    real(8)             :: array(n_values) ! array of values
+
+    array = XSS(XSS_index:XSS_index + n_values - 1)
+    XSS_index = XSS_index + n_values
+
+  end function get_real
   
 end module multigroup

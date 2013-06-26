@@ -4,23 +4,27 @@ module eigenvalue
   use mpi
 #endif
 
-  use cmfd_execute, only: cmfd_init_batch, execute_cmfd
-  use constants,    only: ZERO
-  use error,        only: fatal_error, warning
+  use cmfd_execute,       only: cmfd_init_batch, execute_cmfd
+  use constants,          only: ZERO
+  use error,              only: fatal_error, warning
   use global
-  use math,         only: t_percentile
-  use mesh,         only: count_bank_sites
-  use mesh_header,  only: StructuredMesh
-  use output,       only: write_message, header, print_columns,              &
-                          print_batch_keff, print_generation
-  use physics,      only: transport
-  use random_lcg,   only: prn, set_particle_seed, prn_skip
-  use search,       only: binary_search
-  use source,       only: get_source_particle
-  use state_point,  only: write_state_point, replay_batch_history
-  use string,       only: to_str
-  use tally,        only: synchronize_tallies, setup_active_usertallies, &
-                          reset_result
+  use math,               only: t_percentile
+  use mesh,               only: count_bank_sites
+  use mesh_header,        only: StructuredMesh
+  use output,             only: write_message, header, print_columns,              &
+                                print_batch_keff, print_generation
+#ifdef MULTIGROUP
+  use multigroup_physics, only: transport
+#else
+  use physics,            only: transport
+#endif
+  use random_lcg,         only: prn, set_particle_seed, prn_skip
+  use search,             only: binary_search
+  use source,             only: get_source_particle
+  use state_point,        only: write_state_point, replay_batch_history
+  use string,             only: to_str
+  use tally,              only: synchronize_tallies, setup_active_usertallies, &
+                                reset_result
 
 #ifdef HDF5
   use hdf5_interface, only: hdf5_write_state_point

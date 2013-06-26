@@ -7,12 +7,6 @@ xml_fort = xml-fortran/xmlparse.o \
            xml-fortran/write_xml_primitives.o
 
 #===============================================================================
-# Object Files
-#===============================================================================
-
-include OBJECTS
-
-#===============================================================================
 # User Options
 #===============================================================================
 
@@ -21,10 +15,22 @@ DEBUG      = no
 PROFILE    = no
 OPTIMIZE   = no
 # Multigroup only tested for gnu compiler!!
-MULTIGROUP = no
+MULTIGROUP = yes
 MPI        = no
 HDF5       = no
 PETSC      = no
+
+#===============================================================================
+# Object Files
+#===============================================================================
+
+include OBJECTS
+
+ifeq ($(MULTIGROUP),yes)
+  include MULTIGROUP_OBJECTS
+else
+  include CONT_ENERGY_OBJECTS
+endif
 
 #===============================================================================
 # External Library Paths
@@ -53,7 +59,7 @@ ifeq ($(COMPILER),gnu)
   LDFLAGS =
 
   # Debugging
-  ifeq ($(DEBUG),yes) #I ADDED THE NO CHARACTER TRUNCATION FLAG
+  ifeq ($(DEBUG),yes) #KENDRA ADDED THE NO CHARACTER TRUNCATION FLAG
     F90FLAGS += -g -Wall -Wno-character-truncation -pedantic -std=f2008 -fbounds-check \
                 -ffpe-trap=invalid,overflow,underflow
     LDFLAGS  += -g
@@ -278,3 +284,9 @@ neat:
 #===============================================================================
 
 include DEPENDENCIES
+
+ifeq ($(MULTIGROUP),yes)
+  include MULTIGROUP_DEPENDENCIES
+else
+  include CONT_ENERGY_DEPENDENCIES
+endif

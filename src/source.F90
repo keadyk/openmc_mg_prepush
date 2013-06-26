@@ -1,16 +1,19 @@
 module source
 
-  use bank_header,     only: Bank
+  use bank_header,        only: Bank
   use constants
-  use error,           only: fatal_error
-  use geometry_header, only: BASE_UNIVERSE
+  use error,              only: fatal_error
+  use geometry_header,    only: BASE_UNIVERSE
   use global
-  use output,          only: write_message
-  use particle_header, only: deallocate_coord
-  use physics,         only: maxwell_spectrum, watt_spectrum
-  use random_lcg,      only: prn, set_particle_seed
-  use state_point,     only: read_source_binary
-  use string,          only: to_str
+  use output,             only: write_message
+  use particle_header,    only: deallocate_coord
+#ifdef MULTIGROUP
+  use multigroup_physics,            only: maxwell_spectrum, watt_spectrum
+#else
+  use physics, only: maxwell_spectrum, watt_spectrum
+#endif
+  use random_lcg,         only: prn, set_particle_seed
+  use string,             only: to_str
 
 #ifdef MPI
   use mpi

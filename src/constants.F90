@@ -141,6 +141,7 @@ module constants
   integer, parameter :: & 
        ANGLE_ISOTROPIC = 1, & ! Isotropic angular distribution
        ANGLE_32_EQUI   = 2, & ! 32 equiprobable bins
+       ANGLE_NLEG_EQUI = 4, & ! NLEG equiprobable bins
        ANGLE_TABULAR   = 3    ! Tabular angular distribution
 
   ! Secondary energy mode for S(a,b) inelastic scattering

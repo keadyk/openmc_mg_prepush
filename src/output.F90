@@ -2,18 +2,22 @@ module output
 
   use, intrinsic :: ISO_FORTRAN_ENV
 
-  use ace_header,      only: Nuclide, Reaction, UrrData
+#ifdef MULTIGROUP
+  use multigroup_header, only: Nuclide, Reaction
+#else
+  use ace_header,        only: Nuclide, Reaction, UrrData
+#endif
   use constants
-  use endf,            only: reaction_name
-  use geometry_header, only: Cell, Universe, Surface, BASE_UNIVERSE
+  use endf,              only: reaction_name
+  use geometry_header,   only: Cell, Universe, Surface, BASE_UNIVERSE
   use global
-  use math,            only: t_percentile
-  use mesh_header,     only: StructuredMesh
-  use mesh,            only: mesh_indices_to_bin, bin_to_mesh_indices
-  use particle_header, only: LocalCoord
+  use math,              only: t_percentile
+  use mesh_header,       only: StructuredMesh
+  use mesh,              only: mesh_indices_to_bin, bin_to_mesh_indices
+  use particle_header,   only: LocalCoord
   use plot_header
-  use string,          only: upper_case, to_str
-  use tally_header,    only: TallyObject
+  use string,            only: upper_case, to_str
+  use tally_header,      only: TallyObject
 
   implicit none
 
@@ -43,6 +47,17 @@ contains
          '                  888', &
          '                  888'
 
+#ifdef MULTIGROUP
+    write(UNIT=OUTPUT_UNIT, FMT='(/8(A/))') &
+         '                         888b     d888  .d8888b.   d88888b            ', &
+         '                         8888b   d8888 d88P  Y88b  Y88888P            ', &
+         '                         88888b.d88888 888    888   Y888P             ', &
+         '                         888Y88888P888 888           Y8P              ', &
+         '                         888 Y888P 888 888    8888b                   ', &
+         '.888.    .888.   .888.   888  Y8P  888 888    888   .888.             ', &
+         '88888    88888   88888   888   "   888 Y88b  d88P   88888             ', &
+         '"888"    "888"   "888"   888       888  "Y8888P"    "888"             '
+#endif
     ! Write version information
     write(UNIT=OUTPUT_UNIT, FMT=*) &
          '     Copyright:     2011-2013 Massachusetts Institute of Technology'
@@ -309,9 +324,13 @@ contains
 
     write(ou,*) 'Reaction ' // reaction_name(rxn % MT)
     write(ou,*) '    MT = ' // to_str(rxn % MT)
+#ifndef MULTIGROUP
     write(ou,*) '    Q-value = ' // to_str(rxn % Q_value)
+#endif
     write(ou,*) '    Multiplicity = ' // to_str(rxn % multiplicity)
+#ifndef MULTIGROUP
     write(ou,*) '    Threshold = ' // to_str(rxn % threshold)
+#endif
     if (rxn % has_energy_dist) then
       write(ou,*) '    Energy: Law ' // to_str(rxn % edist % law)
     end if
@@ -626,6 +645,7 @@ contains
       write(unit_,*) trim(string)
     end do
 
+#ifndef MULTIGROUP
     ! Write information on S(a,b) table
     if (mat % n_sab > 0) then
         write(unit_,*) '    S(a,b) tables:'
@@ -634,6 +654,7 @@ contains
              sab_tables(mat % i_sab_tables(i)) % name)
       end do
     end if
+#endif
     write(unit_,*)
 
   end subroutine print_material
@@ -910,8 +931,9 @@ contains
     integer :: size_urr          ! memory used for probability tables (bytes)
     character(11) :: law         ! secondary energy distribution law
     type(Reaction), pointer :: rxn => null()
+#ifndef MULTIGROUP
     type(UrrData),  pointer :: urr => null()
-
+#endif
     ! set default unit for writing information
     if (present(unit)) then
       unit_ = unit
@@ -930,19 +952,31 @@ contains
     write(unit_,*) '  zaid = ' // trim(to_str(nuc % zaid))
     write(unit_,*) '  awr = ' // trim(to_str(nuc % awr))
     write(unit_,*) '  kT = ' // trim(to_str(nuc % kT))
+#ifdef MULTIGROUP
+    write(unit_,*) '  # of energy groups = ' // trim(to_str(nuc % n_group))
+#else
     write(unit_,*) '  # of grid points = ' // trim(to_str(nuc % n_grid))
+#endif
     write(unit_,*) '  Fissionable = ', nuc % fissionable
     write(unit_,*) '  # of fission reactions = ' // trim(to_str(nuc % n_fission))
     write(unit_,*) '  # of reactions = ' // trim(to_str(nuc % n_reaction))
 
     ! Information on each reaction
+#ifdef MULTIGROUP
+    write(unit_,*) '  Reaction  COM   Law    size(angle) size(energy) '
+#else
     write(unit_,*) '  Reaction     Q-value  COM  Law    IE    size(angle) size(energy)'
+#endif
     do i = 1, nuc % n_reaction
       rxn => nuc % reactions(i)
 
       ! Determine size of angle distribution
       if (rxn % has_angle_dist) then
+#ifdef MULTIGROUP
+        size_angle = rxn % adist % n_data * 16 + size(rxn % adist % data) * 8
+#else
         size_angle = rxn % adist % n_energy * 16 + size(rxn % adist % data) * 8
+#endif
       else
         size_angle = 0
       end if
@@ -956,22 +990,35 @@ contains
         law = 'None'
       end if
 
+#ifdef MULTIGROUP
+      write(unit_,'(3X,1X,F8.3,L1,3X,A4,1X,I6,1X,I11,1X,I11)') &
+           reaction_name(rxn % MT), rxn % scatter_in_cm, law(1:4), &
+           size_angle, size_energy
+#else
       write(unit_,'(3X,A11,1X,F8.3,3X,L1,3X,A4,1X,I6,1X,I11,1X,I11)') &
            reaction_name(rxn % MT), rxn % Q_value, rxn % scatter_in_cm, &
            law(1:4), rxn % threshold, size_angle, size_energy
-
+#endif
       ! Accumulate data size
+#ifdef MULTIGROUP
+      size_xs = size_xs + nuc % n_group * 8
+#else
       size_xs = size_xs + (nuc % n_grid - rxn%threshold + 1) * 8
+#endif
       size_angle_total = size_angle_total + size_angle
       size_energy_total = size_energy_total + size_energy
     end do
 
     ! Add memory required for summary reactions (total, absorption, fission,
     ! nu-fission)
-    size_xs = 8 * nuc % n_grid * 4
-
+#ifdef MULTIGROUP
+    size_xs = size_xs + 8 * nuc % n_group * 4
+#else
+    size_xs = size_xs + 8 * nuc % n_grid * 4
+#endif
+    
     ! Write information about URR probability tables
-    size_urr = 0
+#ifndef MULTIGROUP
     if (nuc % urr_present) then
       urr => nuc % urr_data
       write(unit_,*) '  Unresolved resonance probability table:'
@@ -987,7 +1034,7 @@ contains
       ! Calculate memory used by probability tables and add to total
       size_urr = urr % n_energy * (urr % n_prob * 6 + 1) * 8
     end if
-
+#endif
     ! Calculate total memory
     size_total = size_xs + size_angle_total + size_energy_total + size_urr
 
@@ -998,8 +1045,10 @@ contains
          trim(to_str(size_angle_total)) // ' bytes'
     write(unit_,*) '    Secondary energy distributions = ' // &
          trim(to_str(size_energy_total)) // ' bytes'
+#ifndef MULTIGROUP
     write(unit_,*) '    Probability Tables = ' // &
          trim(to_str(size_urr)) // ' bytes'
+#endif
     write(unit_,*) '    Total = ' // trim(to_str(size_total)) // ' bytes'
 
     ! Blank line at end of nuclide
@@ -1011,7 +1060,7 @@ contains
 ! PRINT_SAB_TABLE displays information about a S(a,b) table containing data
 ! describing thermal scattering from bound materials such as hydrogen in water.
 !===============================================================================
-
+#ifndef MULTIGROUP
   subroutine print_sab_table(sab, unit)
 
     type(SAlphaBeta), pointer :: sab
@@ -1063,7 +1112,7 @@ contains
     write(unit_,*)
 
   end subroutine print_sab_table
-
+#endif
 !===============================================================================
 ! WRITE_SUMMARY displays summary information about the problem about to be run
 ! after reading all input files
@@ -1174,8 +1223,10 @@ contains
     integer                  :: i    ! loop index
     character(MAX_FILE_LEN)  :: path ! path of summary file
     type(Nuclide),    pointer :: nuc => null()
+#ifndef MULTIGROUP
     type(SAlphaBeta), pointer :: sab => null()
-
+#endif
+    
     ! Create filename for log file
     path = trim(path_output) // "cross_sections.out"
 
@@ -1192,15 +1243,16 @@ contains
       ! Print information about nuclide
       call print_nuclide(nuc, unit=UNIT_XS)
     end do NUCLIDE_LOOP
-
+    
+#ifndef MULTIGROUP
     SAB_TABLES_LOOP: do i = 1, n_sab_tables
       ! Get pointer to S(a,b) table
       sab => sab_tables(i)
-
       ! Print information about S(a,b) table
       call print_sab_table(sab, unit=UNIT_XS)
     end do SAB_TABLES_LOOP
-
+#endif
+    
     ! Close cross section summary file
     close(UNIT_XS)
 

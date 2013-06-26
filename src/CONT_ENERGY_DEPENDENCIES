@@ -1,0 +1,60 @@
+ace.o: ace_header.o
+ace.o: constants.o
+ace.o: endf.o
+ace.o: error.o
+ace.o: fission.o
+ace.o: global.o
+ace.o: material_header.o
+ace.o: output.o
+ace.o: set_header.o
+ace.o: string.o
+
+ace_header.o: constants.o
+ace_header.o: endf_header.o
+
+cross_section.o: ace_header.o
+cross_section.o: constants.o
+cross_section.o: error.o
+cross_section.o: fission.o
+cross_section.o: global.o
+cross_section.o: material_header.o
+cross_section.o: random_lcg.o
+cross_section.o: search.o
+
+
+eigenvalue.o: physics.o
+
+fission.o: ace_header.o
+
+fixed_source.o: physics.o
+
+global.o: ace_header.o
+
+hdf5_interface.o: ace_header.o
+
+initialize.o: ace.o
+
+output.o: ace_header.o
+
+physics.o: ace_header.o
+physics.o: constants.o
+physics.o: cross_section.o
+physics.o: endf.o
+physics.o: error.o
+physics.o: fission.o
+physics.o: geometry.o
+physics.o: geometry_header.o
+physics.o: global.o
+physics.o: interpolation.o
+physics.o: material_header.o
+physics.o: mesh.o
+physics.o: output.o
+physics.o: particle_header.o
+physics.o: random_lcg.o
+physics.o: search.o
+physics.o: string.o
+physics.o: tally.o
+
+source.o: physics.o
+
+tally.o: ace_header.o

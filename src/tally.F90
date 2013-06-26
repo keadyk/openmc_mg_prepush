@@ -1,8 +1,12 @@
 module tally
 
-  use ace_header,       only: Reaction
+#ifdef MULTIGROUP
+  use multigroup_header, only: Reaction
+#else
+  use ace_header,        only: Reaction
+#endif
   use constants
-  use error,            only: fatal_error
+  use error,             only: fatal_error
   use global
   use math,             only: t_percentile, calc_pn
   use mesh,             only: get_mesh_bin, bin_to_mesh_indices, &
@@ -299,8 +303,12 @@ contains
 
               end if
             end if
-          
+         
           case (SCORE_KAPPA_FISSION)
+#ifdef MULTIGROUP
+            message = "SCORE_KAPPA_FISSION not valid in multigroup simulation."
+            call fatal_error() 
+#else
             if (survival_biasing) then
               ! No fission events occur if survival biasing is on -- need to
               ! calculate fraction of absorptions that would have resulted in
@@ -322,6 +330,7 @@ contains
               score = last_wgt * &
                 nuclides(p % event_nuclide) % reactions(n) % Q_value
             end if
+#endif
           case (SCORE_EVENTS)
             ! Simply count number of scoring events
             score = ONE
@@ -551,11 +560,15 @@ contains
                 ! Nu-fission cross section is pre-calculated
                 score = micro_xs(i_nuclide) % nu_fission * &
                      atom_density * flux
-
+        
               case (SCORE_KAPPA_FISSION)
+#ifdef MULTIGROUP
+                message = "SCORE_KAPPA_FISSION not valid in multigroup simulation."
+                call fatal_error()
+#else
                 score = micro_xs(i_nuclide) % kappa_fission * &
                      atom_density * flux
-
+#endif
               case (SCORE_EVENTS)
                 ! For number of events, just score unity
                 score = ONE
@@ -573,7 +586,7 @@ contains
                   ! TODO: The following search for the matching reaction could
                   ! be replaced by adding a dictionary on each Nuclide instance
                   ! of the form {MT: i_reaction, ...}
-
+ 
                   REACTION_LOOP: do m = 1, nuclides(i_nuclide) % n_reaction
                     ! Get pointer to reaction
                     rxn => nuclides(i_nuclide) % reactions(m)
@@ -582,6 +595,10 @@ contains
                     if (score_bin == rxn % MT) then
                       ! Retrieve index on nuclide energy grid and interpolation
                       ! factor
+#ifdef MULTIGROUP
+                      message = "Multigroup reaction tallies coming soon!"
+                      call warning()
+#else
                       i_energy = micro_xs(i_nuclide) % index_grid
                       f = micro_xs(i_nuclide) % interp_factor
 
@@ -590,11 +607,10 @@ contains
                              rxn%threshold + 1) + f * rxn % sigma(i_energy - &
                              rxn%threshold + 2)) * atom_density * flux
                       end if
-
+#endif
                       exit REACTION_LOOP
                     end if
                   end do REACTION_LOOP
-
                 else
                   message = "Invalid score type on tally " // to_str(t % id) // "."
                   call fatal_error()
@@ -631,8 +647,13 @@ contains
                 score = material_xs % nu_fission * flux
 
               case (SCORE_KAPPA_FISSION)
+#ifdef MULTIGROUP
+                message = "SCORE_KAPPA_FISSION not valid in multigroup simulation."
+                call fatal_error() 
+#else
                 score = material_xs % kappa_fission * flux
-
+#endif
+                
               case (SCORE_EVENTS)
                 ! For number of events, just score unity
                 score = ONE
@@ -668,6 +689,10 @@ contains
                       if (score_bin == rxn % MT) then
                         ! Retrieve index on nuclide energy grid and interpolation
                         ! factor
+#ifdef MULTIGROUP
+                      message = "Multigroup reaction tallies coming soon!"
+                      call warning()
+#else
                         i_energy = micro_xs(i_nuc) % index_grid
                         f = micro_xs(i_nuc) % interp_factor
 
@@ -676,7 +701,7 @@ contains
                                rxn%threshold + 1) + f * rxn % sigma(i_energy - &
                                rxn%threshold + 2)) * atom_density * flux
                         end if
-
+#endif
                         exit
                       end if
                     end do
@@ -785,8 +810,12 @@ contains
           score = micro_xs(i_nuclide) % nu_fission * atom_density * flux
 
         case (SCORE_KAPPA_FISSION)
+#ifdef MULTIGROUP
+          message = "SCORE_KAPPA_FISSION not valid in multigroup simulation."
+          call fatal_error() 
+#else
           score = micro_xs(i_nuclide) % kappa_fission * atom_density * flux
-
+#endif
         case (SCORE_EVENTS)
           score = ONE
 
@@ -810,6 +839,10 @@ contains
 
               ! Check if this is the desired MT
               if (score_bin == rxn % MT) then
+#ifdef MULTIGROUP
+                      message = "Multigroup reaction tallies coming soon!"
+                      call warning()
+#else
                 ! Retrieve index on nuclide energy grid and interpolation factor
                 i_energy = micro_xs(i_nuclide) % index_grid
                 f = micro_xs(i_nuclide) % interp_factor
@@ -819,7 +852,7 @@ contains
                        rxn%threshold + 1) + f * rxn % sigma(i_energy - &
                        rxn%threshold + 2)) * atom_density * flux
                 end if
-
+#endif
                 exit REACTION_LOOP
               end if
             end do REACTION_LOOP
@@ -871,8 +904,13 @@ contains
         score = material_xs % nu_fission * flux
 
       case (SCORE_KAPPA_FISSION)
+#ifdef MULTIGROUP
+        message = "SCORE_KAPPA_FISSION not valid in multigroup simulation."
+        call fatal_error() 
+#else        
         score = material_xs % kappa_fission * flux
-
+#endif
+        
       case (SCORE_EVENTS)
         score = ONE
 
@@ -907,6 +945,10 @@ contains
               if (score_bin == rxn % MT) then
                 ! Retrieve index on nuclide energy grid and interpolation
                 ! factor
+#ifdef MULTIGROUP
+                      message = "Multigroup reaction tallies coming soon!"
+                      call warning()
+#else
                 i_energy = micro_xs(i_nuclide) % index_grid
                 f = micro_xs(i_nuclide) % interp_factor
 
@@ -915,7 +957,7 @@ contains
                        rxn%threshold + 1) + f * rxn % sigma(i_energy - &
                        rxn%threshold + 2)) * atom_density * flux
                 end if
-
+#endif
                 exit
               end if
             end do
@@ -1200,7 +1242,12 @@ contains
                   score = micro_xs(i_nuclide) % nu_fission * &
                        atom_density * flux
                 case (SCORE_KAPPA_FISSION)
+#ifdef MULTIGROUP
+                  message = "SCORE_KAPPA_FISSION not valid in multigroup simulation."
+                  call fatal_error() 
+#else
                   score = micro_xs(i_nuclide) % kappa_fission * atom_density * flux
+#endif
                 case (SCORE_EVENTS)
                   score = ONE
                 case default
@@ -1225,7 +1272,12 @@ contains
                 case (SCORE_NU_FISSION)
                   score = material_xs % nu_fission * flux
                 case (SCORE_KAPPA_FISSION)
+#ifdef MULTIGROUP
+                  message = "SCORE_KAPPA_FISSION not valid in multigroup simulation."
+                  call fatal_error()
+#else
                   score = material_xs % kappa_fission * flux
+#endif
                 case (SCORE_EVENTS)
                   score = ONE
                 case default

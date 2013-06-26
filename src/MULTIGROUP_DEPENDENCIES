@@ -1,0 +1,58 @@
+multigroup.o : multigroup_header.o
+multigroup.o : constants.o
+multigroup.o : endf.o
+multigroup.o : error.o
+multigroup.o : fission.o
+multigroup.o : global.o
+multigroup.o : material_header.o
+multigroup.o : output.o
+multigroup.o : set_header.o
+multigroup.o : string.o
+
+multigroup_header: constants.o
+multigroup_header: endf_header.o
+
+multigroup_cross_section.o : multigroup_header.o
+multigroup_cross_section.o: constants.o
+multigroup_cross_section.o: error.o
+multigroup_cross_section.o: fission.o
+multigroup_cross_section.o: global.o
+multigroup_cross_section.o: material_header.o
+multigroup_cross_section.o: random_lcg.o
+multigroup_cross_section.o: search.o
+
+eigenvalue.o : multigroup_physics.o
+
+fission.o : multigroup_header.o
+
+fixed_source.o : multigroup_physics.o
+
+global.o : multigroup_header.o
+
+hdf5_interface.o : multigroup_header.o
+
+initialize.o : multigroup.o
+
+multigroup_physics.o : multigroup_header.o
+multigroup_physics.o: constants.o
+multigroup_physics.o: multigroup_cross_section.o
+multigroup_physics.o: endf.o
+multigroup_physics.o: error.o
+multigroup_physics.o: fission.o
+multigroup_physics.o: geometry.o
+multigroup_physics.o: geometry_header.o
+multigroup_physics.o: global.o
+multigroup_physics.o: material_header.o
+multigroup_physics.o: mesh.o
+multigroup_physics.o: output.o
+multigroup_physics.o: particle_header.o
+multigroup_physics.o: random_lcg.o
+multigroup_physics.o: search.o
+multigroup_physics.o: string.o
+multigroup_physics.o: tally.o
+
+output.o : multigroup_header.o 
+
+source.o : multigroup_physics.o
+
+tally.o : multigroup_header.o

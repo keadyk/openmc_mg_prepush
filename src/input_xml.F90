@@ -370,10 +370,6 @@ contains
     call lower_case(ptables_)
     if (ptables_ == 'false' .or. ptables_ == '0') urr_ptables_on = .false.
     
-    ! Multigroup cross sections
-    call lower_case(multigroup_)
-    if (multigroup_ == 'true' .or. multigroup_ == '1') multigroup = .true.
-
     ! Cutoffs
     if (size(cutoff_) > 0) then
       weight_cutoff = cutoff_(1) % weight

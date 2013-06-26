@@ -1,8 +1,13 @@
 module global
 
-  use ace_header,       only: Nuclide, SAlphaBeta, xsListing, NuclideMicroXS, &
+#ifdef MULTIGROUP
+  use multigroup_header, only: Nuclide, xsListing, NuclideMicroXS, &
                               MaterialMacroXS
-  use bank_header,      only: Bank
+#else
+  use ace_header,        only: Nuclide, SAlphaBeta, xsListing, NuclideMicroXS, &
+                              MaterialMacroXS
+#endif                              
+  use bank_header,       only: Bank
   use cmfd_header
   use constants
   use dict_header,      only: DictCharInt, DictIntInt
@@ -15,6 +20,7 @@ module global
   use source_header,    only: ExtSource
   use tally_header,     only: TallyObject, TallyMap, TallyResult
   use timer_header,     only: Timer
+
 
 #ifdef MPI
   use mpi
@@ -72,7 +78,9 @@ module global
 
   ! Cross section arrays
   type(Nuclide),    allocatable, target :: nuclides(:)    ! Nuclide cross-sections
+#ifndef MULTIGROUP
   type(SAlphaBeta), allocatable, target :: sab_tables(:)  ! S(a,b) tables
+#endif
   type(XsListing),  allocatable, target :: xs_listings(:) ! cross_sections.xml listings 
 
   ! Cross section caches
@@ -80,12 +88,16 @@ module global
   type(MaterialMacroXS)             :: material_xs  ! Cache for current material
 
   integer :: n_nuclides_total ! Number of nuclide cross section tables
+#ifndef MULTIGROUP
   integer :: n_sab_tables     ! Number of S(a,b) thermal scattering tables
+#endif
   integer :: n_listings       ! Number of listings in cross_sections.xml
 
   ! Dictionaries to look up cross sections and listings
   type(DictCharInt) :: nuclide_dict
+#ifndef MULTIGROUP
   type(DictCharInt) :: sab_dict
+#endif
   type(DictCharInt) :: xs_listing_dict
 
   ! Unionized energy grid
@@ -93,12 +105,11 @@ module global
   integer :: n_grid      ! number of points on unionized grid
   real(8), allocatable :: e_grid(:) ! energies on unionized grid
 
+#ifndef MULTIGROUP
   ! Unresolved resonance probability tables
   logical :: urr_ptables_on = .true.
+#endif
   
-  ! Multigroup solver option -- default to continuous energy
-  logical :: multigroup = .false.
-
   ! Default xs identifier (e.g. 70c)
   character(3):: default_xs
 
@@ -408,7 +419,9 @@ contains
       end do
       deallocate(nuclides)
     end if
+#ifndef MULTIGROUP
     if (allocated(sab_tables)) deallocate(sab_tables)
+#endif
     if (allocated(xs_listings)) deallocate(xs_listings)
     if (allocated(micro_xs)) deallocate(micro_xs)
 

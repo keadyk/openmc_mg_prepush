@@ -1,11 +1,15 @@
 module fission
 
-  use ace_header,    only: Nuclide
+#ifdef MULTIGROUP
+  use multigroup_header, only: Nuclide
+#else
+  use ace_header,        only: Nuclide
+#endif
   use constants
-  use error,         only: fatal_error
-  use global,        only: message
-  use interpolation, only: interpolate_tab1
-  use search,        only: binary_search
+  use error,             only: fatal_error
+  use global,            only: message
+  use interpolation,     only: interpolate_tab1
+  use search,            only: binary_search
 
   implicit none
 
@@ -84,6 +88,8 @@ contains
 
   end function nu_prompt
 
+! (No delayed neutron treatment in multigroup simulation)
+#ifndef MULTIGROUP   
 !===============================================================================
 ! NU_DELAYED calculates the total number of delayed neutrons emitted per fission
 ! for a given nuclide and incoming neutron energy
@@ -103,5 +109,6 @@ contains
     end if
 
   end function nu_delayed
-
+#endif
+  
 end module fission

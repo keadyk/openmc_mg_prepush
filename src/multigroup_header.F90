@@ -1,7 +1,7 @@
 module multigroup_header
 
   use constants,   only: MAX_FILE_LEN
-  use endf_header, only: Tab1
+  ! use endf_header, only: Tab1
 
   implicit none
 
@@ -11,11 +11,13 @@ module multigroup_header
 !===============================================================================
 
   type DistAngle
-    integer              :: n_energy    ! # of incoming energies
+    integer              :: n_data      ! # of cosine values per group
     real(8), allocatable :: energy(:)   ! incoming energy grid
     integer, allocatable :: type(:)     ! type of distribution
     integer, allocatable :: location(:) ! location of each table
     real(8), allocatable :: data(:)     ! angular distribution data
+    ! angular dist data will be n_data cosine values for ANGLE_NLEG_EQUI type,
+    ! or n_data cosine values + (n_data - 1) cum. probs for ANGLE_TABULAR type  
   end type DistAngle
 
 !===============================================================================
@@ -25,7 +27,7 @@ module multigroup_header
 
   type DistEnergy
     integer    :: law                 ! secondary distribution law
-    type(Tab1) :: p_valid             ! probability of law validity
+    ! type(Tab1) :: p_valid             ! probability of law validity
     real(8), allocatable :: data(:)   ! energy distribution data
 
     ! For reactions that may have multiple energy distributions such as (n.2n),
@@ -34,21 +36,22 @@ module multigroup_header
   end type DistEnergy
 
 !===============================================================================
-! REACTION contains the cross-section and secondary energy and angle
-! distributions for a single reaction in a continuous-energy ACE-format table
+! REACTION contains the multigroup cross-sections for a single reaction
 !===============================================================================
 
   type Reaction
-    integer :: MT                      ! ENDF MT value
-    real(8) :: Q_value                 ! Reaction Q value
-    integer :: multiplicity            ! Number of secondary particles released
-    integer :: threshold               ! Energy grid index of threshold
-    logical :: scatter_in_cm           ! scattering system in center-of-mass?
-    real(8), allocatable :: sigma(:)   ! Cross section values
-    logical :: has_angle_dist          ! Angle distribution present?
-    logical :: has_energy_dist         ! Energy distribution present?
-    type(DistAngle)           :: adist ! Secondary angular distribution
-    type(DistEnergy), pointer :: edist ! Secondary energy distribution
+    integer :: MT                            ! ENDF MT value
+    integer :: multiplicity                  ! Number of secondary particles released
+    logical :: scatter_in_cm                 ! scattering system in center-of-mass?
+    real(8), allocatable :: total_scatter(:) ! if scatter rxn, total for each grp 
+    real(8), allocatable :: sigma(:)         ! Cross section values
+    integer, allocatable :: group_index(:)   ! Location in P0 xs where group data begin
+    integer, allocatable :: max_scatter(:)   ! max outscatter group
+    integer, allocatable :: min_scatter(:)   ! min outscatter group
+    logical :: has_angle_dist                ! Angle distribution present?
+    logical :: has_energy_dist               ! Energy distribution present?
+    type(DistAngle)           :: adist       ! Secondary angular distribution
+    type(DistEnergy), pointer :: edist       ! Secondary energy distribution
   end type Reaction
 
 !===============================================================================
@@ -63,11 +66,11 @@ module multigroup_header
     real(8)       :: kT      ! temperature in MeV (k*T)
 
     ! Energy group information
-    integer :: n_group                     ! # of energy groups
-    integer, allocatable :: grid_index(:) ! pointers to union grid
-    real(8), allocatable :: group_energy(:)     ! energy values corresponding to xs
-    real(8), allocatable :: group_width(:)     ! energy values corresponding to xs
-    real(8), allocatable :: group_mass(:)     ! energy values corresponding to xs
+    integer :: n_group                      ! # of energy groups
+    integer, allocatable :: grid_index(:)   ! pointers to union grid
+    real(8), allocatable :: group_energy(:) ! energy values corresponding to xs
+    real(8), allocatable :: group_width(:)  ! width values corresponding to xs
+    real(8), allocatable :: group_mass(:)   ! mass values corresponding to xs
 
     ! Microscopic cross sections
     real(8), allocatable :: total(:)      ! total cross section
@@ -79,8 +82,8 @@ module multigroup_header
 
     ! Fission information
     logical :: fissionable         ! nuclide is fissionable?
-    ! logical :: has_partial_fission ! nuclide has partial fission reactions?
-    ! integer :: n_fission           ! # of fission reactions
+    logical :: has_partial_fission ! nuclide has partial fission reactions?
+    integer :: n_fission           ! # of fission reactions
     integer, allocatable :: index_fission(:) ! indices in reactions
 
     ! Total fission neutron emission
@@ -130,7 +133,7 @@ module multigroup_header
 
   type NuclideMicroXS
     integer :: index_grid      ! index on nuclide energy grid
-    real(8) :: interp_factor   ! interpolation factor on nuc. energy grid
+    real(8) :: last_E = 0.0    ! last evaluated energy GROUP
     real(8) :: total           ! microscropic total xs
     real(8) :: scattering      ! microscopic P0 scattering xs
     real(8) :: absorption      ! microscopic absorption xs
@@ -152,7 +155,6 @@ module multigroup_header
     real(8) :: absorption    ! macroscopic absorption xs
     real(8) :: fission       ! macroscopic fission xs
     real(8) :: nu_fission    ! macroscopic production xs
-    real(8) :: kappa_fission ! macroscopic energy-released from fission
   end type MaterialMacroXS
 
 end module multigroup_header
