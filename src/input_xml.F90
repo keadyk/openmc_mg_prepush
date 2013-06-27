@@ -1239,14 +1239,22 @@ contains
           call fatal_error()
         end if
 
-        ! Check to make sure cross-section is continuous energy neutron table
         n = len_trim(name)
+#ifdef MULTIGROUP
+        ! Check to make sure cross-section is multigroup neutron table
+        if (name(n:n) /= 'm') then
+          message = "Cross-section table " // trim(name) // & 
+               " is not a multi-group neutron table."
+          call fatal_error()
+        end if
+#else
+        ! Check to make sure cross-section is continuous energy neutron table
         if (name(n:n) /= 'c') then
           message = "Cross-section table " // trim(name) // & 
                " is not a continuous-energy neutron table."
           call fatal_error()
         end if
-
+#endif
         ! Find xs_listing and set the name/alias according to the listing
         index_list = xs_listing_dict % get_key(name)
         name       = xs_listings(index_list) % name

@@ -151,8 +151,8 @@ contains
     read(UNIT=in, FMT=100) comment, mat, & 
          (zaids(i), awrs(i), i=1,16), NXS, JXS
 100 format(A70,A10/4(I7,F11.0)/4(I7,F11.0)/4(I7,F11.0)/4(I7,F11.0)/&
-        ,8I9/8I9/8I9/8I9/8I9/8I9)
-
+        ,8I9/8I9/8I9/8I9/8I9/8I9) 
+  
     ! determine table length
     length = NXS(1)
     allocate(XSS(length))
@@ -172,7 +172,7 @@ contains
     nuc % awr  = awr
     nuc % kT   = kT
     nuc % zaid = NXS(2)
-
+    
     ! read all blocks
     call read_erg(nuc)
     call read_nu_data(nuc)
@@ -207,7 +207,7 @@ contains
   subroutine read_erg(nuc)
 
     type(Nuclide), pointer :: nuc
-
+!    integer :: i   ! iterator for debug statements
     integer :: NG ! number of energy groups
 
     ! determine number of energy groups
@@ -238,6 +238,12 @@ contains
     nuc % group_width = get_real(NG)
     ! Read energy group masses
     nuc % group_mass = get_real(NG)
+    
+!    message = "group energy, width, mass: "
+!    call warning()
+!    write(*,FMT=200) (nuc % group_energy(i), nuc % group_width(i), nuc % group_mass(i), i=1,30)
+!200 format(3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/&
+!           3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7)
 
   end subroutine read_erg
   
@@ -251,7 +257,7 @@ contains
 
     type(Nuclide), pointer :: nuc
 
-    integer :: i      ! loop index
+!    integer :: i      ! iterator for debug writes
     integer :: JXS3   ! location of fission cross sections (0 if not fissionable)
     integer :: JXS4   ! location for fission nu data
     integer :: NXS10  ! number of nu types (i.e. total, prompt) present
@@ -280,7 +286,12 @@ contains
       XSS_index = JXS4
       ! Read total nu data
       nuc % nu_t_data = get_real(length)
-
+!      message = "nu total data: "
+!      call warning()
+!      write(*,FMT=200) (nuc % nu_t_data(i), i=1,30)
+!200 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
+!           E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+      
     else if (JXS3 /= 0 .and. NXS10 == 2) then
       ! =======================================================================
       ! PROMPT AND TOTAL NU DATA
@@ -296,6 +307,12 @@ contains
       nuc % nu_p_data = get_real(length)
       ! Read total nu data
       nuc % nu_t_data = get_real(length)
+      
+!      message = "nu prompt, nu total: "
+!      call warning()
+!      write(*,FMT=201) (nuc % nu_p_data(i), nuc % nu_t_data(i), i=1,30)
+!201 format(2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/&
+!           2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7/2E14.7)
     end if
 
   end subroutine read_nu_data
@@ -311,6 +328,7 @@ contains
 
     integer :: JXS3   ! location of fission cross sections (0 if not fissionable)
     integer :: JXS5   ! location for fission nu data
+!    integer :: i      ! iterator for debug write statement
     integer :: length ! length of data to allocate
     
     JXS5 = JXS(5) ! location of chi data
@@ -331,6 +349,11 @@ contains
       XSS_index = JXS5
       ! read chi data
       nuc % chi_data = get_real(length)
+!      message = "chi data: "
+!      call warning()
+!      write(*,FMT=200) (nuc % chi_data(i), i=1,30)
+!200 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
+!           E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
     end if  
   end subroutine read_chi_data
   
@@ -343,6 +366,7 @@ contains
       
       type(Nuclide), pointer :: nuc
       
+      integer :: i       ! iterator for debug writes
       integer :: JXS2    ! location of total cross sections
       integer :: JXS3    ! location of fission cross sections
       integer :: JXS6    ! location of absorption cross section data
@@ -372,6 +396,13 @@ contains
         XSS_index = JXS2
         ! read total x section data (space already allocated)
         nuc % total = get_real(length)
+        
+!        message = "sigma total data: "
+!        call warning()
+!        write(*,FMT=200) (nuc % total(i), i=1,30)
+!200     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
+!               E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+                
       endif
       
       if (JXS3 == 0) then 
@@ -396,6 +427,13 @@ contains
         ! read fission x section data
         rxn % sigma = get_real(length)
         nuc % fission = rxn % sigma
+        
+!        message = "sigma fission data: "
+!        call warning()
+!        write(*,FMT=201) (nuc % fission(i), i=1,30)
+!201     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
+!               E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+        
       endif
       
       if (JXS6 == 0) then 
@@ -415,6 +453,13 @@ contains
         ! read abs x section data
         rxn % sigma = get_real(length)
         nuc % absorption = rxn % sigma
+
+!        message = "sigma gamma data: "
+!        call warning()
+!        write(*,FMT=201) (nuc % absorption(i), i=1,30)
+!201     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
+!               E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+        
       endif
       
       ! skip reading secondary particle reactions for now! :)
@@ -452,8 +497,6 @@ contains
     integer :: LXPN                 ! location of incident particle XPN block
     integer :: base_type            ! base ang. dist. type for this nuclide
     integer :: this_index           ! index where data for this grp begins
-    integer :: I1                   ! highest possible group for outscatter
-    integer :: I2                   ! lowest possible group for outscatter
     integer, allocatable :: LPND(:)  ! locations of PND angular dist. blocks
     type(Reaction), pointer :: rxn => null()
           
@@ -507,12 +550,16 @@ contains
       XSS_index = LP0
       
       ! read correct number of P0 values, copy to reaction
-      rxn % sigma = get_real(length)
+      rxn % sigma = get_real(length) 
       nuc % scattering = rxn % sigma
       
       ! sum up total P0 values (total scattering for each group)
       ! also store array index where each group's outscatter xs start
       this_index = 1
+      
+      message = "sigma s (p0) data: "
+      call warning()
+      
       do k=1,nuc % n_group
         ! store starting index for group
         rxn % group_index(k) = this_index
@@ -521,13 +568,26 @@ contains
         rxn % max_scatter(k) = max(1, k - NXS6)
         rxn % min_scatter(k) = min(NXS5, k + NXS7)
         
+        message = "Group " // to_str(k) // " data." 
+        call warning()
+        
+        message = "highest and lowest groups: "
+        call warning()
+        write(*, '(I3,2X,I3)') rxn % max_scatter(k), rxn % min_scatter(k)
+        
+        do i=this_index,(this_index + rxn % min_scatter(k) - rxn % max_scatter(k))
+          write(*,'(E25.15,2X)') nuc % scattering(i)
+        end do
+        write(*, '(1X,/)') 
+        
+        
         ! sum up outscatter sigmas for this energy group 
         do i=this_index,(this_index + rxn % min_scatter(k) - rxn % max_scatter(k))
           rxn % total_scatter(k) = rxn % total_scatter(k) + rxn % sigma(i)
         end do
         
         ! update starting index for next group
-        this_index = this_index + (rxn % min_scatter(k) - rxn % max_scatter(k))
+        this_index = this_index + (rxn % min_scatter(k) - rxn % max_scatter(k) + 1)
       end do
       
       ! get location for incident particle XPN block (if one exists)

@@ -497,9 +497,9 @@ contains
       ! a uniform distribution in mu
       mu = TWO * prn() - ONE
 
-      ! sample from prompt neutron energy distribution
-      ! (for now, we're just setting the energy group to 1!
-      E_out = 1
+      ! sample from prompt neutron chi distribution for the 
+      ! fissioning nuclide
+      E_out = sample_energy(nuc)
 
       ! Sample azimuthal angle uniformly in [0,2*pi)
       phi = TWO*PI*prn()
@@ -740,4 +740,27 @@ contains
 
   end subroutine rotate_angle
 
+!===============================================================================
+! SAMPLE_ENERGY samples the multi-group chi distribution 
+! for a prompt fission neutron (dependent on the fissioned nuclide)
+!===============================================================================
+  
+  function sample_energy(nuc) result(E)
+        type(Nuclide), pointer   :: nuc  ! nuclide
+        integer        ::   cutoff   ! random number cutoff for chi
+        integer        ::   E        ! outgoing energy group
+        real(8)        ::   sum      ! cumulative sum of chi values 
+        
+        cutoff = prn()  ! sample cutoff between 0 and 1
+   
+        sum = 0
+        E = 0
+        
+        do while (sum < cutoff)
+          E = E + 1
+          sum = sum + nuc % chi_data(E)
+        end do
+        
+  end function sample_energy
+  
 end module multigroup_physics
