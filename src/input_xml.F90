@@ -2522,7 +2522,6 @@ contains
 
        ! copy a number of attributes
        listing % name       = trim(ace_tables_(i) % name)
-       listing % alias      = trim(ace_tables_(i) % alias)
        listing % zaid       = ace_tables_(i) % zaid
        listing % awr        = ace_tables_(i) % awr
        listing % kT         = ace_tables_(i) % temperature
@@ -2533,8 +2532,15 @@ contains
           listing % type = ACE_NEUTRON
        elseif (ends_with(listing % name, 't')) then
           listing % type = ACE_THERMAL
+       elseif (ends_with(listing % name, 'm')) then
+          listing % type = MULTIGROUP
        end if
-
+       
+       ! don't read alias if this is a thermal table
+       if (listing % type /= ACE_THERMAL) then
+        listing % alias      = trim(ace_tables_(i) % alias)
+       end if
+       
        ! set filetype, record length, and number of entries
        listing % filetype = filetype
        listing % recl     = recl
@@ -2560,7 +2566,11 @@ contains
 
        ! create dictionary entry for both name and alias
        call xs_listing_dict % add_key(listing % name, i)
-       call xs_listing_dict % add_key(listing % alias, i)
+       ! thermal tables don't actually have aliases listed,
+       ! so we get a valgrind error if we try to add them
+       if (listing % type /= ACE_THERMAL) then
+         call xs_listing_dict % add_key(listing % alias, i)
+       end if
     end do
 
   end subroutine read_cross_sections_xml

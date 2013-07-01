@@ -133,15 +133,13 @@ module multigroup_header
 
   type NuclideMicroXS
     integer :: index_grid      ! index on nuclide energy grid
-    real(8) :: last_E = 0.0    ! last evaluated energy GROUP
+    integer :: last_E = 0      ! last evaluated energy GROUP
     real(8) :: total           ! microscropic total xs
     real(8) :: scattering      ! microscopic P0 scattering xs
     real(8) :: absorption      ! microscopic absorption xs
     real(8) :: fission         ! microscopic fission xs
     real(8) :: nu_fission      ! microscopic production xs
 
-    ! Information for URR probability table use
-    logical :: use_ptable = .false. ! in URR range with probability tables?
   end type NuclideMicroXS
 
 !===============================================================================

@@ -285,7 +285,7 @@ contains
               if (t % find_filter(FILTER_ENERGYOUT) > 0) then
 #ifdef MULTIGROUP
                 message = "Energy filter not valid for multigroup simulation!"
-                call fatal_error()
+                call warning()
 #else
                 ! Normally, we only need to make contributions to one scoring
                 ! bin. However, in the case of fission, since multiple fission
@@ -1103,7 +1103,7 @@ contains
       case (FILTER_ENERGYIN)
 #ifdef MULTIGROUP
         message = "Energy filters not allowed on multigroup tallies."
-        call fatal_error()
+        call warning()
 #else
         ! determine incoming energy bin
         k = t % filters(i) % n_bins
@@ -1406,7 +1406,7 @@ contains
       case (FILTER_ENERGYOUT)
 #ifdef MULTIGROUP
         message = "Energy filters not allowed on multigroup tallies."
-        call fatal_error()
+        call warning()
 #else
         ! determine outgoing energy bin
         n = t % filters(i) % n_bins

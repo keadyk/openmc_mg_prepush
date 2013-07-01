@@ -90,34 +90,34 @@ contains
 
     integer, intent(in) :: i_nuclide ! index into nuclides array
 
-    integer :: i_group ! index on nuclide energy grid
+!    integer :: i_group ! index on nuclide energy grid
     type(Nuclide),   pointer :: nuc => null()
 
     ! Set pointer to nuclide
     nuc => nuclides(i_nuclide)
 
-    micro_xs(i_nuclide) % index_grid    = i_group
+    micro_xs(i_nuclide) % index_grid    = p % E
 
     ! Initialize nuclide cross-sections to zero
     micro_xs(i_nuclide) % fission    = ZERO
     micro_xs(i_nuclide) % nu_fission = ZERO
 
     ! Calculate microscopic nuclide total cross section
-    micro_xs(i_nuclide) % total = nuc % total(i_group) 
+    micro_xs(i_nuclide) % total = nuc % total(p % E) 
 
     ! Calculate microscopic nuclide total cross section
-    micro_xs(i_nuclide) % scattering = nuc % scattering(i_group) 
+    micro_xs(i_nuclide) % scattering = nuc % scattering(p % E) 
 
     ! Calculate microscopic nuclide absorption cross section
     micro_xs(i_nuclide) % absorption = nuc % absorption( &
-         i_group) 
+         p % E) 
 
     if (nuc % fissionable) then
       ! Calculate microscopic nuclide total cross section
-      micro_xs(i_nuclide) % fission = nuc % fission(i_group) 
+      micro_xs(i_nuclide) % fission = nuc % fission(p % E) 
 
       ! Calculate microscopic nuclide nu-fission cross section
-      micro_xs(i_nuclide) % nu_fission =  nuc % nu_fission(i_group) 
+      micro_xs(i_nuclide) % nu_fission =  nuc % nu_fission(p % E) 
     end if
 
       micro_xs(i_nuclide) % last_E = p % E

@@ -219,10 +219,9 @@ contains
   
 !===============================================================================
 ! SAMPLE_REACTION samples a nuclide based on the macroscopic cross sections for
-! each nuclide within a material and then samples a reaction for that nuclide
-! and calls the appropriate routine to process the physics. Note that there is
-! special logic when suvival biasing is turned on since fission and
-! disappearance are treated implicitly.
+! each nuclide within a material and calls the appropriate routine to process
+!  the physics. Note that there is special logic when suvival biasing is 
+!  turned on since fission and disappearance are treated implicitly.
 !===============================================================================
 
   subroutine sample_reaction()
@@ -324,7 +323,7 @@ contains
       ! since absorption is treated implicitly. However, we still need to bank
       ! sites so we sample a fission reaction (if there are multiple) and bank
       ! the expected number of fission neutrons created.
-
+      
       if (survival_biasing) then
         cutoff = prn() * micro_xs(i_nuclide) % fission
         prob = ZERO
@@ -332,7 +331,7 @@ contains
 
       FISSION_REACTION_LOOP: do i = 1, nuc % n_fission
         rxn => nuc % reactions(nuc % index_fission(i))
-
+        
         ! add to cumulative probability (no partial fissions)
         prob = prob + micro_xs(i_nuclide) % fission
 
@@ -441,13 +440,13 @@ contains
 
     ! Get pointer to nuclide
     nuc => nuclides(i_nuclide)
-
+    
     ! copy energy of neutron
     E = p % E
 
     ! Determine total nu
     nu_t = nu_total(nuc, E)
-
+    
     ! If uniform fission source weighting is turned on, we increase or decrease
     ! the expected number of fission sites produced
 
@@ -541,7 +540,8 @@ contains
 
     ! Sample scattering angle, given incoming, outgoing group
     mu = sample_angle(rxn, p % E, E_new)
-
+!    write(*,'(E14.7)') mu
+    
     ! copy directional cosines
     u = p % coord0 % uvw(1)
     v = p % coord0 % uvw(2)
@@ -568,20 +568,47 @@ contains
   type(Reaction), pointer    :: rxn        ! sampled reaction (scattering)
   integer,        intent(in) :: E          ! incoming energy group
   integer         :: E_new      ! outgoing energy group
-  real(8)         :: k = 0.0    ! cumulative probability
+  real(8)         :: xi         ! random number
+  real(8)         :: k          ! cumulative probability
   real(8)         :: cutoff     ! random number
-  integer         :: offset = 0 ! group search offset
+  integer         :: offset     ! group search offset
+  
   
   ! sample cutoff as fraction of total sigma_s for this energy group
-  cutoff = prn() * rxn % total_scatter(E)
+  xi = prn()
+  cutoff = xi * rxn % total_scatter(E)
   
+  ! set offset and cumulative prob to zero
+  k = 0.0
+  offset = 0
+  
+!  message = "-------THIS IS ONE SCATTER-------"
+!  call warning()
+!  message = "initial group, sampled rand, total sigS"
+!  call warning()
+!  write(*, '(I3,2X,2E14.7)') E, xi, rxn % total_scatter(E)
+!message = "max index!"
+!call warning()
+!write(*,'(I3)') size(rxn % sigma)
   ! determine outgoing energy group
-  E_new = rxn % max_scatter(E) - 1 
+  E_new = rxn % max_scatter(E) - 1
   do while(k < cutoff) 
-    E_new = E_new + 1
+!    message = "attempting scatter from " // to_str(E) // " to " // to_str(E_new) // "."
+!    call warning()
     ! add this group's cross section
     k = k + rxn % sigma(rxn % group_index(E) + offset)
+!    message = "sum and cutoff: "
+!   call warning()
+!    write(*, '(2E14.7)') k, cutoff
+!    message = "index: "
+!    call warning()
+!    write(*, '(I3)') (rxn % group_index(E) + offset)
+!    message = "corresponding cross section:"
+!    call warning()
+!    write(*, '(E14.7)') rxn % sigma(rxn % group_index(E) + offset)
+!   write(*, '(I3)') E_new
     offset = offset + 1
+    E_new = E_new + 1
   end do
   
   end function sample_group
@@ -627,6 +654,8 @@ contains
     ! (E_new - max_scatter(E)) gives the offset between the actual outgoing 
     ! energy group sampled and the highest possible energy group.
     index = rxn % group_index(E) + E_new - rxn % max_scatter(E)
+
+!    write(*, '(I3,2X,I3,2X,I3)') E, E_new, index
     
     ! admittedly, this is kind of confusing... the index above gives the 
     ! location of the particular group-to-group scattering combination
@@ -644,12 +673,22 @@ contains
     elseif (type == ANGLE_NLEG_EQUI) then
       ! sample cosine bin
       xi = prn()
-      k = 1 + int(NT *xi)
+      k = 1 + int((NT-1) *xi)
 
+!      message = "chosen bin: "
+!      call warning()
+!      write(*,'(I2)') k 
+      
       ! calculate cosine
       mu0 = rxn % adist % data(lc + k)
       mu1 = rxn % adist % data(lc + k+1)
-      mu = mu0 + (NT * xi - k) * (mu1 - mu0)
+      
+!      message = "bin bounds: "
+!      call warning()
+!      write(*,'(2E14.7)') mu0, mu1
+      
+!      FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+      mu = mu0 + ((NT-1) * xi - k + 1) * (mu1 - mu0)
 
     elseif (type == ANGLE_TABULAR) then
       ! NP = number of cum. probabilities listed
@@ -657,9 +696,18 @@ contains
 
       ! determine outgoing cosine bin
       xi = prn()
+!      message = "cum prob: "
+!      call warning()
+!      write(*,'(E14.7)') xi 
       c_k = rxn % adist % data(lc + 1)
+!      message = "initial cum prob, assoc mu: "
+!      call warning()
+!      write(*, '(2E14.7)') c_k, rxn % adist % data(lc + NP + 1)
       do k = 1, NP
         c_k1 = rxn % adist % data(lc + k+1)
+!        message = "initial cum prob, assoc mu: "
+!        call warning()
+!        write(*, '(2E14.7)') c_k1, rxn % adist % data(lc + k+1 + NP)
         if (xi < c_k1) exit
         c_k = c_k1
       end do
@@ -747,9 +795,9 @@ contains
   
   function sample_energy(nuc) result(E)
         type(Nuclide), pointer   :: nuc  ! nuclide
-        integer        ::   cutoff   ! random number cutoff for chi
         integer        ::   E        ! outgoing energy group
         real(8)        ::   sum      ! cumulative sum of chi values 
+        real(8)        ::   cutoff   ! random number cutoff for chi
         
         cutoff = prn()  ! sample cutoff between 0 and 1
    

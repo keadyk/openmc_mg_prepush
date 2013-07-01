@@ -18,5 +18,7 @@
       <parameters>-4 -4 -4  4  4  4</parameters>
     </space>
   </source>
+  
+  <verbosity>5</verbosity>
 
 </settings>

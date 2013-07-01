@@ -101,12 +101,6 @@ contains
       call time_read_xs % start()
       call read_xs()
       call time_read_xs % stop()
-      
-    !==========================================================================
-    message = "Yay we made it past the cross section reading!" 
-    call fatal_error()
-    !==========================================================================
-
 
 #ifndef MULTIGROUP
       ! Construct unionized energy grid from cross-sections
@@ -130,7 +124,7 @@ contains
         call allocate_banks()
         if (.not. restart_run) call initialize_source()
       end if
-
+      
       ! If this is a restart run, load the state point data and binary source
       ! file
 #ifdef HDF5

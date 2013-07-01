@@ -68,7 +68,7 @@ contains
       ! =======================================================================
       ! LOOP OVER GENERATIONS
       GENERATION_LOOP: do current_gen = 1, gen_per_batch
-
+      
         call initialize_generation()
 
         ! Start timer for transport

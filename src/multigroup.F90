@@ -331,6 +331,7 @@ contains
 !    integer :: i      ! iterator for debug write statement
     integer :: length ! length of data to allocate
     
+    JXS3 = JXS(3) ! nuclide has fission xsect?
     JXS5 = JXS(5) ! location of chi data
     length = nuc % n_group
     
@@ -411,17 +412,20 @@ contains
       else 
         ! =======================================================================
         ! TABULAR FISSION XS DATA
-        
-        rxn => nuc % reactions(2)
-        rxn % has_angle_dist  = .false.
-        rxn % MT = N_FISSION
-        
         nuc % fissionable = .true.
         nuc % has_partial_fission = .false.
         nuc % n_fission = 1
         ! allocate space
-        allocate(rxn % sigma(length)) 
         allocate(nuc % index_fission(1))
+        
+        ! assocate the only fission reaction with overall reaction index #2
+        nuc % index_fission(1) = 2
+        rxn => nuc % reactions(nuc % index_fission(1))
+        ! ^(same as rxn => nuc % reactions(2))
+        allocate(rxn % sigma(length)) 
+        rxn % has_angle_dist  = .false.
+        rxn % MT = N_FISSION
+        
         ! set index
         XSS_index = JXS3
         ! read fission x section data
@@ -557,9 +561,6 @@ contains
       ! also store array index where each group's outscatter xs start
       this_index = 1
       
-      message = "sigma s (p0) data: "
-      call warning()
-      
       do k=1,nuc % n_group
         ! store starting index for group
         rxn % group_index(k) = this_index
@@ -567,25 +568,18 @@ contains
         ! determine min, max groups for outscatter
         rxn % max_scatter(k) = max(1, k - NXS6)
         rxn % min_scatter(k) = min(NXS5, k + NXS7)
-        
-        message = "Group " // to_str(k) // " data." 
-        call warning()
-        
-        message = "highest and lowest groups: "
-        call warning()
-        write(*, '(I3,2X,I3)') rxn % max_scatter(k), rxn % min_scatter(k)
-        
-        do i=this_index,(this_index + rxn % min_scatter(k) - rxn % max_scatter(k))
-          write(*,'(E25.15,2X)') nuc % scattering(i)
-        end do
-        write(*, '(1X,/)') 
-        
-        
+     
         ! sum up outscatter sigmas for this energy group 
         do i=this_index,(this_index + rxn % min_scatter(k) - rxn % max_scatter(k))
+!          message = "group " // trim(to_str(k)) // " can scatter into groups " // trim(to_str(rxn % max_scatter(k))) &
+!                     // " thru " // trim(to_str(rxn % min_scatter(k))) // "."
+!                     call warning()
+          if (rxn % sigma(i) < 0.0) then
+            rxn % sigma(i) = 0.0
+            nuc % scattering(i) = 0.0
+          end if
           rxn % total_scatter(k) = rxn % total_scatter(k) + rxn % sigma(i)
         end do
-        
         ! update starting index for next group
         this_index = this_index + (rxn % min_scatter(k) - rxn % max_scatter(k) + 1)
       end do
@@ -609,6 +603,7 @@ contains
         allocate(LPND(length))
         LPND = get_real(length)
         
+        
         ! determine base distribution type
         if(ISANG == 1) then
           base_type = ANGLE_TABULAR
@@ -627,9 +622,10 @@ contains
         allocate(rxn % adist % data(length * NLEG))
         
         do j = 1,length
-
           ! determine location (offset) where group data is located
-          rxn % adist % location(j) = LPND(j)
+          rxn % adist % location(j) = LPND(j) - 1
+          
+!          write(*, '(I4)') rxn % adist % location(j)
           
           ! If this LPND = -1 or 0, no data in this block
           ! Set scattering type to isotropic, then cycle
@@ -640,8 +636,14 @@ contains
           
           ! We made it here-- there must be data!
           rxn % adist % type(j) = base_type
-          XSS_index = LPN + LPND(j)
+          XSS_index = LPN + LPND(j) - 1
           rxn % adist % data((j - 1) * NLEG + 1:j * NLEG) = get_real(NLEG)
+          
+!          message = "Dist type and data: "
+!          call warning()
+!          write(*, '(I2)') rxn % adist % type(j)
+!          write(*, '(4E14.7)') rxn % adist % data((j-1)*4+1), rxn % adist % data((j-1)*4+2), rxn % adist % data((j-1)*4+3), &
+!                               rxn % adist % data(j*4)
           
         end do
       else
@@ -651,6 +653,13 @@ contains
       end if
     end if
     
+    !    Do a quick check to see if things make sense:
+!      message = "sum of scatt, abs, fission vs. TOTAL! "
+!      call warning()
+!      do i=1,nuc % n_group
+!        write(*,'(2E14.7)') (rxn % total_scatter(i) + nuc % absorption(i)), nuc % total(i)  
+!      end do
+      
   end subroutine read_scattering
   
 !===============================================================================

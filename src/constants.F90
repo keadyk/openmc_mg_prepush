@@ -209,7 +209,8 @@ module constants
   integer, parameter :: &
        ACE_NEUTRON   = 1, & ! continuous-energy neutron
        ACE_THERMAL   = 2, & ! thermal S(a,b) scattering data
-       ACE_DOSIMETRY = 3    ! dosimetry cross sections
+       ACE_DOSIMETRY = 3, & ! dosimetry cross sections
+       MG_NEUTRON    = 4    ! continuous-energy neutron
 
   ! Fission neutron emission (nu) type
   integer, parameter ::   &
