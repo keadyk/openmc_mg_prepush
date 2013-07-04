@@ -75,7 +75,6 @@ contains
     ! Initialize random number generator -- this has to be done after the input
     ! files have been read in case the user specified a seed for the random
     ! number generator
-
     call initialize_prng()
 
     ! Read plots.xml if it exists -- this has to be done separate from the other

@@ -991,9 +991,8 @@ contains
       end if
 
 #ifdef MULTIGROUP
-      write(unit_,'(3X,1X,F8.3,L1,3X,A4,1X,I6,1X,I11,1X,I11)') &
-           reaction_name(rxn % MT), rxn % scatter_in_cm, law(1:4), &
-           size_angle, size_energy
+      write(unit_,'(3X,A11,3X,L1,3X,I11,1X,I11)') &
+           reaction_name(rxn % MT), rxn % scatter_in_cm, size_angle, size_energy
 #else
       write(unit_,'(3X,A11,1X,F8.3,3X,L1,3X,A4,1X,I6,1X,I11,1X,I11)') &
            reaction_name(rxn % MT), rxn % Q_value, rxn % scatter_in_cm, &

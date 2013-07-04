@@ -7,9 +7,9 @@
 
   <!-- Parameters for k-eigenvalue calculation -->
   <eigenvalue>
-    <batches>15</batches>
-    <inactive>5</inactive>
-    <particles>10000</particles>
+    <batches>100</batches>
+    <inactive>20</inactive>
+    <particles>20000</particles>
   </eigenvalue>
 
   <!-- Starting source -->
@@ -20,5 +20,7 @@
   </source>
   
   <verbosity>5</verbosity>
+  
+  <survival_biasing>false</survival_biasing>
 
 </settings>

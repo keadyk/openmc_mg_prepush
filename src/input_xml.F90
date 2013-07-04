@@ -1575,11 +1575,11 @@ contains
       ! Set tally type to volume by default
       t % type = TALLY_VOLUME
 
-      ! It's desirable to use a track-length esimator for tallies since
+      ! It's desirable to use a track-length estimator for tallies since
       ! generally more events will score to the tally, reducing the
       ! variance. However, for tallies that require information on
       ! post-collision parameters (e.g. tally with an energyout filter) the
-      ! analog esimator must be used.
+      ! analog estimator must be used.
 
       t % estimator = ESTIMATOR_TRACKLENGTH
 

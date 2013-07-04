@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<settings>
+	<cross_sections>
+		/home/keadyk/Desktop/Research_stuff/OPENMC/cross_sections_ascii.xml
+	</cross_sections>
+	<eigenvalue>
+		<batches>200</batches>
+		<inactive>50</inactive>
+		<particles>10000</particles>
+	</eigenvalue>
+	<output>summary cross_sections</output>
+	<source>
+		<space type="point" parameters="0.01 0.01 0.01" />
+	</source>
+	<entropy>
+		<lower_left>-0.412 -0.412 -100</lower_left>
+		<upper_right>0.412 0.412 100</upper_right>
+		<dimension>2 2 2</dimension>
+	</entropy>
+	<run_cmfd>false</run_cmfd>
+	<survival_biasing>false</survival_biasing>
+	<verbosity>
+		5
+	</verbosity>
+</settings>
+

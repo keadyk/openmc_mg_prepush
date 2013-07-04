@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<cmfd>
+	<active_flush>25</active_flush>
+	<feedback>true</feedback>
+	<mesh>
+		<type>rectangular</type>
+		<lower_left>-0.63 -0.63 -10</lower_left>
+		<upper_right>0.63 0.63 10</upper_right>
+		<dimension>2 2 2</dimension>
+		<albedo>1.0 1.0 1.0 1.0 1.0 1.0</albedo>
+	</mesh>
+</cmfd>

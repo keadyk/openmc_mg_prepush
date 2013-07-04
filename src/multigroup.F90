@@ -288,6 +288,7 @@ contains
       nuc % nu_t_data = get_real(length)
 !      message = "nu total data: "
 !      call warning()
+!      write(*,'(E14.7)') nuc % nu_t_data(1)
 !      write(*,FMT=200) (nuc % nu_t_data(i), i=1,30)
 !200 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
 !           E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
@@ -352,6 +353,7 @@ contains
       nuc % chi_data = get_real(length)
 !      message = "chi data: "
 !      call warning()
+!      write(*,'(E14.7)') nuc % chi_data(1)
 !      write(*,FMT=200) (nuc % chi_data(i), i=1,30)
 !200 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
 !           E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
@@ -400,6 +402,7 @@ contains
         
 !        message = "sigma total data: "
 !        call warning()
+!        write(*,'(E14.7)') nuc % total(1)
 !        write(*,FMT=200) (nuc % total(i), i=1,30)
 !200     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
 !               E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
@@ -434,6 +437,7 @@ contains
         
 !        message = "sigma fission data: "
 !        call warning()
+!        write(*,'(E14.7)') nuc % fission(1)
 !        write(*,FMT=201) (nuc % fission(i), i=1,30)
 !201     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
 !               E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
@@ -460,6 +464,7 @@ contains
 
 !        message = "sigma gamma data: "
 !        call warning()
+!        write(*,'(E14.7)') nuc % absorption(1)
 !        write(*,FMT=201) (nuc % absorption(i), i=1,30)
 !201     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
 !               E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)

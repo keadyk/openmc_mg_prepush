@@ -72,36 +72,49 @@ contains
 
     do while (p % alive)
 
+!      write(*, '(A50)') "--------------------------------------------------"
       ! Calculate microscopic and macroscopic cross sections -- note: if the
       ! material is the same as the last material and the energy of the
       ! particle hasn't changed, we don't need to lookup cross sections again.
 
       if (p % material /= p % last_material) call calculate_xs()
 
+!      write(*,'(A20,1E20.7)') "part init location: ", sqrt(p % coord0 % xyz(1)*p % coord0 % xyz(1) + &
+!                                                            p % coord0 % xyz(2)*p % coord0 % xyz(2))
       ! Find the distance to the nearest boundary
       call distance_to_boundary(d_boundary, surface_crossed, lattice_crossed)
-
+!      write(*,'(A20,1E20.7)') "dist to boundary :  ", d_boundary
+      
       ! Sample a distance to collision
       if (material_xs % total == ZERO) then
         d_collision = INFINITY
       else
         d_collision = -log(prn()) / material_xs % total
+!        write(*,'(A20,1E20.7)') "dist to collision:  ", d_collision
       end if
 
       ! Select smaller of the two distances
       distance = min(d_boundary, d_collision)
-
+      
       ! Advance particle
       coord => p % coord0
+      
       do while (associated(coord))
+!        write(*,'(A20,3E20.7)') "moved from ", coord % xyz(1), coord % xyz(2), coord % xyz(3)
         coord % xyz = coord % xyz + distance * coord % uvw
+!        write(*,'(A4,3E20.7)') " to ", coord % xyz(1), coord % xyz(2), coord % xyz(3)
+!        write(*,'(A10,3E20.7)') "along dir ", coord % uvw(1), coord % uvw(2), coord % uvw(3)
         coord => coord % next
       end do
+      
+!      write(*,'(A20,1E20.7)') "part fin location:  ", sqrt(p % coord0 % xyz(1)*p % coord0 % xyz(1) + &
+!                                                      p % coord0 % xyz(2)*p % coord0 % xyz(2))
 
       ! Score track-length tallies
       if (active_tracklength_tallies % size() > 0) &
            call score_tracklength_tally(distance)
 
+!      write(*, '(A10,E14.7)') "nusigf:   ", material_xs % nu_fission     
       ! Score track-length estimate of k-eff
       global_tallies(K_TRACKLENGTH) % value = &
            global_tallies(K_TRACKLENGTH) % value + p % wgt * distance * &
@@ -110,7 +123,7 @@ contains
       if (d_collision > d_boundary) then
         ! ====================================================================
         ! PARTICLE CROSSES SURFACE
-
+!        write(*,'(A20)') "^ was bound crossing"
         last_cell = p % coord % cell
         p % coord % cell = NONE
         if (lattice_crossed /= NONE) then
@@ -127,7 +140,7 @@ contains
       else
         ! ====================================================================
         ! PARTICLE HAS COLLISION
-
+ !       write(*,'(A20)') "^ was collision     "
         ! Score collision estimate of keff
         global_tallies(K_COLLISION) % value = &
              global_tallies(K_COLLISION) % value + p % wgt * &
@@ -220,7 +233,7 @@ contains
 !===============================================================================
 ! SAMPLE_REACTION samples a nuclide based on the macroscopic cross sections for
 ! each nuclide within a material and calls the appropriate routine to process
-!  the physics. Note that there is special logic when suvival biasing is 
+!  the physics. Note that there is special logic when survival biasing is 
 !  turned on since fission and disappearance are treated implicitly.
 !===============================================================================
 
@@ -277,7 +290,7 @@ contains
 
     if (survival_biasing) then
       ! Determine weight absorbed in survival biasing
-      p % absorb_wgt = p % wgt * micro_xs(i_nuclide) % absorption / &
+      p % absorb_wgt = p % wgt * (micro_xs(i_nuclide) % absorption + micro_xs(i_nuclide) % fission)/ &
            micro_xs(i_nuclide) % total
 
       ! Adjust weight of particle by probability of absorption
@@ -288,7 +301,7 @@ contains
       ! estimate, this only needs to be scored to in one place.
       global_tallies(K_ABSORPTION) % value = &
            global_tallies(K_ABSORPTION) % value + p % absorb_wgt * &
-           material_xs % nu_fission / material_xs % absorption
+           material_xs % nu_fission / (material_xs % absorption + material_xs % fission)
 
     else
       ! set cutoff variable for analog cases
@@ -296,17 +309,21 @@ contains
       prob = ZERO
 
       ! Add disappearance cross-section to prob
-      prob = prob + micro_xs(i_nuclide) % absorption - &
-           micro_xs(i_nuclide) % fission
+      !prob = prob + micro_xs(i_nuclide) % absorption - &
+      !     micro_xs(i_nuclide) % fission
+      prob = prob + micro_xs(i_nuclide) % absorption 
+           
+!          message = "abs: " // trim(to_str(micro_xs(i_nuclide) % absorption)) // " and fission: " //  &
+!           trim(to_str(micro_xs(i_nuclide) % fission)) // "."
+!           call warning()
 
       ! See if disappearance reaction happens
       if (prob > cutoff) then
-        ! Score absorption estimate of keff. Note that this appears in three
-        ! places -- absorption reactions, total fission reactions, and
-        ! first/second/etc chance fission reactions
+        ! Score absorption estimate of keff. Note that this appears in two
+        ! places -- absorption reactions and fission reactions
         global_tallies(K_ABSORPTION) % value = &
              global_tallies(K_ABSORPTION) % value + p % wgt * &
-             material_xs % nu_fission / material_xs % absorption
+             material_xs % nu_fission / (material_xs % absorption + material_xs % fission)
 
         p % alive = .false.
         p % event = EVENT_ABSORB
@@ -323,7 +340,6 @@ contains
       ! since absorption is treated implicitly. However, we still need to bank
       ! sites so we sample a fission reaction (if there are multiple) and bank
       ! the expected number of fission neutrons created.
-      
       if (survival_biasing) then
         cutoff = prn() * micro_xs(i_nuclide) % fission
         prob = ZERO
@@ -345,11 +361,10 @@ contains
             exit FISSION_REACTION_LOOP
           else
             ! Score absorption estimate of keff. Note that this appears in
-            ! three places -- absorption reactions, total fission reactions,
-            ! and first/second/etc chance fission reactions
+            ! two places -- absorption reactions and fission reactions
             global_tallies(K_ABSORPTION) % value = &
                  global_tallies(K_ABSORPTION) % value + p % wgt * &
-                 material_xs % nu_fission / material_xs % absorption
+                 material_xs % nu_fission / (material_xs % absorption + material_xs % fission)
 
             ! With no survival biasing, the particle is absorbed and so
             ! its life is over :( poor little fella
@@ -486,7 +501,6 @@ contains
     do i = int(n_bank,4) + 1, int(min(n_bank + nu, 3*work),4)
       ! Bank source neutrons by copying particle data
       fission_bank(i) % xyz = p % coord0 % xyz
-
       ! Set weight of fission bank site
       fission_bank(i) % wgt = ONE/weight
 

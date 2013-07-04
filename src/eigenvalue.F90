@@ -708,7 +708,7 @@ contains
         j = 2
         k = 3
       elseif (l == 2) then
-        ! i = absortion, j = tracklength, k = collision
+        ! i = absorption, j = tracklength, k = collision
         i = 2
         j = 3
         k = 1
@@ -722,7 +722,7 @@ contains
       ! Calculate weighting
       f = cov(j,j)*(cov(k,k) - cov(i,k)) - cov(k,k)*cov(i,j) + &
            cov(j,k)*(cov(i,j) + cov(i,k) - cov(j,k))
-
+      
       ! Add to S sums for variance of combined estimate
       S(1) = S(1) + f * cov(1,l)
       S(2) = S(2) + (cov(j,j) + cov(k,k) - TWO*cov(j,k))*kv(l)*kv(l)

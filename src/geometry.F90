@@ -372,7 +372,7 @@ contains
       ! Score surface currents since reflection causes the direction of the
       ! particle to change -- artificially move the particle slightly back in
       ! case the surface crossing in coincident with a mesh boundary
-
+            
       if (active_current_tallies % size() > 0) then
         p % coord0 % xyz = p % coord0 % xyz - TINY_BIT * p % coord0 % uvw
         call score_surface_current()
@@ -430,6 +430,9 @@ contains
         w = w - 2*dot_prod*z/(R*R)
 
       case (SURF_CYL_Z)
+        
+        !write(*, '(A13,E20.7)') "unit vector? ", sqrt(u*u + v*v + w*w)
+        
         ! Find x-x0, y-y0 and dot product of direction and surface normal
         x = p % coord0 % xyz(1) - surf % coeffs(1)
         y = p % coord0 % xyz(2) - surf % coeffs(2)
@@ -440,6 +443,18 @@ contains
         u = u - 2*dot_prod*x/(R*R)
         v = v - 2*dot_prod*y/(R*R)
 
+        norm = sqrt(u*u + v*v + w*w)
+        !write(*, '(A15,E20.7)') "how about now? ", norm
+        
+      !  if(norm < 0.9999 .or. norm > 1.0001) then
+          ! renormalize directions
+          u = u/norm
+          v = v/norm
+          w = w/norm
+          norm = sqrt(u*u + v*v + w*w)
+          !write(*,'(A8,E20.7)') "better? ", norm
+      !  end if
+        
       case (SURF_SPHERE)
         ! Find x-x0, y-y0, z-z0 and dot product of direction and surface
         ! normal
@@ -501,7 +516,7 @@ contains
              trim(to_str(surf % id))
         call fatal_error()
       end select
-
+      
       ! Set new particle direction
       p % coord0 % uvw = (/ u, v, w /)
 
@@ -733,7 +748,7 @@ contains
     type(LocalCoord), pointer :: coord => null()
     type(LocalCoord), pointer :: final_coord => null()
 
-    ! inialize distance to infinity (huge)
+  ! initialize distance to infinity (huge)
     dist = INFINITY
     lattice_crossed = NONE
     nullify(final_coord)
@@ -769,6 +784,7 @@ contains
         index_surf = cl % surfaces(i)
         if (index_surf == p % surface) then
           on_surface = .true.
+!          write(*,'(A11,I3)') "on surface ", index_surf
         else
           on_surface = .false.
         end if
@@ -928,7 +944,7 @@ contains
           a = ONE - w*w  ! u^2 + v^2
           if (a == ZERO) then
             d = INFINITY
-          else
+          else 
             x0 = surf % coeffs(1)
             y0 = surf % coeffs(2)
             r = surf % coeffs(3)
@@ -941,14 +957,15 @@ contains
 
             if (quad < ZERO) then
               ! no intersection with cylinder
-
+ !             write(*,'(A24)') "no intersection!????????"
               d = INFINITY 
 
             elseif (on_surface) then
               ! particle is on the cylinder, thus one distance is
               ! positive/negative and the other is zero. The sign of k
               ! determines if we are facing in or out
-
+  !            write(*,'(A25)') "particle on cylinder edge"
+              
               if (k >= ZERO) then
                 d = INFINITY
               else
@@ -959,14 +976,16 @@ contains
               ! particle is inside the cylinder, thus one distance must be
               ! negative and one must be positive. The positive distance
               ! will be the one with negative sign on sqrt(quad)
-
+ !             write(*,'(A24)') "particle inside cylinder"
+              
               d = (-k + sqrt(quad))/a
 
             else
               ! particle is outside the cylinder, thus both distances are
               ! either positive or negative. If positive, the smaller
               ! distance is the one with positive sign on sqrt(quad)
-
+  !            write(*,'(A25)') "particle outside cylinder"
+              
               d = (-k - sqrt(quad))/a
               if (d <= ZERO) d = INFINITY
 

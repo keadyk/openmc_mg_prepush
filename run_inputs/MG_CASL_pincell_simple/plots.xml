@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<plots>
+	<plot>
+		<id>602</id>
+		<filename>CASL_pincell_cells</filename>
+		<color>cell</color>
+		<origin>0 0 0</origin>
+		<width>1.26 1.26</width>
+		<type>slice</type>
+		<pixels>1000 1000</pixels>
+	</plot>
+</plots>

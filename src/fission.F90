@@ -29,7 +29,6 @@ contains
     real(8), intent(in)    :: E   ! energy of incoming neutron
 #endif
     real(8)                :: nu  ! number of total neutrons emitted per fission
-
     integer :: i  ! loop index
     integer :: NC ! number of polynomial coefficients
     real(8) :: c  ! polynomial coefficient

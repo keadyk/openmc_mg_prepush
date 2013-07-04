@@ -2159,7 +2159,9 @@
   <ace_table alias="Am-243.50m" awr="240.974535" location="71581" name="95243.50m" path="mgxsnp" zaid="95243"/>
   <ace_table alias="Cm-242.50m" awr="239.980599" location="72213" name="96242.50m" path="mgxsnp" zaid="96242"/>  
   <ace_table alias="Cm-244.50m" awr="241.967311" location="72718" name="96244.50m" path="mgxsnp" zaid="96244"/> 
-  <!-- Added by Kendra Keady on June 28 for MG debugging-->  
-    <ace_table alias="U-235.kpk" awr="233.025921" location="1" name="96244.50m" path="kpkmgxs" zaid="96244"/>  
-      <ace_table alias="H20.kpk" awr="0.999167" location="10" name="96244.50m" path="kpkmgxs" zaid="96244"/>  
+<!-- Added by Kendra Keady on June 28 for MG debugging and test code comparison-->  
+  <ace_table alias="H20k.01m" awr="1.000000" location="1" name="H20k.01m" path="kpkmgxs" zaid="00001"/>  
+  <ace_table alias="Cladk.01m" awr="1.000000" location="15" name="Cladk.01m" path="kpkmgxs" zaid="00002"/>
+  <ace_table alias="Gapk.01m" awr="1.000000" location="29" name="Gapk.01m" path="kpkmgxs" zaid="00003"/>  
+  <ace_table alias="Fuelk.01m" awr="1.000000" location="43" name="Fuelk.01m" path="kpkmgxs" zaid="00004"/>     
 </cross_sections>

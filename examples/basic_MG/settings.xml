@@ -7,7 +7,7 @@
 
   <!-- Parameters for k-eigenvalue calculation -->
   <eigenvalue>
-    <batches>100</batches>
+    <batches>50</batches>
     <inactive>20</inactive>
     <particles>10000</particles>
   </eigenvalue>
