@@ -16,9 +16,9 @@ PROFILE    = no
 OPTIMIZE   = no
 # Multigroup only tested for gnu compiler!!
 MULTIGROUP = yes
-MPI        = no
+MPI        = yes
 HDF5       = no
-PETSC      = no
+PETSC      = yes
 
 #===============================================================================
 # Object Files

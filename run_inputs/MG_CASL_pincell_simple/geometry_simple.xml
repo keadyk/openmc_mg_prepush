@@ -10,8 +10,8 @@
 	<surface id="1" type="z-cylinder" coeffs="0. 0. 0.412"/>
 	<surface id="2" type="z-cylinder" coeffs="0. 0. 0.422"/>
 	<surface id="3" type="z-cylinder" coeffs="0. 0. 0.486"/>
-    <surface id="4" type="x-plane" coeffs="-0.558" boundary="reflective"/>
-    <surface id="5" type="x-plane" coeffs="0.558" boundary="reflective"/>
-    <surface id="6" type="y-plane" coeffs="-0.558" boundary="reflective"/>
-    <surface id="7" type="y-plane" coeffs="0.558" boundary="reflective"/>     
+    <surface id="4" type="x-plane" coeffs="-0.63" boundary="reflective"/>
+    <surface id="5" type="x-plane" coeffs="0.63" boundary="reflective"/>
+    <surface id="6" type="y-plane" coeffs="-0.63" boundary="reflective"/>
+    <surface id="7" type="y-plane" coeffs="0.63" boundary="reflective"/>     
 </geometry>

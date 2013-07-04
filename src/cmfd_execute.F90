@@ -313,8 +313,10 @@ contains
                            n_user_meshes, message, cmfd, master, mpi_err,      &
                            bank_first, bank_last
     use mesh_header, only: StructuredMesh
-    use mesh,        only: count_bank_sites, get_mesh_indices
+    use mesh,        only: count_bank_sites, get_mesh_indices   
+#ifndef MULTIGROUP  
     use search,      only: binary_search
+#endif
 
     ! local variables
     integer :: nx ! maximum number of cells in x direction
@@ -394,6 +396,10 @@ contains
       ! determine spatial bin
       call get_mesh_indices(m, source_bank(i)%xyz, ijk, in_mesh)
 
+#ifdef MULTIGROUP
+      ! determine energy group
+      e_bin = source_bank(i) % E
+#else
       ! determine energy bin
       n_groups = size(cmfd%egrid) - 1
       if (source_bank(i) % E < cmfd%egrid(1)) then
@@ -410,7 +416,8 @@ contains
 
       ! reverese energy bin (lowest grp is highest energy bin)
       e_bin = n_groups - e_bin + 1
-
+#endif
+      
       ! check for outside of mesh
       if (.not. in_mesh) then
         message = 'Source site found outside of CMFD mesh!'

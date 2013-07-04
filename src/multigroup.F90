@@ -540,10 +540,10 @@ contains
       allocate(rxn % max_scatter(nuc % n_group))
       
       ! initialize to zeros
-      rxn % group_index = ZERO
+      rxn % group_index = 0
       rxn % total_scatter = ZERO
-      rxn % min_scatter = ZERO
-      rxn % max_scatter = ZERO
+      rxn % min_scatter = 0
+      rxn % max_scatter = 0
       
       ! set length of table -- see LANL report LA-12704, pg 119
       length = int(NXS5 * (1 + NXS7 + NXS6) - 0.5 * (NXS7 * (NXS7 + 1) + NXS6 &
@@ -606,7 +606,7 @@ contains
         ! allocate, then read in locations for PND blocks
         XSS_index = LXPN
         allocate(LPND(length))
-        LPND = get_real(length)
+        LPND = get_int(length)
         
         
         ! determine base distribution type

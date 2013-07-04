@@ -13,11 +13,11 @@
 		<space type="point" parameters="0.01 0.01 0.01" />
 	</source>
 	<entropy>
-		<lower_left>-0.63 -100 -100</lower_left>
-		<upper_right>0.63 100 100</upper_right>
+		<lower_left>-0.63 -10 -10</lower_left>
+		<upper_right>0.63 10 10</upper_right>
 		<dimension>2 2 2</dimension>
 	</entropy>
-	<run_cmfd>false</run_cmfd>
+	<run_cmfd>true</run_cmfd>
 	<survival_biasing>false</survival_biasing>
 	<verbosity>
 		5

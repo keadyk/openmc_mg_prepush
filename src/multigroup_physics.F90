@@ -68,7 +68,7 @@ contains
     total_weight = total_weight + p % wgt
 
     ! Force calculation of cross-sections by setting last energy to zero 
-    micro_xs % last_E = ZERO
+    micro_xs % last_E = 0
 
     do while (p % alive)
 

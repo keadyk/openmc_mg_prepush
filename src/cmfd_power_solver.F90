@@ -329,8 +329,8 @@ contains
 
     ! print out to user
     if (cmfd_power_monitor .and. master) then
-      write(OUTPUT_UNIT,FMT='(I0,":",T10,"k-eff: ",F0.8,T30,"k-error: ",1PE12.5,T55, &
-           "src-error: ",1PE12.5)') iter, k_n, kerr, serr
+      write(OUTPUT_UNIT,FMT=100) iter, k_n, kerr, serr
+100   format(I0,":",T10,"k-eff: ",F0.8,T30,"k-error: ",1PE12.5,T55, "src-error: ",1PE12.5)
     end if
 
   end subroutine convergence

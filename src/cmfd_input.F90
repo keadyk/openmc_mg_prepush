@@ -342,6 +342,8 @@ contains
       filters(n_filters) % int_bins(1) = n_user_meshes + 1
       t % find_filter(FILTER_MESH) = n_filters
 
+! (No energy filters allowed for multigroup)      
+#ifndef MULTIGROUP      
       ! read and set incoming energy mesh filter
       if (associated(mesh_ % energy)) then
         n_filters = n_filters + 1
@@ -352,8 +354,9 @@ contains
         filters(n_filters) % real_bins = mesh_ % energy
         t % find_filter(FILTER_ENERGYIN) = n_filters
       end if
-
-      ! set number of nucilde bins
+#endif
+      
+      ! set number of nuclide bins
       allocate(t % nuclide_bins(1))
       t % nuclide_bins(1) = -1
       t % n_nuclide_bins = 1
@@ -403,6 +406,8 @@ contains
         ! set tally type to volume
         t % type = TALLY_VOLUME
 
+! (No energy filters allowed for multigroup)      
+#ifndef MULTIGROUP          
         ! read and set outgoing energy mesh filter
         if (associated(mesh_ % energy)) then
           n_filters = n_filters + 1
@@ -413,16 +418,20 @@ contains
           filters(n_filters) % real_bins = mesh_ % energy
           t % find_filter(FILTER_ENERGYOUT) = n_filters
         end if
+#endif
 
         ! allocate and set filters
         t % n_filters = n_filters
         allocate(t % filters(n_filters))
         t % filters = filters(1:n_filters)
 
+! (No energy filters allowed for multigroup)      
+#ifndef MULTIGROUP          
         ! deallocate filters bins array
         if (associated(mesh_ % energy)) &
              deallocate(filters(n_filters) % real_bins)
-
+#endif
+             
         ! allocate macro reactions
         allocate(t % score_bins(2))
         t % n_score_bins = 2
@@ -488,8 +497,11 @@ contains
 
       ! deallocate filter bins
       deallocate(filters(1) % int_bins)
+! (No energy filters allowed for multigroup)      
+#ifndef MULTIGROUP  
       if (associated(mesh_ % energy)) deallocate(filters(2) % real_bins)
-
+#endif
+      
     end do
 
     call setup_active_cmfdtallies()

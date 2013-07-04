@@ -4,8 +4,8 @@
 	<feedback>true</feedback>
 	<mesh>
 		<type>rectangular</type>
-		<lower_left>-0.558 -0.558</lower_left>
-		<upper_right>0.558 0.558</upper_right>
+		<lower_left>-0.62 -0.62 -10</lower_left>
+		<upper_right>0.62 0.62 10</upper_right>
 		<dimension>2 2 2</dimension>
 		<albedo>1.0 1.0 1.0 1.0 1.0 1.0</albedo>
 	</mesh>

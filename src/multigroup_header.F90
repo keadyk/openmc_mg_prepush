@@ -133,7 +133,7 @@ module multigroup_header
 
   type NuclideMicroXS
     integer :: index_grid      ! index on nuclide energy grid
-    integer :: last_E = 0      ! last evaluated energy GROUP
+    integer :: last_E          ! last evaluated energy GROUP
     real(8) :: total           ! microscropic total xs
     real(8) :: scattering      ! microscopic P0 scattering xs
     real(8) :: absorption      ! microscopic absorption xs

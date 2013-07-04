@@ -244,7 +244,7 @@ contains
         ! get matrix column location
         call indices_to_matrix(h, i, j, k, hmat_idx)
 
-        ! reocrd value in matrix
+        ! record value in matrix
         val = nfissxs
 
         ! check for adjoint and bank val
