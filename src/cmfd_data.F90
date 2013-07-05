@@ -14,18 +14,22 @@ module cmfd_data
 
 contains
 
-!==============================================================================
+!===============================================================================
 ! SET_UP_CMFD
-!==============================================================================
+!===============================================================================
 
   subroutine set_up_cmfd() 
 
-    use cmfd_header,         only: allocate_cmfd
+    use cmfd_header,         only: allocate_cmfd, allocate_funct
     use constants,           only: CMFD_NOACCEL
-    use global,              only: cmfd, cmfd_coremap, cmfd_run_2grp
+    use global,              only: cmfd, cmfd_coremap, cmfd_run_2grp, use_functs
 
     ! initialize cmfd object
     if (.not.allocated(cmfd%flux)) call allocate_cmfd(cmfd)
+    ! initialize functionals if necessary
+    if(use_functs) then
+      if (.not. allocated(cmfd % vol_curr)) call allocate_funct(cmfd)
+    end if
 
     ! check for core map and set it up
     if ((cmfd_coremap) .and. (cmfd%mat_dim == CMFD_NOACCEL)) call set_coremap()
@@ -57,7 +61,8 @@ contains
                             FILTER_SURFACE, IN_RIGHT, OUT_RIGHT, IN_FRONT,      &
                             OUT_FRONT, IN_TOP, OUT_TOP, CMFD_NOACCEL, ZERO, ONE
     use error,        only: fatal_error
-    use global,       only: cmfd, message, n_cmfd_tallies, cmfd_tallies, meshes
+    use global,       only: cmfd, message, n_cmfd_tallies, cmfd_tallies, meshes,&
+                            use_functs
     use mesh,         only: mesh_indices_to_bin
     use mesh_header,  only: StructuredMesh
     use tally_header, only: TallyObject
@@ -80,6 +85,7 @@ contains
     integer :: i_filter_eout ! index for outgoing energy filter
     integer :: i_filter_surf ! index for surface filter
     real(8) :: flux          ! temp variable for flux
+    real(8) :: vol_curr(3)   ! temp variable for cell-avg currents
     type(TallyObject),    pointer :: t => null() ! pointer for tally object
     type(StructuredMesh), pointer :: m => null() ! pointer for mesh object
 
@@ -112,9 +118,9 @@ contains
      m => meshes(i_mesh)
 
      i_filter_mesh = t % find_filter(FILTER_MESH)
+     i_filter_surf = t % find_filter(FILTER_SURFACE)
      i_filter_ein  = t % find_filter(FILTER_ENERGYIN)
      i_filter_eout = t % find_filter(FILTER_ENERGYOUT)
-     i_filter_surf = t % find_filter(FILTER_SURFACE)
 
      ! begin loop around space
      ZLOOP: do k = 1,nz
@@ -147,7 +153,12 @@ contains
 
                 ! apply energy in filter
                 if (i_filter_ein > 0) then
+#ifdef MULTIGROUP
+                  message = "Energy filters not valid for multigroup simulations!"
+                  call fatal_error()
+#else
                   t % matching_bins(i_filter_ein) = ng - h + 1
+#endif
                 end if
 
                 ! calculate score index from bins
@@ -156,6 +167,14 @@ contains
                 ! get flux
                 flux = t % results(1,score_index) % sum
                 cmfd % flux(h,i,j,k) = flux
+                
+                ! get volume current if applicable
+                if(use_functs) then
+                  vol_curr(1) = t % results(2,score_index) % sum
+                  vol_curr(2) = t % results(3,score_index) % sum
+                  vol_curr(3) = t % results(4,score_index) % sum                  
+                  cmfd % vol_curr(:,h,i,j,k) = vol_curr
+                end if
 
                 ! detect zero flux
                 if ((flux - 0.0D0) < 1.0E-10_8) then
@@ -189,11 +208,16 @@ contains
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m,ijk)
 
                   if (i_filter_ein > 0) then
+#ifdef MULTIGROUP
+                    message = "Energy filters not valid for multigroup simulations!"
+                    call fatal_error()
+#else
                     ! apply energy in filter
                     t % matching_bins(i_filter_ein) = ng - h + 1
 
                     ! set energy out bin
                     t % matching_bins(i_filter_eout) = ng - g + 1
+#endif
                   end if
 
                   ! calculate score index from bins
@@ -218,7 +242,12 @@ contains
                 ! initialize and filter for energy
                 t % matching_bins = 1
                 if (i_filter_ein > 0) then
+#ifdef MULTIGROUP
+                  message = "Energy filters not valid for multigroup simulations!"
+                  call fatal_error()
+#else
                   t % matching_bins(i_filter_ein) = ng - h + 1
+#endif
                 end if
 
                 ! left surface
@@ -246,7 +275,7 @@ contains
                      (/ i, j-1, k /) + 1, .true.)
                 t % matching_bins(i_filter_surf) = IN_FRONT
                 score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                cmfd % current(5,h,i,j,k) = t % results(1,score_index) % sum
+                cmfd % current(5,h,i,j,k) = t % results(1,score_index) % sum            
                 t % matching_bins(i_filter_surf) = OUT_FRONT
                 score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
                 cmfd % current(6,h,i,j,k) = t % results(1,score_index) % sum
@@ -256,7 +285,7 @@ contains
                      (/ i, j, k /) + 1, .true.)
                 t % matching_bins(i_filter_surf) = IN_FRONT
                 score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                cmfd % current(7,h,i,j,k) = t % results(1,score_index) % sum
+                cmfd % current(7,h,i,j,k) = t % results(1,score_index) % sum              
                 t % matching_bins(i_filter_surf) = OUT_FRONT
                 score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
                 cmfd % current(8,h,i,j,k) = t % results(1,score_index) % sum
@@ -280,6 +309,78 @@ contains
                 t % matching_bins(i_filter_surf) = OUT_TOP
                 score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
                 cmfd % current(12,h,i,j,k) = t % results(1,score_index) % sum
+
+                ! repeat the surface treatment for the mu-sq tally if applicable
+                ! (saves a number of if statements over nesting in each block)
+                ! (notice 'incoming' and 'outgoing' have no meaning-- there is 
+                ! a single mu-sq value for each face of the mesh)
+                if (use_functs) then
+                  ! left surface
+                  t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
+                       (/ i-1, j, k /) + 1, .true.)
+                  t % matching_bins(i_filter_surf) = IN_RIGHT
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
+                  cmfd % mu_sq(1,h,i,j,k) = t % results(2,score_index) % sum
+                  t % matching_bins(i_filter_surf) = OUT_RIGHT
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
+                  cmfd % mu_sq(1,h,i,j,k) = cmfd % mu_sq(1,h,i,j,k) + &
+                                              t % results(2,score_index) % sum
+
+                  ! right surface
+                  t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
+                       (/ i, j, k /) + 1, .true.)
+                  t % matching_bins(i_filter_surf) = IN_RIGHT
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
+                  cmfd % mu_sq(2,h,i,j,k) = t % results(2,score_index) % sum
+                  t % matching_bins(i_filter_surf) = OUT_RIGHT
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
+                  cmfd % mu_sq(2,h,i,j,k) = cmfd % mu_sq(2,h,i,j,k) + &
+                                              t % results(2,score_index) % sum
+
+                  ! back surface
+                  t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
+                       (/ i, j-1, k /) + 1, .true.)
+                  t % matching_bins(i_filter_surf) = IN_FRONT
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
+                  cmfd % mu_sq(3,h,i,j,k) = t % results(2,score_index) % sum                
+                  t % matching_bins(i_filter_surf) = OUT_FRONT
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
+                  cmfd % mu_sq(3,h,i,j,k) = cmfd % mu_sq(3,h,i,j,k) + &
+                                              t % results(2,score_index) % sum
+
+                  ! front surface
+                  t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
+                       (/ i, j, k /) + 1, .true.)
+                  t % matching_bins(i_filter_surf) = IN_FRONT
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
+                  cmfd % mu_sq(4,h,i,j,k) = t % results(2,score_index) % sum                
+                  t % matching_bins(i_filter_surf) = OUT_FRONT
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
+                  cmfd % mu_sq(4,h,i,j,k) = cmfd % mu_sq(4,h,i,j,k) + &
+                                              t % results(2,score_index) % sum
+
+                  ! bottom surface
+                  t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
+                       (/ i, j, k-1 /) + 1, .true.)
+                  t % matching_bins(i_filter_surf) = IN_TOP
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
+                  cmfd % mu_sq(5,h,i,j,k) = t % results(2,score_index) % sum
+                  t % matching_bins(i_filter_surf) = OUT_TOP
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
+                  cmfd % mu_sq(5,h,i,j,k) = cmfd % mu_sq(5,h,i,j,k) + &
+                                              t % results(2,score_index) % sum
+
+                  ! top surface
+                  t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
+                       (/ i, j, k /) + 1, .true.)
+                  t % matching_bins(i_filter_surf) = IN_TOP
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
+                  cmfd % mu_sq(6,h,i,j,k) = t % results(2,score_index) % sum
+                  t % matching_bins(i_filter_surf) = OUT_TOP
+                  score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
+                  cmfd % mu_sq(6,h,i,j,k) = cmfd % mu_sq(6,h,i,j,k) + &
+                                              t % results(2,score_index) % sum
+                end if
 
               end if TALLY
 
@@ -499,10 +600,10 @@ contains
     integer :: xyz_idx            ! index for determining if x,y or z leakage
     integer :: dir_idx            ! index for determining - or + face of cell
     integer :: shift_idx          ! parameter to shift index by +1 or -1
-    integer :: neig_idx(3)        ! spatial indices of neighbour
-    integer :: bound(6)           ! vector containing indices for boudary check
+    integer :: neig_idx(3)        ! spatial indices of neighbor
+    integer :: bound(6)           ! vector containing indices for boundary check
     real(8) :: albedo(6)          ! albedo vector with global boundaries
-    real(8) :: cell_dc            ! diffusion coef of current cell
+    real(8) :: cell_dc            ! diffusion coeff of current cell
     real(8) :: cell_hxyz(3)       ! cell dimensions of current ijk cell
     real(8) :: neig_dc            ! diffusion coefficient of neighbor cell
     real(8) :: neig_hxyz(3)       ! cell dimensions of neighbor cell
@@ -626,7 +727,7 @@ contains
   subroutine compute_dhat()
 
     use constants,  only: CMFD_NOACCEL, ZERO
-    use global,     only: cmfd, cmfd_coremap
+    use global,     only: cmfd, cmfd_coremap, use_functs
 
     integer :: nx                 ! maximum number of cells in x direction
     integer :: ny                 ! maximum number of cells in y direction
@@ -649,6 +750,18 @@ contains
     real(8) :: net_current        ! net current on a face
     real(8) :: neig_flux          ! flux in neighbor cell
     real(8) :: dhat               ! dhat equivalence parameter
+!If using functionals, we need a few extra variables:
+    real(8) :: cell_curr_all(3)       ! vol-avg current in current cell (in i,j,k)
+    real(8) :: cell_curr          ! vol-avg current in current cell (in i,j, OR k)
+!    real(8) :: neig_curr(3)        ! vol-avg current in neighbor cell (in i,j,k)
+    real(8) :: neig_curr          ! vol-avg current in neighbor cell (i,j, or k)
+    real(8) :: cell_sigtr         ! average transport x-sect in current cell
+    real(8) :: neig_sigtr         ! average transport x-sect in neighbor cell
+    real(8) :: mu_sq              ! area integrated mu^2 wted flux at one face 
+    real(8) :: mu_sq_all(6)       ! area integrated mu-sq funct at each face
+!    real(8) :: neig_mu_sq_all(6)   ! area integrated mu-sq values (neighbor)
+    real(8) :: neig_mu_sq         ! "        ", 2 faces away
+    real(8) :: corr               ! total value of functional correction
 
     ! get maximum of spatial and group indices
     nx = cmfd%indices(1)
@@ -681,7 +794,15 @@ contains
             cell_dtilde = cmfd%dtilde(:,g,i,j,k)
             cell_flux = cmfd%flux(g,i,j,k)/product(cmfd%hxyz(:,i,j,k))
             current = cmfd%current(:,g,i,j,k)
-
+            
+            ! if applicable, get functional data too
+            if(use_functs) then
+              cell_curr_all = cmfd % vol_curr(:,g,i,j,k)
+              mu_sq_all = cmfd % mu_sq(:,g,i,j,k)
+              ! THIS ONLY WORKS FOR ISOTROPIC SCATTERING RIGHT NOW
+              cell_sigtr = cmfd % totalxs(g,i,j,k)
+            end if
+              
             ! setup of vector to identify boundary conditions
             bound = (/i,i,j,j,k,k/)
 
@@ -690,12 +811,21 @@ contains
 
               ! define xyz and +/- indices
               xyz_idx = int(ceiling(real(l)/real(2)))  ! x=1, y=2, z=3
-              dir_idx = 2 - mod(l,2) ! -=1, +=2
+              dir_idx = 2 - mod(l,2) ! - is 1, + is 2
               shift_idx = -2*mod(l,2) +1          ! shift neig by -1 or +1
 
               ! calculate net current on l face (divided by surf area)
               net_current = (current(2*l) - current(2*l-1)) / &
                    product(cmfd%hxyz(:,i,j,k)) * cmfd%hxyz(xyz_idx,i,j,k)
+              
+              ! store mu-sq funct value for this dir (don't normalize)
+              ! IMPORTANT: We want the value for the face OPPOSITE
+              ! the interface we are currently calculating! That's why
+              ! the index calculation is so silly :)
+              mu_sq = mu_sq_all(l + mod(l,2) - mod((l+1),2))
+              
+              ! store cell-avg current for this direction
+              cell_curr = cell_curr_all(ceiling(real(l)/real(2)))
 
               ! check if at a boundary
               if (bound(l) == nxyz(xyz_idx,dir_idx)) then
@@ -710,10 +840,22 @@ contains
                 neig_idx = (/i,j,k/)                ! begin with i,j,k
                 neig_idx(xyz_idx) = shift_idx + neig_idx(xyz_idx)
 
-                ! get neigbor flux 
+                ! get neighbor flux 
                 neig_flux = cmfd%flux(g,neig_idx(1),neig_idx(2),neig_idx(3)) / &
                      product(cmfd%hxyz(:,neig_idx(1),neig_idx(2),neig_idx(3)))
 
+                ! if applicable, get neighbor's data
+                if(use_functs) then
+                  !neig_curr = cmfd%vol_curr(:,g,neig_idx(1),neig_idx(2),neig_idx(3))
+                  ! only get the single face value we need:
+                  neig_curr = cmfd%vol_curr(ceiling(real(l)/real(2)),g,neig_idx(1),neig_idx(2),neig_idx(3))
+                  !neig_mu_sq_all = cmfd % mu_sq(:,g,neig_idx(1),neig_idx(2),neig_idx(3))
+                  ! only get the single face value we need:
+                  neig_mu_sq = cmfd % mu_sq(l,g,neig_idx(1),neig_idx(2),neig_idx(3))
+                  ! THIS ONLY WORKS FOR ISOTROPIC SCATTERING RIGHT NOW
+                  neig_sigtr = cmfd % totalxs(g,neig_idx(1),neig_idx(2),neig_idx(3))
+                end if     
+                  
                 ! check for fuel-reflector interface
                 if (cmfd_coremap) then
 
@@ -727,17 +869,30 @@ contains
                   else ! not a fuel-reflector interface
 
                     ! compute dhat 
-                    dhat = (net_current + shift_idx*cell_dtilde(l)* &
-                         (neig_flux - cell_flux))/(neig_flux + cell_flux)
+                    if (use_functs) then
+                      corr = 0
+                      dhat = (net_current + shift_idx*cell_dtilde(l)* &
+                             (neig_flux - cell_flux) - shift_idx*corr)/(neig_flux + cell_flux)
+                    else
+                      dhat = (net_current + shift_idx*cell_dtilde(l)* &
+                             (neig_flux - cell_flux))/(neig_flux + cell_flux)
+                    end if  
 
                   end if
 
                 else ! not for fuel-reflector case
-
                   ! compute dhat 
-                  dhat = (net_current + shift_idx*cell_dtilde(l)* &
-                       (neig_flux - cell_flux))/(neig_flux + cell_flux)
-
+                  if (use_functs) then
+                    corr = (cell_curr + neig_curr + neig_mu_sq - mu_sq)/(cell_sigtr + neig_sigtr)
+                    write(*,'(A20,E14.7)') "adding a corr term: ", corr
+                    ! set to zero till we get it right :)
+                    corr = 0
+                    dhat = (net_current + shift_idx*cell_dtilde(l)* &
+                       (neig_flux - cell_flux) - shift_idx*corr)/(neig_flux + cell_flux)
+                  else
+                    dhat = (net_current + shift_idx*cell_dtilde(l)* &
+                             (neig_flux - cell_flux))/(neig_flux + cell_flux)
+                  end if
                 end if
 
               end if

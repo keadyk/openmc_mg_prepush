@@ -4,7 +4,7 @@ module cmfd_header
 
   implicit none
   private
-  public :: allocate_cmfd, deallocate_cmfd
+  public :: allocate_cmfd, allocate_funct, deallocate_cmfd, deallocate_funct
 
   type, public :: cmfd_type
 
@@ -33,9 +33,15 @@ module cmfd_header
 
     ! current
     real(8), allocatable :: current(:,:,:,:,:)
+    
+    ! edge mu-sq weighted flux
+    real(8), allocatable :: mu_sq(:,:,:,:,:)
 
     ! flux
     real(8), allocatable :: flux(:,:,:,:)
+    
+    ! cell-average weighted current (if use_functs)
+    real(8), allocatable :: vol_curr(:,:,:,:,:)
 
     ! coupling coefficients and equivalence parameters
     real(8), allocatable :: dtilde(:,:,:,:,:)
@@ -138,6 +144,35 @@ contains
 
   end subroutine allocate_cmfd
 
+!==============================================================================
+! ALLOCATE_CMFD
+!==============================================================================
+
+  subroutine allocate_funct(this)
+    
+    type(cmfd_type) :: this 
+
+    integer :: nx  ! number of mesh cells in x direction
+    integer :: ny  ! number of mesh cells in y direction
+    integer :: nz  ! number of mesh cells in z direction
+    integer :: ng  ! number of energy groups
+
+   ! extract spatial and energy indices from object
+    nx = this % indices(1)
+    ny = this % indices(2)
+    nz = this % indices(3)
+    ng = this % indices(4)
+    
+    ! allocate variables for functional calculation
+    if (.not. allocated(this % vol_curr)) allocate(this % vol_curr(3,ng,nx,ny,nz)) 
+    if (.not. allocated(this % mu_sq))    allocate(this % mu_sq(6,ng,nx,ny,nz)) 
+    
+    ! finally, initialize!
+    this % vol_curr = ZERO
+    this % mu_sq = ZERO
+    
+  end subroutine allocate_funct
+  
 !===============================================================================
 ! DEALLOCATE_CMFD 
 !===============================================================================
@@ -164,7 +199,20 @@ contains
     if (allocated(this % weightfactors)) deallocate(this % weightfactors)
     if (allocated(this % cmfd_src))      deallocate(this % cmfd_src)
     if (allocated(this % openmc_src))    deallocate(this % openmc_src)
-
+    
   end subroutine deallocate_cmfd
 
+!===============================================================================
+! DEALLOCATE_CMFD 
+!===============================================================================
+
+  subroutine deallocate_funct(this)
+
+    type(cmfd_type) :: this    
+    
+    if (allocated(this % vol_curr))      deallocate(this % vol_curr) 
+    if (allocated(this % mu_sq))         deallocate(this % mu_sq) 
+    
+  end subroutine deallocate_funct
+  
 end module cmfd_header

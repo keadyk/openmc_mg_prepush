@@ -325,6 +325,9 @@ module global
 
   ! activate neutronic feedback
   logical :: cmfd_feedback = .false.
+  
+  ! use additional functionals to stabilize cmfd
+  logical :: use_functs = .false.
 
   ! activate auto-balance of tallies (2grp only)
 ! logical :: cmfd_balance = .false.
@@ -447,6 +450,10 @@ contains
 
     ! Deallocate cmfd
     call deallocate_cmfd(cmfd)
+        ! initialize functionals if necessary
+    if(use_functs) then
+      call deallocate_funct(cmfd)
+    end if
 
     ! Deallocate tally node lists
     call active_analog_tallies % clear()

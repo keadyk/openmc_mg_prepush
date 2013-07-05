@@ -126,6 +126,10 @@ contains
 
     ! set the solver type
     cmfd_solver_type = solver_(1:10)
+    
+    ! are we using the extra functionals?
+    call lower_case(use_functs_)
+    if(use_functs_ == 'true' .or. use_functs_ == '1') use_functs = .true.
 
     ! set monitoring 
     call lower_case(snes_monitor_)
@@ -186,8 +190,10 @@ contains
 ! accleration.
 ! There are 3 tally types:
 !   1: Only an energy in filter-> flux,total,p1 scatter
+!        (+ 3 directions of volume-averaged current if functionals are used) 
 !   2: Energy in and energy out filter-> nu-scatter,nu-fission
 !   3: Surface current
+!        (+ mu-squared weighted flux if functionals are used) 
 !===============================================================================
 
   subroutine create_cmfd_tally()
@@ -320,7 +326,7 @@ contains
 
     ! Add mesh to dictionary
     call mesh_dict % add_key(m % id, n_user_meshes + 1)
-
+    
     ! allocate tallies
     call add_tallies("cmfd", n_cmfd_tallies)
 
@@ -365,10 +371,15 @@ contains
       t % id = i_cmfd_tallies + i
 
       if (i == 1) then
-
+               
         ! set label
-        t % label = "CMFD flux, total, scatter-1"
-
+        if (use_functs) then
+          t % label = "CMFD flux, total, scatter-1, diffusion, &
+                      &wt'ed vol currents"
+        else
+          t % label = "CMFD flux, total, scatter-1, diffusion"
+        end if
+        
         ! set tally estimator to analog
         t % estimator = ESTIMATOR_ANALOG
 
@@ -381,9 +392,16 @@ contains
         t % filters = filters(1:n_filters)
 
         ! allocate scoring bins 
-        allocate(t % score_bins(3))
-        t % n_score_bins = 3
-        t % n_user_score_bins = 3
+        ! (3 extra bins for 3 volume-avg currs if using functional method)
+        if (use_functs) then
+          allocate(t % score_bins(7))
+          t % n_score_bins = 7
+          t % n_user_score_bins = 7
+        else
+          allocate(t % score_bins(4))
+          t % n_score_bins = 4
+          t % n_user_score_bins = 4
+        end if
 
         ! allocate scattering order data
         allocate(t % scatt_order(3))
@@ -394,6 +412,12 @@ contains
         t % score_bins(2)  = SCORE_TOTAL
         t % score_bins(3)  = SCORE_SCATTER_N
         t % scatt_order(3) = 1
+        t % score_bins(4)  = SCORE_DIFFUSION
+        if(use_functs) then
+          t % score_bins(5)  = SCORE_SIGWT_CURRX
+          t % score_bins(6)  = SCORE_SIGWT_CURRY
+          t % score_bins(7)  = SCORE_SIGWT_CURRZ
+        end if
 
       else if (i == 2) then
 
@@ -448,8 +472,12 @@ contains
       else if (i == 3) then
 
         ! set label
-        t % label = "CMFD surface currents"
-
+        if(use_functs) then
+          t % label = "CMFD surface currents, mu squared values"
+        else
+          t % label = "CMFD surface currents"
+        end if
+        
         ! set tally estimator to analog
         t % estimator = ESTIMATOR_ANALOG
 
@@ -476,18 +504,31 @@ contains
         deallocate(filters(n_filters) % int_bins)
 
         ! allocate macro reactions
-        allocate(t % score_bins(1))
-        t % n_score_bins = 1
-        t % n_user_score_bins = 1
-
+        if(use_functs) then
+          ! extra scoring bin for mu-squared values
+          allocate(t % score_bins(2))
+          t % n_score_bins = 2
+          t % n_user_score_bins = 2
+        else
+          allocate(t % score_bins(1))
+          t % n_score_bins = 1
+          t % n_user_score_bins = 1
+        end if
+          
         ! allocate scattering order data
         allocate(t % scatt_order(1))
         t % scatt_order = 0
 
         ! set macro bins
-        t % score_bins(1) = SCORE_CURRENT
-        t % type = TALLY_SURFACE_CURRENT
-
+        if(use_functs) then
+          t % score_bins(1) = SCORE_CURRENT
+          t % score_bins(2) = SCORE_MU_SQ
+          t % type = TALLY_SURFACE_CURRENT          
+        else
+          t % score_bins(1) = SCORE_CURRENT
+          t % type = TALLY_SURFACE_CURRENT
+        end if
+        
         ! we need to increase the dimension by one since we also need
         ! currents coming into and out of the boundary mesh cells.
         i_filter_mesh = t % find_filter(FILTER_MESH)
