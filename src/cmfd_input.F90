@@ -375,14 +375,20 @@ contains
         ! set label
         if (use_functs) then
           t % label = "CMFD flux, total, scatter-1, diffusion, &
-                      &wt'ed vol currents"
+                      &vol curr"
         else
           t % label = "CMFD flux, total, scatter-1, diffusion"
         end if
         
+#ifdef MULTIGROUP
+        ! set tally estimator to tracklength
+        !t % estimator = ESTIMATOR_TRACKLENGTH
+        t % estimator = ESTIMATOR_ANALOG
+#else
         ! set tally estimator to analog
         t % estimator = ESTIMATOR_ANALOG
-
+#endif
+        
         ! set tally type to volume
         t % type = TALLY_VOLUME
 
@@ -410,8 +416,10 @@ contains
         ! set macro_bins
         t % score_bins(1)  = SCORE_FLUX
         t % score_bins(2)  = SCORE_TOTAL
+        ! FIX THIS FOR TRACKLENGTH TALLIES
         t % score_bins(3)  = SCORE_SCATTER_N
         t % scatt_order(3) = 1
+        !t % score_bins(3) = SCORE_SCATTER
         t % score_bins(4)  = SCORE_DIFFUSION
         if(use_functs) then
           t % score_bins(5)  = SCORE_SIGWT_CURRX

@@ -113,7 +113,6 @@ contains
       if (d_collision > d_boundary) then
         ! ====================================================================
         ! PARTICLE CROSSES SURFACE
-
         last_cell = p % coord % cell
         p % coord % cell = NONE
         if (lattice_crossed /= NONE) then
@@ -130,7 +129,7 @@ contains
       else
         ! ====================================================================
         ! PARTICLE HAS COLLISION
-
+        
         ! Score collision estimate of keff
         global_tallies(K_COLLISION) % value = &
              global_tallies(K_COLLISION) % value + p % wgt * &
@@ -187,6 +186,7 @@ contains
     ! Store pre-collision particle properties
     p % last_wgt = p % wgt
     p % last_E   = p % E
+    p % last_uvw = p % coord0 % uvw
 
     ! Add to collision counter for particle
     p % n_collision = p % n_collision + 1
@@ -217,10 +217,11 @@ contains
 
     ! Score collision estimator tallies -- this is done after a collision has
     ! occurred rather than before because we need information on the outgoing
-    ! energy for any tallies with an outgoing energy filter
+    ! energy for any tallies with an outgoing energy filter (if cont energy)
 
     if (active_analog_tallies % size() > 0) call score_analog_tally()
-
+    
+    
     ! Reset banked weight during collision
     p % n_bank   = 0
     p % wgt_bank = ZERO

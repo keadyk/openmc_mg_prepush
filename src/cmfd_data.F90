@@ -170,9 +170,9 @@ contains
                 
                 ! get volume current if applicable
                 if(use_functs) then
-                  vol_curr(1) = t % results(2,score_index) % sum
-                  vol_curr(2) = t % results(3,score_index) % sum
-                  vol_curr(3) = t % results(4,score_index) % sum                  
+                  vol_curr(1) = t % results(5,score_index) % sum
+                  vol_curr(2) = t % results(6,score_index) % sum
+                  vol_curr(3) = t % results(7,score_index) % sum                  
                   cmfd % vol_curr(:,h,i,j,k) = vol_curr
                 end if
 
@@ -187,7 +187,9 @@ contains
                 cmfd % totalxs(h,i,j,k) = t % results(2,score_index) % sum / flux
 
                 ! get p1 scatter rr and convert to p1 scatter xs
-                cmfd % p1scattxs(h,i,j,k) = t % results(3,score_index) % sum / flux
+                ! cmfd % p1scattxs(h,i,j,k) = t % results(3,score_index) % sum / flux
+                !SET THIS TO ZERO TEMPORARILY
+                cmfd % p1scattxs = ZERO
 
                 ! calculate diffusion coefficient
                 cmfd % diffcof(h,i,j,k) = ONE/(3.0_8*(cmfd % totalxs(h,i,j,k) - &
@@ -753,13 +755,11 @@ contains
 !If using functionals, we need a few extra variables:
     real(8) :: cell_curr_all(3)       ! vol-avg current in current cell (in i,j,k)
     real(8) :: cell_curr          ! vol-avg current in current cell (in i,j, OR k)
-!    real(8) :: neig_curr(3)        ! vol-avg current in neighbor cell (in i,j,k)
     real(8) :: neig_curr          ! vol-avg current in neighbor cell (i,j, or k)
     real(8) :: cell_sigtr         ! average transport x-sect in current cell
     real(8) :: neig_sigtr         ! average transport x-sect in neighbor cell
     real(8) :: mu_sq              ! area integrated mu^2 wted flux at one face 
     real(8) :: mu_sq_all(6)       ! area integrated mu-sq funct at each face
-!    real(8) :: neig_mu_sq_all(6)   ! area integrated mu-sq values (neighbor)
     real(8) :: neig_mu_sq         ! "        ", 2 faces away
     real(8) :: corr               ! total value of functional correction
 
@@ -783,7 +783,7 @@ contains
 
           GROUP: do g = 1,ng
 
-            ! check for active mesh cell
+            ! check for active mesh cell 
             if (allocated(cmfd%coremap)) then
               if (cmfd%coremap(i,j,k) == CMFD_NOACCEL) then
                 cycle
@@ -800,7 +800,7 @@ contains
               cell_curr_all = cmfd % vol_curr(:,g,i,j,k)
               mu_sq_all = cmfd % mu_sq(:,g,i,j,k)
               ! THIS ONLY WORKS FOR ISOTROPIC SCATTERING RIGHT NOW
-              cell_sigtr = cmfd % totalxs(g,i,j,k)
+              cell_sigtr = cmfd % totalxs(g,i,j,k) * product(cmfd%hxyz(:,i,j,k))
             end if
               
             ! setup of vector to identify boundary conditions
@@ -822,14 +822,16 @@ contains
               ! IMPORTANT: We want the value for the face OPPOSITE
               ! the interface we are currently calculating! That's why
               ! the index calculation is so silly :)
+              !mu_sq = mu_sq_all(l + mod(l,2) - mod((l+1),2))/&
+              !        product(cmfd%hxyz(:,i,j,k)) * cmfd%hxyz(xyz_idx,i,j,k)
               mu_sq = mu_sq_all(l + mod(l,2) - mod((l+1),2))
-              
-              ! store cell-avg current for this direction
-              cell_curr = cell_curr_all(ceiling(real(l)/real(2)))
+                      
+              ! store cell-avg current for this direction, avg'ed over surf area
+              cell_curr = cell_curr_all(xyz_idx)
 
               ! check if at a boundary
               if (bound(l) == nxyz(xyz_idx,dir_idx)) then
-
+                
                 ! compute dhat
                 dhat = (net_current - shift_idx*cell_dtilde(l)*cell_flux) / &
                      cell_flux
@@ -846,14 +848,15 @@ contains
 
                 ! if applicable, get neighbor's data
                 if(use_functs) then
-                  !neig_curr = cmfd%vol_curr(:,g,neig_idx(1),neig_idx(2),neig_idx(3))
+                  ! only get the single direction value we need:
+                  neig_curr = cmfd%vol_curr(xyz_idx,g,&
+                       neig_idx(1),neig_idx(2),neig_idx(3))
                   ! only get the single face value we need:
-                  neig_curr = cmfd%vol_curr(ceiling(real(l)/real(2)),g,neig_idx(1),neig_idx(2),neig_idx(3))
-                  !neig_mu_sq_all = cmfd % mu_sq(:,g,neig_idx(1),neig_idx(2),neig_idx(3))
-                  ! only get the single face value we need:
+                  !neig_mu_sq = cmfd % mu_sq(l,g,neig_idx(1),neig_idx(2),neig_idx(3))/&
+                  !           product(cmfd%hxyz(:,neig_idx(1),neig_idx(2),neig_idx(3)))
                   neig_mu_sq = cmfd % mu_sq(l,g,neig_idx(1),neig_idx(2),neig_idx(3))
                   ! THIS ONLY WORKS FOR ISOTROPIC SCATTERING RIGHT NOW
-                  neig_sigtr = cmfd % totalxs(g,neig_idx(1),neig_idx(2),neig_idx(3))
+                  neig_sigtr = cmfd % totalxs(g,neig_idx(1),neig_idx(2),neig_idx(3)) * product(cmfd%hxyz(:,i,j,k))
                 end if     
                   
                 ! check for fuel-reflector interface
@@ -871,8 +874,9 @@ contains
                     ! compute dhat 
                     if (use_functs) then
                       corr = 0
+                      corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq - mu_sq))/(cell_sigtr + neig_sigtr)
                       dhat = (net_current + shift_idx*cell_dtilde(l)* &
-                             (neig_flux - cell_flux) - shift_idx*corr)/(neig_flux + cell_flux)
+                             (neig_flux - cell_flux) - corr)/(neig_flux + cell_flux)
                     else
                       dhat = (net_current + shift_idx*cell_dtilde(l)* &
                              (neig_flux - cell_flux))/(neig_flux + cell_flux)
@@ -883,12 +887,18 @@ contains
                 else ! not for fuel-reflector case
                   ! compute dhat 
                   if (use_functs) then
-                    corr = (cell_curr + neig_curr + neig_mu_sq - mu_sq)/(cell_sigtr + neig_sigtr)
-                    write(*,'(A20,E14.7)') "adding a corr term: ", corr
+                    corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq - mu_sq))/(cell_sigtr + neig_sigtr)
+                    !write(*,'(A8,I2,A12,I2,A11,I2)') "face #: ", l, " this cell: ", i, " neighbor: ", neig_idx(1)
+                    !write(*,'(A27,2E20.7,A14,4E20.7)') "          current terms: ", net_current, (cell_curr + neig_curr)/&
+                    !(cell_sigtr +neig_sigtr),"  musq terms: ", shift_idx*(neig_mu_sq - mu_sq)/(cell_sigtr + neig_sigtr)
+                    !write(*,'(A25,E20.7)') "   full correction term: ", corr
+                    !write(*,'(A27,2E20.7)') "          current terms: ", net_current, (cell_curr + neig_curr)/&
+                    !(cell_sigtr +neig_sigtr)
+                    
                     ! set to zero till we get it right :)
-                    corr = 0
+                    
                     dhat = (net_current + shift_idx*cell_dtilde(l)* &
-                       (neig_flux - cell_flux) - shift_idx*corr)/(neig_flux + cell_flux)
+                       (neig_flux - cell_flux) - corr)/(neig_flux + cell_flux)
                   else
                     dhat = (net_current + shift_idx*cell_dtilde(l)* &
                              (neig_flux - cell_flux))/(neig_flux + cell_flux)

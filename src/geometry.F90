@@ -371,7 +371,7 @@ contains
 
       ! Score surface currents since reflection causes the direction of the
       ! particle to change -- artificially move the particle slightly back in
-      ! case the surface crossing in coincident with a mesh boundary
+      ! case the surface crossing is coincident with a mesh boundary
             
       if (active_current_tallies % size() > 0) then
         p % coord0 % xyz = p % coord0 % xyz - TINY_BIT * p % coord0 % uvw

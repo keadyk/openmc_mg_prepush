@@ -72,7 +72,6 @@ contains
 
     do while (p % alive)
 
-!      write(*, '(A50)') "--------------------------------------------------"
       ! Calculate microscopic and macroscopic cross sections -- note: if the
       ! material is the same as the last material and the energy of the
       ! particle hasn't changed, we don't need to lookup cross sections again.
@@ -197,7 +196,9 @@ contains
     ! Store pre-collision particle properties
     p % last_wgt = p % wgt
     p % last_E   = p % E
-
+    p % last_uvw = p % coord0 % uvw
+!    write(*,'(3E14.7)') p % last_uvw(1), p % last_uvw(2), p % last_uvw(3)
+    
     ! Add to collision counter for particle
     p % n_collision = p % n_collision + 1
 

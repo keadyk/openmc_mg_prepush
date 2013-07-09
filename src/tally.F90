@@ -334,7 +334,22 @@ contains
               score = last_wgt * &
                 nuclides(p % event_nuclide) % reactions(n) % Q_value
             end if
-#endif
+#endif 
+          case(SCORE_SIGWT_CURRX)
+            ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
+            !score = last_wgt * p % coord0 % uvw(1)
+            score = last_wgt * p % last_uvw(1)
+
+          case(SCORE_SIGWT_CURRY)
+            ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
+            !score = last_wgt * p % coord0 % uvw(2)
+            score = last_wgt * p % last_uvw(2)
+           
+          case(SCORE_SIGWT_CURRZ)
+            ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
+            !score = last_wgt * p % coord0 % uvw(3)
+            score = last_wgt * p % last_uvw(3)
+
           case (SCORE_EVENTS)
             ! Simply count number of scoring events
             score = ONE
@@ -456,7 +471,7 @@ contains
     integer :: i_energy             ! index in nuclide energy grid
     integer :: score_bin            ! scoring type, e.g. SCORE_FLUX
     integer :: score_index          ! scoring bin index
-    real(8) :: f                    ! interpolation factor
+    real(8) :: f                    ! interpolation factor  
     real(8) :: flux                 ! tracklength estimate of flux
     real(8) :: score                ! actual score (e.g., flux*xs)
     real(8) :: atom_density         ! atom density of single nuclide in atom/b-cm
@@ -579,7 +594,19 @@ contains
               case (SCORE_EVENTS)
                 ! For number of events, just score unity
                 score = ONE
-
+                
+              case(SCORE_SIGWT_CURRX)
+                ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
+                score = micro_xs(i_nuclide) % total * atom_density * flux * p % coord0 % uvw(1)
+                
+              case(SCORE_SIGWT_CURRY)
+                ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
+                score = micro_xs(i_nuclide) % total* atom_density * flux * p % coord0 % uvw(2)
+                
+              case(SCORE_SIGWT_CURRZ)
+                ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
+                score = micro_xs(i_nuclide) % total * atom_density * flux * p % coord0 % uvw(3)
+                
               case default
                 ! Any other cross section has to be calculated on-the-fly. For
                 ! cross sections that are used often (e.g. n2n, ngamma, etc. for
@@ -620,6 +647,7 @@ contains
                   end do REACTION_LOOP
                 else
                   message = "Invalid score type on tally " // to_str(t % id) // "."
+                  !write(*, '(A20)') "the micro xs version"
                   call fatal_error()
                 end if
               end select
@@ -645,10 +673,14 @@ contains
                 ! Absorption cross section is pre-calculated
                 score = material_xs % absorption * flux
 
+              case (SCORE_DIFFUSION)
+                ! Temporarily store sigS in score:
+                score = 1.0/(3.0 * (material_xs % total)) * flux
+
               case (SCORE_FISSION)
                 ! Fission cross section is pre-calculated
-                score = material_xs % fission * flux
-
+                score = material_xs % fission * flux  
+                
               case (SCORE_NU_FISSION)
                 ! Nu-fission cross section is pre-calculated
                 score = material_xs % nu_fission * flux
@@ -660,6 +692,18 @@ contains
 #else
                 score = material_xs % kappa_fission * flux
 #endif
+              case(SCORE_SIGWT_CURRX)
+                ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
+                score = material_xs % total * flux * p % coord0 % uvw(1)
+                
+              case(SCORE_SIGWT_CURRY)
+                ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
+                score = material_xs % total * flux * p % coord0 % uvw(2)
+                
+              case(SCORE_SIGWT_CURRZ)
+                ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
+                score = material_xs % total * flux * p % coord0 % uvw(3)
+                
                 
               case (SCORE_EVENTS)
                 ! For number of events, just score unity
@@ -717,6 +761,7 @@ contains
 
                 else
                   message = "Invalid score type on tally " // to_str(t % id) // "."
+                  !write(*, '(A20)') "the material version"
                   call fatal_error()
                 end if
               end select
@@ -1279,6 +1324,7 @@ contains
                 case default
                   message = "Invalid score type on tally " // &
                        to_str(t % id) // "."
+                       !write(*, '(A20)') "the mesh tal version"
                   call fatal_error()
                 end select
 
@@ -1293,6 +1339,8 @@ contains
                   score = (material_xs % total - material_xs % absorption) * flux
                 case (SCORE_ABSORPTION)
                   score = material_xs % absorption * flux
+                case (SCORE_DIFFUSION)
+                  score = 1.0/(3.0 * (material_xs % total)) * flux
                 case (SCORE_FISSION)
                   score = material_xs % fission * flux
                 case (SCORE_NU_FISSION)
@@ -1319,6 +1367,7 @@ contains
                 case default
                   message = "Invalid score type on tally " // &
                        to_str(t % id) // "."
+                       !write(*, '(A20)') "the mesh mat version"
                   call fatal_error()
                 end select
               end if
@@ -1463,7 +1512,7 @@ contains
 !===============================================================================
 
   subroutine score_surface_current()
-
+    
     integer :: i
     integer :: i_tally
     integer :: j                    ! loop indices
@@ -1491,6 +1540,7 @@ contains
     logical :: z_same               ! same starting/ending z index (k)
     type(TallyObject),    pointer :: t => null()
     type(StructuredMesh), pointer :: m => null()
+    type(Surface),  pointer :: surf => null()
 
     TALLY_LOOP: do i = 1, active_current_tallies % size()
       ! Copy starting and ending location of particle
@@ -1672,7 +1722,6 @@ contains
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt * &
                          abs(uvw(1))
-                         !write(*,'(A11,E20.7)') "added xcrsp ", p % wgt * abs(uvw(1))  
                 end select
               end do
             end if
@@ -1829,11 +1878,11 @@ contains
                      t % results(l, filter_index) % value + p % wgt
               case (SCORE_MU_SQ)
                 ! can determine which dir. coefficient to weight by
-                ! using the modulus operator on the surface filter
+                ! using the floor operator on the surface filter
                 ! (see constants.F90 for integer values of IN_TOP, OUT_TOP, ..)
                 t % results(l, filter_index) % value = &
                      t % results(l, filter_index) % value + p % wgt * &
-                     abs(uvw(mod(t % matching_bins(i_filter_surf) + 1,2)))
+                     abs(uvw(floor(0.5*(t % matching_bins(i_filter_surf) + 1))))
             end select
           end do               
 

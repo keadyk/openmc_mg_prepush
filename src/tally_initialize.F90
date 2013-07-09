@@ -184,7 +184,7 @@ contains
 
     end if
 
-    ! Set index for ths tally group
+    ! Set index for this tally group
     select case(tally_group)
     case ("user")
       i_user_tallies = n_tallies
