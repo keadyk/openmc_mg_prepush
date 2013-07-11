@@ -2358,6 +2358,8 @@ contains
           if (pl % color_by == PLOT_COLOR_CELLS) then
 
             if (cell_dict % has_key(col_id)) then
+
+              ! repurpose col_id to hold actual index of material in dict, NOT user-assigned key!
               col_id = cell_dict % get_key(col_id)
               pl % colors(col_id) % rgb = plot_(i) % col_spec_(j) % rgb
             else
@@ -2369,6 +2371,8 @@ contains
           else if (pl % color_by == PLOT_COLOR_MATS) then
 
             if (material_dict % has_key(col_id)) then
+
+              ! repurpose col_id to hold actual index of material in dict, NOT user-assigned key!
               col_id = material_dict % get_key(col_id)
               pl % colors(col_id) % rgb = plot_(i) % col_spec_(j) % rgb
             else

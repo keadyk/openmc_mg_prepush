@@ -262,7 +262,8 @@ module constants
        EVENT_FISSION =  3 
 
   ! Tally score type
-  integer, parameter :: N_SCORE_TYPES = 14
+  integer, parameter :: N_SCORE_TYPES = 19
+  
   integer, parameter :: &
        SCORE_FLUX          = -1,  & ! flux
        SCORE_TOTAL         = -2,  & ! total reaction rate
@@ -331,7 +332,7 @@ module constants
   ! Source angular distribution types
   integer, parameter :: &
        SRC_ANGLE_ISOTROPIC = 1, & ! Isotropic angular 
-       SRC_ANGLE_MONO      = 2, & ! Monodirectional source
+       SRC_ANGLE_MONO      = 2, & ! Monodirectional sourceUNIT
        SRC_ANGLE_TABULAR   = 3    ! Tabular distribution
 
   ! Source energy distribution types

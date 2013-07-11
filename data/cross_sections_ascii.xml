@@ -2163,5 +2163,13 @@
   <ace_table alias="H20k.01m" awr="1.000000" location="1" name="H20k.01m" path="kpkmgxs" zaid="00001"/>  
   <ace_table alias="Cladk.01m" awr="1.000000" location="15" name="Cladk.01m" path="kpkmgxs" zaid="00002"/>
   <ace_table alias="Gapk.01m" awr="1.000000" location="29" name="Gapk.01m" path="kpkmgxs" zaid="00003"/>  
-  <ace_table alias="Fuelk.01m" awr="1.000000" location="43" name="Fuelk.01m" path="kpkmgxs" zaid="00004"/>     
+  <ace_table alias="Fuelk.01m" awr="1.000000" location="43" name="Fuelk.01m" path="kpkmgxs" zaid="00004"/>
+<!-- Added by Kendra Keady on July 10 for C5G7 benchmark problem-->
+  <ace_table alias="H20k.02m" awr="1.000000" location="1" name="H20k.02m" path="c5g7xs" zaid="00001"/>  
+  <ace_table alias="FissCk.02m" awr="1.000000" location="31" name="FissCk.02m" path="c5g7xs" zaid="00002"/>
+  <ace_table alias="Guidek.02m" awr="1.000000" location="66" name="Guidek.02m" path="c5g7xs" zaid="00003"/>  
+  <ace_table alias="MOX4k.02m" awr="1.000000" location="96" name="MOX4k.02m" path="c5g7xs" zaid="00004"/>
+  <ace_table alias="MOX7k.02m" awr="1.000000" location="131" name="MOX7k.02m" path="c5g7xs" zaid="00005"/>  
+  <ace_table alias="MOX8k.02m" awr="1.000000" location="166" name="MOX8k.02m" path="c5g7xs" zaid="00006"/>
+  <ace_table alias="UO2k.02m" awr="1.000000" location="201" name="UO2k.02m" path="c5g7xs" zaid="00007"/>      
 </cross_sections>

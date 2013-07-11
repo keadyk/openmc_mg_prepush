@@ -873,7 +873,6 @@ contains
 
                     ! compute dhat 
                     if (use_functs) then
-                      corr = 0
                       corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq - mu_sq))/(cell_sigtr + neig_sigtr)
                       dhat = (net_current + shift_idx*cell_dtilde(l)* &
                              (neig_flux - cell_flux) - corr)/(neig_flux + cell_flux)
@@ -895,7 +894,6 @@ contains
                     !write(*,'(A27,2E20.7)') "          current terms: ", net_current, (cell_curr + neig_curr)/&
                     !(cell_sigtr +neig_sigtr)
                     
-                    ! set to zero till we get it right :)
                     
                     dhat = (net_current + shift_idx*cell_dtilde(l)* &
                        (neig_flux - cell_flux) - corr)/(neig_flux + cell_flux)

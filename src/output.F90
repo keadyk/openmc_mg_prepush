@@ -1577,6 +1577,9 @@ contains
     score_names(abs(SCORE_FISSION))       = "Fission Rate"
     score_names(abs(SCORE_NU_FISSION))    = "Nu-Fission Rate"
     score_names(abs(SCORE_KAPPA_FISSION)) = "Kappa-Fission Rate"
+    score_names(abs(SCORE_SIGWT_CURRX))   = "Volume Current (x)"
+    score_names(abs(SCORE_SIGWT_CURRY))   = "Volume Current (y)"
+    score_names(abs(SCORE_SIGWT_CURRZ))   = "Volume Current (z)"
     score_names(abs(SCORE_EVENTS))        = "Events"
 
     ! Create filename for tally output
@@ -1588,7 +1591,7 @@ contains
     end if
 
     ! Open tally file for writing
-    open(FILE=filename, UNIT=UNIT_TALLY, STATUS='replace', ACTION='write')
+    open(UNIT=UNIT_TALLY, FILE=filename, STATUS='replace', ACTION='write')
 
     ! Calculate t-value for confidence intervals
     if (confidence_intervals) then

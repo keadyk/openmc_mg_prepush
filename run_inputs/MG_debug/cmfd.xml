@@ -2,12 +2,13 @@
 <cmfd>
 	<active_flush>20</active_flush>
 	<feedback>true</feedback>
-	<use_functs>true</use_functs>
+	<write_balance>true</write_balance>
+	<use_functs>false</use_functs>
 	<mesh>
 		<type>rectangular</type>
 		<lower_left>-0.62 -10.0 -10.0</lower_left>
 		<upper_right>0.62 10.0 10.0</upper_right>
-		<dimension>4 1 1</dimension>
+		<dimension>2 2 2</dimension>
 		<albedo>1.0 1.0 1.0 1.0 1.0 1.0</albedo>
 	</mesh>
 </cmfd>
