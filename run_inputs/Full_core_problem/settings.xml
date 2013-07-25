@@ -5,9 +5,9 @@
 	</cross_sections>
 	<eigenvalue>
 		<batches>20</batches>
-		<generations_per_batch>20</generations_per_batch>
+		<generations_per_batch>1</generations_per_batch>
 		<inactive>2</inactive>
-		<particles>100000</particles>
+		<particles>1000000</particles>
 	</eigenvalue>
 	<output>summary cross_sections</output>
 	<output_path>/home/keadyk/Desktop/Research_stuff/OPENMC/run_outputs/Full_core_problem</output_path>
@@ -19,8 +19,9 @@
 		<upper_right>406.98 406.98 10</upper_right>
 		<dimension>19 19 1</dimension>
 	</entropy>
-	<run_cmfd>false</run_cmfd>
+	<run_cmfd>true</run_cmfd>
 	<survival_biasing>true</survival_biasing>
+	<uniform_fs dimension="19 19 1" lower_left="0.0 0.0 0.0" upper_right="406.98 406.98 10" />
 	<verbosity>
 		5
 	</verbosity>

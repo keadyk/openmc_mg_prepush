@@ -895,7 +895,8 @@ contains
 
                     ! compute dhat
                     if (use_functs) then
-                      dhat = (net_current - shift_idx*cell_dtilde(l)*cell_flux) /&
+                      corr = (cell_curr + shift_idx*(mu_sq_all(l)-mu_sq))/(cell_sigtr)
+                      dhat = (net_current - shift_idx*cell_dtilde(l)*cell_flux - corr) /&
                              cell_flux
                     else
                       dhat = (net_current - shift_idx*cell_dtilde(l)*cell_flux) /&

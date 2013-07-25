@@ -1,0 +1,36 @@
+Assembly-size mesh
+
+ ===========================================================================
+ ======================>     SIMULATION FINISHED     <======================
+ ===========================================================================
+
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     =  1.3000E+00 seconds
+   Reading cross sections          =  1.0000E-03 seconds
+   Unionizing energy grid          =  0.0000E+00 seconds
+ Total time in simulation          =  7.0666E+03 seconds
+   Time in transport only          =  7.0587E+03 seconds
+   Time in inactive batches        =  4.7651E+02 seconds
+   Time in active batches          =  6.5901E+03 seconds
+   Time synchronizing fission bank =  3.5080E+00 seconds
+     Sampling source sites         =  2.1460E+00 seconds
+     SEND/RECV source sites        =  1.3550E+00 seconds
+   Time accumulating tallies       =  0.0000E+00 seconds
+ Total time for finalization       =  9.0000E-03 seconds
+ Total time elapsed                =  7.0679E+03 seconds
+ Calculation Rate (inactive)       =  8394.33 neutrons/second
+ Calculation Rate (active)         =  5462.73 neutrons/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     =  1.32276 +/-  0.00013
+ k-effective (Track-length)  =  1.32275 +/-  0.00015
+ k-effective (Absorption)    =  1.32276 +/-  0.00013
+ Combined k-effective        =  1.32276 +/-      NaN
+ Leakage Fraction            =  0.00008 +/-  0.00000
+
+
+RUN FINISHED; exit value 0; real time: 1h 57m 48s; user: 840ms; system: 1h 57m 37s
+
