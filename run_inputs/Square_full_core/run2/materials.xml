@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<materials>
+	<default_xs>02m</default_xs>
+	<material> <!-- UO2 Fuel -->
+		<id>11</id>
+		<density value="1.0" units="atom/b-cm"/>
+		<nuclide name="UO2k" ao="1.00"/>
+	</material>
+	<material> <!-- 8.7 MOX -->
+		<id>21</id>
+		<density value="1.0" units="atom/b-cm"/>
+		<nuclide name="MOX8k" ao="1.00"/>
+	</material>
+	<material> <!-- 7.0 MOX -->
+		<id>22</id>
+		<density value="1.0" units="atom/b-cm"/>
+		<nuclide name="MOX7k" ao="1.00"/>
+	</material>
+	<material> <!-- 4.3 MOX -->
+		<id>23</id>
+		<density value="1.0" units="atom/b-cm"/>
+		<nuclide name="MOX4k" ao="1.00"/>
+	</material>
+	<material> <!-- Guide tube -->
+		<id>31</id>
+		<density value="1.0" units="atom/b-cm"/>
+		<nuclide name="Guidek" ao="1.00"/>
+	</material>
+	<material> <!-- Fiss chamber -->
+		<id>41</id>
+		<density value="1.0" units="atom/b-cm"/>
+		<nuclide name="FissCk" ao="1.00"/>
+	</material>
+	<material> <!-- Light water -->
+		<id>99</id>
+		<density value="1.0" units="atom/b-cm"/>
+		<nuclide name="H20k" ao="1.00"/>
+	</material>
+</materials>
