@@ -3,12 +3,12 @@
 	<cross_sections>
 		/home/keadyk/Desktop/Research_stuff/OPENMC/data/cross_sections_ascii.xml
 	</cross_sections>
-    <seed>17</seed>
+    <seed>25</seed>
 	<eigenvalue>
-		<batches>40</batches>
+		<batches>75</batches>
 		<generations_per_batch>1</generations_per_batch>
 		<inactive>25</inactive>
-		<particles>1000000</particles>
+		<particles>200000</particles>
 	</eigenvalue>
 	<output>summary cross_sections</output>
 	<source>
@@ -17,12 +17,12 @@
 	<uniform_fs>
 		<lower_left>0 0 0</lower_left>
 		<upper_right>342.72 342.72 10</upper_right>
-		<dimension>16 16 1</dimension>
+		<dimension>32 32 1</dimension>
 	</uniform_fs>
 	<entropy>
 		<lower_left>0 0 0</lower_left>
 		<upper_right>342.72 342.72 10</upper_right>
-		<dimension>16 16 1</dimension>
+		<dimension>32 32 1</dimension>
 	</entropy>
 	<run_cmfd>true</run_cmfd>
 	<survival_biasing>false</survival_biasing>

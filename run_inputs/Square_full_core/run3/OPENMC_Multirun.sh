@@ -6,10 +6,10 @@ echo "Usage: bash OPENMC_Multirun.sh <# RUNS>"
 exit 1
 fi
 
-echo "Number of runs: $1"
+echo "Number of runs: $2"
 echo "Running k-eigenvalue calculations..."
 
-for seed in $(seq 3 $1)
+for seed in $(seq 1 $1)
 do
 
 echo -e "RUN: $seed"
