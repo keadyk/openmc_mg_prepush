@@ -267,7 +267,7 @@ module constants
        EVENT_FISSION =  3 
 
   ! Tally score type
-  integer, parameter :: N_SCORE_TYPES = 18
+  integer, parameter :: N_SCORE_TYPES = 20
 
   integer, parameter :: &
        SCORE_FLUX          = -1,  & ! flux
@@ -287,7 +287,10 @@ module constants
        SCORE_SIGWT_CURRX   = -15, & ! sigma_tr-weighted current functional- x
        SCORE_SIGWT_CURRY   = -16, & ! "                                   " y
        SCORE_SIGWT_CURRZ   = -17, & ! "                                   " z
-       SCORE_MU_SQ         = -18    ! mu-squared functional
+       SCORE_MU_SQX        = -18, & ! mu-sq functional in x
+       SCORE_MU_SQY        = -19, & ! mu-sq functional in y
+       SCORE_MU_SQZ        = -20
+  !    SCORE_MU_SQ         = -18    ! mu-squared functional
        
   ! Maximum scattering order supported
   integer, parameter :: SCATT_ORDER_MAX = 10

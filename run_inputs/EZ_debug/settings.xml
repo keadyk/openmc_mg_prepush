@@ -6,7 +6,7 @@
 	<eigenvalue>
 		<batches>200</batches>
 		<inactive>50</inactive>
-		<particles>500000</particles>
+		<particles>200000</particles>
 	</eigenvalue>
 	<output>summary cross_sections</output>
 	<source>

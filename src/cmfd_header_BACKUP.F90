@@ -166,7 +166,7 @@ contains
     ! allocate variables for functional calculation
     if (.not. allocated(this % vol_curr)) allocate(this % vol_curr(3,ng,nx,ny,nz)) 
     ! All six faces of a 2-D cell; 3 direction cosines each face :)
-    if (.not. allocated(this % mu_sq))    allocate(this % mu_sq(18,ng,nx,ny,nz)) 
+    if (.not. allocated(this % mu_sq))    allocate(this % mu_sq(6,ng,nx,ny,nz)) 
     
     ! finally, initialize!
     this % vol_curr = ZERO

@@ -3,7 +3,7 @@
 	<cross_sections>
 		/home/keadyk/Desktop/Research_stuff/OPENMC/data/cross_sections_ascii.xml
 	</cross_sections>
-    <seed>1</seed>
+    <seed>4</seed>
 	<eigenvalue>
 		<batches>75</batches>
 		<generations_per_batch>1</generations_per_batch>

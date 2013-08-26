@@ -326,120 +326,66 @@ contains
                        (/ i-1, j, k /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_RIGHT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  !cmfd % mu_sq(1,h,i,j,k) = t % results(2,score_index) % sum
                   cmfd % mu_sq(1,h,i,j,k) = t % results(2,score_index) % sum
-                  cmfd % mu_sq(2,h,i,j,k) = t % results(3,score_index) % sum
-                  cmfd % mu_sq(3,h,i,j,k) = t % results(4,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_RIGHT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  !cmfd % mu_sq(1,h,i,j,k) = cmfd % mu_sq(1,h,i,j,k) + &
-                  !                            t % results(2,score_index) % sum
                   cmfd % mu_sq(1,h,i,j,k) = cmfd % mu_sq(1,h,i,j,k) + &
                                               t % results(2,score_index) % sum
-                  cmfd % mu_sq(2,h,i,j,k) = cmfd % mu_sq(2,h,i,j,k) + &
-                                              t % results(3,score_index) % sum
-                  cmfd % mu_sq(3,h,i,j,k) = cmfd % mu_sq(3,h,i,j,k) + &
-                                              t % results(4,score_index) % sum
 
                   ! right surface
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
                        (/ i, j, k /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_RIGHT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  !cmfd % mu_sq(2,h,i,j,k) = t % results(2,score_index) % sum
-                  cmfd % mu_sq(4,h,i,j,k) = t % results(2,score_index) % sum
-                  cmfd % mu_sq(5,h,i,j,k) = t % results(3,score_index) % sum
-                  cmfd % mu_sq(6,h,i,j,k) = t % results(4,score_index) % sum
+                  cmfd % mu_sq(2,h,i,j,k) = t % results(2,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_RIGHT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  !cmfd % mu_sq(2,h,i,j,k) = cmfd % mu_sq(2,h,i,j,k) + &
-                  !                            t % results(2,score_index) % sum
-                  cmfd % mu_sq(4,h,i,j,k) = cmfd % mu_sq(4,h,i,j,k) + &
+                  cmfd % mu_sq(2,h,i,j,k) = cmfd % mu_sq(2,h,i,j,k) + &
                                               t % results(2,score_index) % sum
-                  cmfd % mu_sq(5,h,i,j,k) = cmfd % mu_sq(5,h,i,j,k) + &
-                                              t % results(3,score_index) % sum
-                  cmfd % mu_sq(6,h,i,j,k) = cmfd % mu_sq(6,h,i,j,k) + &
-                                              t % results(4,score_index) % sum
 
                   ! back surface
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
                        (/ i, j-1, k /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_FRONT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  !cmfd % mu_sq(3,h,i,j,k) = t % results(2,score_index) % sum 
-                  cmfd % mu_sq(7,h,i,j,k) = t % results(2,score_index) % sum
-                  cmfd % mu_sq(8,h,i,j,k) = t % results(3,score_index) % sum
-                  cmfd % mu_sq(9,h,i,j,k) = t % results(4,score_index) % sum
+                  cmfd % mu_sq(3,h,i,j,k) = t % results(2,score_index) % sum 
                   t % matching_bins(i_filter_surf) = OUT_FRONT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  !cmfd % mu_sq(3,h,i,j,k) = cmfd % mu_sq(3,h,i,j,k) + &
-                  !                            t % results(2,score_index) % sum
-                  cmfd % mu_sq(7,h,i,j,k) = cmfd % mu_sq(7,h,i,j,k) + &
+                  cmfd % mu_sq(3,h,i,j,k) = cmfd % mu_sq(3,h,i,j,k) + &
                                               t % results(2,score_index) % sum
-                  cmfd % mu_sq(8,h,i,j,k) = cmfd % mu_sq(8,h,i,j,k) + &
-                                              t % results(3,score_index) % sum
-                  cmfd % mu_sq(9,h,i,j,k) = cmfd % mu_sq(9,h,i,j,k) + &
-                                              t % results(4,score_index) % sum
-                  
+
                   ! front surface
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
                        (/ i, j, k /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_FRONT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  !cmfd % mu_sq(4,h,i,j,k) = t % results(2,score_index) % sum
-                  cmfd % mu_sq(10,h,i,j,k) = t % results(2,score_index) % sum
-                  cmfd % mu_sq(11,h,i,j,k) = t % results(3,score_index) % sum
-                  cmfd % mu_sq(12,h,i,j,k) = t % results(4,score_index) % sum
+                  cmfd % mu_sq(4,h,i,j,k) = t % results(2,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_FRONT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  !cmfd % mu_sq(4,h,i,j,k) = cmfd % mu_sq(4,h,i,j,k) + &
-                  !                            t % results(2,score_index) % sum
-                  cmfd % mu_sq(10,h,i,j,k) = cmfd % mu_sq(10,h,i,j,k) + &
+                  cmfd % mu_sq(4,h,i,j,k) = cmfd % mu_sq(4,h,i,j,k) + &
                                               t % results(2,score_index) % sum
-                  cmfd % mu_sq(11,h,i,j,k) = cmfd % mu_sq(11,h,i,j,k) + &
-                                              t % results(3,score_index) % sum
-                  cmfd % mu_sq(12,h,i,j,k) = cmfd % mu_sq(12,h,i,j,k) + &
-                                              t % results(4,score_index) % sum
 
                   ! bottom surface
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
                        (/ i, j, k-1 /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_TOP
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  !cmfd % mu_sq(5,h,i,j,k) = t % results(2,score_index) % sum
-                  cmfd % mu_sq(13,h,i,j,k) = t % results(2,score_index) % sum
-                  cmfd % mu_sq(14,h,i,j,k) = t % results(3,score_index) % sum
-                  cmfd % mu_sq(15,h,i,j,k) = t % results(4,score_index) % sum
+                  cmfd % mu_sq(5,h,i,j,k) = t % results(2,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_TOP
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  !cmfd % mu_sq(5,h,i,j,k) = cmfd % mu_sq(5,h,i,j,k) + &
-                  !                            t % results(2,score_index) % sum
-                  cmfd % mu_sq(13,h,i,j,k) = cmfd % mu_sq(13,h,i,j,k) + &
+                  cmfd % mu_sq(5,h,i,j,k) = cmfd % mu_sq(5,h,i,j,k) + &
                                               t % results(2,score_index) % sum
-                  cmfd % mu_sq(14,h,i,j,k) = cmfd % mu_sq(14,h,i,j,k) + &
-                                              t % results(3,score_index) % sum
-                  cmfd % mu_sq(15,h,i,j,k) = cmfd % mu_sq(15,h,i,j,k) + &
-                                              t % results(4,score_index) % sum
 
                   ! top surface
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
                        (/ i, j, k /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_TOP
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  !cmfd % mu_sq(6,h,i,j,k) = t % results(2,score_index) % sum
-                  cmfd % mu_sq(16,h,i,j,k) = t % results(2,score_index) % sum
-                  cmfd % mu_sq(17,h,i,j,k) = t % results(3,score_index) % sum
-                  cmfd % mu_sq(18,h,i,j,k) = t % results(4,score_index) % sum
+                  cmfd % mu_sq(6,h,i,j,k) = t % results(2,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_TOP
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  !cmfd % mu_sq(6,h,i,j,k) = cmfd % mu_sq(6,h,i,j,k) + &
-                  !                            t % results(2,score_index) % sum
-                  cmfd % mu_sq(16,h,i,j,k) = cmfd % mu_sq(16,h,i,j,k) + &
+                  cmfd % mu_sq(6,h,i,j,k) = cmfd % mu_sq(6,h,i,j,k) + &
                                               t % results(2,score_index) % sum
-                  cmfd % mu_sq(17,h,i,j,k) = cmfd % mu_sq(17,h,i,j,k) + &
-                                              t % results(3,score_index) % sum
-                  cmfd % mu_sq(18,h,i,j,k) = cmfd % mu_sq(18,h,i,j,k) + &
-                                              t % results(4,score_index) % sum
                 end if
 
               end if TALLY
@@ -810,15 +756,15 @@ contains
     real(8) :: net_current        ! net current on a face
     real(8) :: neig_flux          ! flux in neighbor cell
     real(8) :: dhat               ! dhat equivalence parameter
-!If using functionals, we need a few extra variables:
+!If using functionals, we need some extra variables:
     real(8) :: cell_curr_all(3)   ! vol-avg current in current cell (in i,j,k)
     real(8) :: cell_curr          ! vol-avg current in current cell (in i,j, OR k)
     real(8) :: neig_curr          ! vol-avg current in neighbor cell (i,j, or k)
     real(8) :: cell_sigtr         ! average transport x-sect in current cell
     real(8) :: neig_sigtr         ! average transport x-sect in neighbor cell
-    real(8) :: mu_sq(3)           ! area integrated mu^2 wted flux (3 dir.) at one face 
-    real(8) :: mu_sq_all(18)      ! area integrated mu-sq functs (3 dir.) at each face
-    real(8) :: neig_mu_sq_all(18) ! "        ", 2 faces away
+    real(8) :: mu_sq              ! area integrated mu^2 wted flux at one face 
+    real(8) :: neig_mu_sq         ! area integrated mu-sq funct at one face, neighbor cell
+    real(8) :: mu_sq_all(6)       ! area integrated mu-sq functs at each face
     real(8) :: corr               ! total value of functional correction
     integer :: musq_sign          ! sign of mu-squared term
 
@@ -934,7 +880,7 @@ contains
                   ! only get the single face value we need:
                   !neig_mu_sq = cmfd % mu_sq(l,g,neig_idx(1),neig_idx(2),neig_idx(3))/&
                   !           product(cmfd%hxyz(:,neig_idx(1),neig_idx(2),neig_idx(3)))
-                  neig_mu_sq = cmfd % mu_sq(:,g,neig_idx(1),neig_idx(2),neig_idx(3))
+                  neig_mu_sq = cmfd % mu_sq(l,g,neig_idx(1),neig_idx(2),neig_idx(3))
                   !write(*,'(A,I3,A,2I3)') "neig musq face: ", l, " cell ", neig_idx(1), neig_idx(2)
                   ! THIS ONLY WORKS FOR ISOTROPIC SCATTERING RIGHT NOW
                   neig_sigtr = cmfd % totalxs(g,neig_idx(1),neig_idx(2),neig_idx(3)) * product(cmfd%hxyz(:,i,j,k))

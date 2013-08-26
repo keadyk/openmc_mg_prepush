@@ -532,9 +532,9 @@ contains
         ! allocate macro reactions
         if(use_functs) then
           ! extra scoring bin for mu-squared values
-           allocate(t % score_bins(2))
-           t % n_score_bins = 2
-           t % n_user_score_bins = 2
+           allocate(t % score_bins(4))
+           t % n_score_bins = 4
+           t % n_user_score_bins = 4
         else
           allocate(t % score_bins(1))
           t % n_score_bins = 1
@@ -548,7 +548,9 @@ contains
         ! set macro bins
         if(use_functs) then
           t % score_bins(1) = SCORE_CURRENT
-          t % score_bins(2) = SCORE_MU_SQ
+          t % score_bins(2) = SCORE_MU_SQX
+          t % score_bins(3) = SCORE_MU_SQY
+          t % score_bins(4) = SCORE_MU_SQZ
           t % type = TALLY_SURFACE_CURRENT          
         else
           t % score_bins(1) = SCORE_CURRENT
