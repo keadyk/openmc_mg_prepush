@@ -1,1 +1,1 @@
-Running 200k ppc, cmfd 2H, 75 cyc, 25 inact, ufs weighting ON
+Running 200k ppc, cmfd_s, 75 cyc, 25 inact, qtr assem grid, ufs weighting ON, ACTIVE FLUSH AT 25 CYCLES

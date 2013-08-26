@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <cmfd>
-	<active_flush>20</active_flush>
+	<active_flush>50</active_flush>
 	<feedback>true</feedback>
 	<write_balance>true</write_balance>
-	<use_functs>false</use_functs>
+	<use_functs>true</use_functs>
 	<mesh>
 		<type>rectangular</type>
 		<lower_left>0.0 0.0 0.0</lower_left>
-		<upper_right>10.0 10.0 10.0</upper_right>
-		<dimension>4 1 1</dimension>
-		<albedo>1.0 0.0 1.0 1.0 1.0 1.0</albedo>
+		<upper_right>5.0 10.0 10.0</upper_right>
+		<dimension>10 1 1</dimension>
+		<albedo>0.0 0.0 0.0 0.0 0.0 0.0</albedo>
 	</mesh>
 </cmfd>

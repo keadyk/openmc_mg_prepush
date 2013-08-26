@@ -1643,6 +1643,18 @@ contains
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt * &
                          abs(uvw(3))
+                  case (SCORE_MU_SQX)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(1)) 
+                  case (SCORE_MU_SQY)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(2))
+                  case (SCORE_MU_SQZ)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(3))
                 end select
               end do
             end if
@@ -1661,7 +1673,19 @@ contains
                   case (SCORE_CURRENT)
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt
-                  case (SCORE_MU_SQ)
+                  !case (SCORE_MU_SQ)
+                  !  t % results(l, filter_index) % value = &
+                  !       t % results(l, filter_index) % value + p % wgt * &
+                  !       abs(uvw(3))
+                  case (SCORE_MU_SQX)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(1)) 
+                  case (SCORE_MU_SQY)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(2))
+                  case (SCORE_MU_SQZ)
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt * &
                          abs(uvw(3))
@@ -1687,10 +1711,22 @@ contains
                   case (SCORE_CURRENT)
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt
-                  case (SCORE_MU_SQ)
+                  !case (SCORE_MU_SQ)
+                  !  t % results(l, filter_index) % value = &
+                  !       t % results(l, filter_index) % value + p % wgt * &
+                  !       abs(uvw(2))
+                  case (SCORE_MU_SQX)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(1)) 
+                  case (SCORE_MU_SQY)
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt * &
                          abs(uvw(2))
+                  case (SCORE_MU_SQZ)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(3))
                 end select
               end do
             end if
@@ -1709,10 +1745,22 @@ contains
                   case (SCORE_CURRENT)
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt
-                  case (SCORE_MU_SQ)
+                  !case (SCORE_MU_SQ)
+                  !  t % results(l, filter_index) % value = &
+                  !       t % results(l, filter_index) % value + p % wgt * &
+                  !       abs(uvw(2))
+                  case (SCORE_MU_SQX)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(1)) 
+                  case (SCORE_MU_SQY)
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt * &
                          abs(uvw(2))
+                  case (SCORE_MU_SQZ)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(3))
                 end select
               end do
             end if
@@ -1735,10 +1783,22 @@ contains
                   case (SCORE_CURRENT)
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt
-                  case (SCORE_MU_SQ)
-                   t % results(l, filter_index) % value = &
+                  !case (SCORE_MU_SQ)
+                  ! t % results(l, filter_index) % value = &
+                  !       t % results(l, filter_index) % value + p % wgt * &
+                  !       abs(uvw(1))
+                  case (SCORE_MU_SQX)
+                    t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt * &
-                         abs(uvw(1))
+                         abs(uvw(1)) 
+                  case (SCORE_MU_SQY)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(2))
+                  case (SCORE_MU_SQZ)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(3))
                 end select
               end do
             end if
@@ -1757,10 +1817,22 @@ contains
                   case (SCORE_CURRENT)
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt
-                  case (SCORE_MU_SQ)
+                  !case (SCORE_MU_SQ)
+                  !  t % results(l, filter_index) % value = &
+                  !       t % results(l, filter_index) % value + p % wgt * &
+                  !       abs(uvw(1))
+                  case (SCORE_MU_SQX)
                     t % results(l, filter_index) % value = &
                          t % results(l, filter_index) % value + p % wgt * &
-                         abs(uvw(1))                        
+                         abs(uvw(1)) 
+                  case (SCORE_MU_SQY)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(2))
+                  case (SCORE_MU_SQZ)
+                    t % results(l, filter_index) % value = &
+                         t % results(l, filter_index) % value + p % wgt * &
+                         abs(uvw(3))                         
                 end select
               end do
             end if
@@ -1893,13 +1965,25 @@ contains
               case (SCORE_CURRENT)
                 t % results(l, filter_index) % value = &
                      t % results(l, filter_index) % value + p % wgt
-               case (SCORE_MU_SQ)
+              ! case (SCORE_MU_SQ)
                 ! can determine which dir. coefficient to weight by
                 ! using the floor operator on the surface filter
                 ! (see constants.F90 for integer values of IN_TOP, OUT_TOP, ..)
-                 t % results(l, filter_index) % value = &
-                      t % results(l, filter_index) % value + p % wgt * &
-                      abs(uvw(floor(0.5*(t % matching_bins(i_filter_surf) + 1)))) 
+                ! t % results(l, filter_index) % value = &
+                     ! t % results(l, filter_index) % value + p % wgt * &
+                     ! abs(uvw(floor(0.5*(t % matching_bins(i_filter_surf) + 1)))) 
+              case (SCORE_MU_SQX)
+                t % results(l, filter_index) % value = &
+                     t % results(l, filter_index) % value + p % wgt * &
+                     abs(uvw(1)) 
+              case (SCORE_MU_SQY)
+                t % results(l, filter_index) % value = &
+                     t % results(l, filter_index) % value + p % wgt * &
+                     abs(uvw(2))
+              case (SCORE_MU_SQZ)
+                t % results(l, filter_index) % value = &
+                     t % results(l, filter_index) % value + p % wgt * &
+                     abs(uvw(3))
             end select
           end do               
 
@@ -2040,9 +2124,15 @@ contains
         t % matching_bins(i_filter_mesh) = &
              mesh_indices_to_bin(m, ijk0 + 1, .true.)
         filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        !t % results(2, filter_index) % value = &
+        !     t % results(2, filter_index) % value + 2 * p % wgt * &
+        !     abs(uvw(3))
         t % results(2, filter_index) % value = &
-             t % results(2, filter_index) % value + 2 * p % wgt * &
-             abs(uvw(3))
+             t % results(2, filter_index) % value + 2 * p % wgt * abs(uvw(1))
+        t % results(3, filter_index) % value = &
+             t % results(3, filter_index) % value + 2 * p % wgt * abs(uvw(2))
+        t % results(4, filter_index) % value = &
+             t % results(4, filter_index) % value + 2 * p % wgt * abs(uvw(3))
       else
         ! in top of bottom mesh bin
         ijk0(3) = ijk0(3) - 1
@@ -2050,9 +2140,15 @@ contains
         t % matching_bins(i_filter_mesh) = &
              mesh_indices_to_bin(m, ijk0 + 1, .true.)
        filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        !t % results(2, filter_index) % value = &
+        !     t % results(2, filter_index) % value + 2 * p % wgt * &
+        !     abs(uvw(3))
         t % results(2, filter_index) % value = &
-             t % results(2, filter_index) % value + 2 * p % wgt * &
-             abs(uvw(3))
+             t % results(2, filter_index) % value + 2 * p % wgt * abs(uvw(1))
+        t % results(3, filter_index) % value = &
+             t % results(3, filter_index) % value + 2 * p % wgt * abs(uvw(2))
+        t % results(4, filter_index) % value = &
+             t % results(4, filter_index) % value + 2 * p % wgt * abs(uvw(3))
       end if
     elseif (x_same .and. z_same) then
       ! Y crossing
@@ -2062,9 +2158,15 @@ contains
         t % matching_bins(i_filter_mesh) = &
              mesh_indices_to_bin(m, ijk0 + 1, .true.)
         filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        !t % results(2, filter_index) % value = &
+        !     t % results(2, filter_index) % value + 2 * p % wgt * &
+        !     abs(uvw(2))
         t % results(2, filter_index) % value = &
-             t % results(2, filter_index) % value + 2 * p % wgt * &
-             abs(uvw(2))
+             t % results(2, filter_index) % value + 2 * p % wgt * abs(uvw(1))
+        t % results(3, filter_index) % value = &
+             t % results(3, filter_index) % value + 2 * p % wgt * abs(uvw(2))
+        t % results(4, filter_index) % value = &
+             t % results(4, filter_index) % value + 2 * p % wgt * abs(uvw(3))
       else
         ! in front of back mesh bin
         ijk0(2) = ijk0(2) - 1
@@ -2072,9 +2174,15 @@ contains
         t % matching_bins(i_filter_mesh) = &
              mesh_indices_to_bin(m, ijk0 + 1, .true.)
         filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        !t % results(2, filter_index) % value = &
+        !     t % results(2, filter_index) % value + 2 * p % wgt * &
+        !     abs(uvw(2))
         t % results(2, filter_index) % value = &
-             t % results(2, filter_index) % value + 2 * p % wgt * &
-             abs(uvw(2))
+             t % results(2, filter_index) % value + 2 * p % wgt * abs(uvw(1))
+        t % results(3, filter_index) % value = &
+             t % results(3, filter_index) % value + 2 * p % wgt * abs(uvw(2))
+        t % results(4, filter_index) % value = &
+             t % results(4, filter_index) % value + 2 * p % wgt * abs(uvw(3))
       end if
     elseif (y_same .and. z_same) then
       ! X crossing
@@ -2084,8 +2192,14 @@ contains
         t % matching_bins(i_filter_mesh) = &
              mesh_indices_to_bin(m, ijk0 + 1, .true.)
         filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        !t % results(2, filter_index) % value = &
+        !     t % results(2, filter_index) % value + 2 * p % wgt * abs(uvw(1))
         t % results(2, filter_index) % value = &
              t % results(2, filter_index) % value + 2 * p % wgt * abs(uvw(1))
+        t % results(3, filter_index) % value = &
+             t % results(3, filter_index) % value + 2 * p % wgt * abs(uvw(2))
+        t % results(4, filter_index) % value = &
+             t % results(4, filter_index) % value + 2 * p % wgt * abs(uvw(3))
       else
         ! in right of left-hand mesh bin
         ijk0(1) = ijk0(1) - 1
@@ -2093,8 +2207,14 @@ contains
         t % matching_bins(i_filter_mesh) = &
              mesh_indices_to_bin(m, ijk0 + 1, .true.)
          filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        !t % results(2, filter_index) % value = &
+        !     t % results(2, filter_index) % value + 2 * p % wgt * abs(uvw(1))
         t % results(2, filter_index) % value = &
-             t % results(2, filter_index) % value + 2 * p % wgt * abs(uvw(1))
+             t % results(2, filter_index) % value + 2* p % wgt * abs(uvw(1))
+        t % results(3, filter_index) % value = &
+             t % results(3, filter_index) % value + 2 * p % wgt * abs(uvw(2))
+        t % results(4, filter_index) % value = &
+             t % results(4, filter_index) % value + 2 * p % wgt * abs(uvw(3))
       end if
     end if                  
     

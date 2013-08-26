@@ -1,4 +1,4 @@
-program = openmc
+program = openmcDEBUGGING
 prefix = /home/keadyk/NetBeansProjects/OPENMC_builds
 
 templates = $(wildcard templates/*.o)

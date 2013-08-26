@@ -326,66 +326,120 @@ contains
                        (/ i-1, j, k /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_RIGHT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
+                  !cmfd % mu_sq(1,h,i,j,k) = t % results(2,score_index) % sum
                   cmfd % mu_sq(1,h,i,j,k) = t % results(2,score_index) % sum
+                  cmfd % mu_sq(2,h,i,j,k) = t % results(3,score_index) % sum
+                  cmfd % mu_sq(3,h,i,j,k) = t % results(4,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_RIGHT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
+                  !cmfd % mu_sq(1,h,i,j,k) = cmfd % mu_sq(1,h,i,j,k) + &
+                  !                            t % results(2,score_index) % sum
                   cmfd % mu_sq(1,h,i,j,k) = cmfd % mu_sq(1,h,i,j,k) + &
                                               t % results(2,score_index) % sum
+                  cmfd % mu_sq(2,h,i,j,k) = cmfd % mu_sq(2,h,i,j,k) + &
+                                              t % results(3,score_index) % sum
+                  cmfd % mu_sq(3,h,i,j,k) = cmfd % mu_sq(3,h,i,j,k) + &
+                                              t % results(4,score_index) % sum
 
                   ! right surface
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
                        (/ i, j, k /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_RIGHT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  cmfd % mu_sq(2,h,i,j,k) = t % results(2,score_index) % sum
+                  !cmfd % mu_sq(2,h,i,j,k) = t % results(2,score_index) % sum
+                  cmfd % mu_sq(4,h,i,j,k) = t % results(2,score_index) % sum
+                  cmfd % mu_sq(5,h,i,j,k) = t % results(3,score_index) % sum
+                  cmfd % mu_sq(6,h,i,j,k) = t % results(4,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_RIGHT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  cmfd % mu_sq(2,h,i,j,k) = cmfd % mu_sq(2,h,i,j,k) + &
+                  !cmfd % mu_sq(2,h,i,j,k) = cmfd % mu_sq(2,h,i,j,k) + &
+                  !                            t % results(2,score_index) % sum
+                  cmfd % mu_sq(4,h,i,j,k) = cmfd % mu_sq(4,h,i,j,k) + &
                                               t % results(2,score_index) % sum
+                  cmfd % mu_sq(5,h,i,j,k) = cmfd % mu_sq(5,h,i,j,k) + &
+                                              t % results(3,score_index) % sum
+                  cmfd % mu_sq(6,h,i,j,k) = cmfd % mu_sq(6,h,i,j,k) + &
+                                              t % results(4,score_index) % sum
 
                   ! back surface
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
                        (/ i, j-1, k /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_FRONT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  cmfd % mu_sq(3,h,i,j,k) = t % results(2,score_index) % sum 
+                  !cmfd % mu_sq(3,h,i,j,k) = t % results(2,score_index) % sum 
+                  cmfd % mu_sq(7,h,i,j,k) = t % results(2,score_index) % sum
+                  cmfd % mu_sq(8,h,i,j,k) = t % results(3,score_index) % sum
+                  cmfd % mu_sq(9,h,i,j,k) = t % results(4,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_FRONT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  cmfd % mu_sq(3,h,i,j,k) = cmfd % mu_sq(3,h,i,j,k) + &
+                  !cmfd % mu_sq(3,h,i,j,k) = cmfd % mu_sq(3,h,i,j,k) + &
+                  !                            t % results(2,score_index) % sum
+                  cmfd % mu_sq(7,h,i,j,k) = cmfd % mu_sq(7,h,i,j,k) + &
                                               t % results(2,score_index) % sum
-
+                  cmfd % mu_sq(8,h,i,j,k) = cmfd % mu_sq(8,h,i,j,k) + &
+                                              t % results(3,score_index) % sum
+                  cmfd % mu_sq(9,h,i,j,k) = cmfd % mu_sq(9,h,i,j,k) + &
+                                              t % results(4,score_index) % sum
+                  
                   ! front surface
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
                        (/ i, j, k /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_FRONT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  cmfd % mu_sq(4,h,i,j,k) = t % results(2,score_index) % sum
+                  !cmfd % mu_sq(4,h,i,j,k) = t % results(2,score_index) % sum
+                  cmfd % mu_sq(10,h,i,j,k) = t % results(2,score_index) % sum
+                  cmfd % mu_sq(11,h,i,j,k) = t % results(3,score_index) % sum
+                  cmfd % mu_sq(12,h,i,j,k) = t % results(4,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_FRONT
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  cmfd % mu_sq(4,h,i,j,k) = cmfd % mu_sq(4,h,i,j,k) + &
+                  !cmfd % mu_sq(4,h,i,j,k) = cmfd % mu_sq(4,h,i,j,k) + &
+                  !                            t % results(2,score_index) % sum
+                  cmfd % mu_sq(10,h,i,j,k) = cmfd % mu_sq(10,h,i,j,k) + &
                                               t % results(2,score_index) % sum
+                  cmfd % mu_sq(11,h,i,j,k) = cmfd % mu_sq(11,h,i,j,k) + &
+                                              t % results(3,score_index) % sum
+                  cmfd % mu_sq(12,h,i,j,k) = cmfd % mu_sq(12,h,i,j,k) + &
+                                              t % results(4,score_index) % sum
 
                   ! bottom surface
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
                        (/ i, j, k-1 /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_TOP
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  cmfd % mu_sq(5,h,i,j,k) = t % results(2,score_index) % sum
+                  !cmfd % mu_sq(5,h,i,j,k) = t % results(2,score_index) % sum
+                  cmfd % mu_sq(13,h,i,j,k) = t % results(2,score_index) % sum
+                  cmfd % mu_sq(14,h,i,j,k) = t % results(3,score_index) % sum
+                  cmfd % mu_sq(15,h,i,j,k) = t % results(4,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_TOP
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  cmfd % mu_sq(5,h,i,j,k) = cmfd % mu_sq(5,h,i,j,k) + &
+                  !cmfd % mu_sq(5,h,i,j,k) = cmfd % mu_sq(5,h,i,j,k) + &
+                  !                            t % results(2,score_index) % sum
+                  cmfd % mu_sq(13,h,i,j,k) = cmfd % mu_sq(13,h,i,j,k) + &
                                               t % results(2,score_index) % sum
+                  cmfd % mu_sq(14,h,i,j,k) = cmfd % mu_sq(14,h,i,j,k) + &
+                                              t % results(3,score_index) % sum
+                  cmfd % mu_sq(15,h,i,j,k) = cmfd % mu_sq(15,h,i,j,k) + &
+                                              t % results(4,score_index) % sum
 
                   ! top surface
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m, &
                        (/ i, j, k /) + 1, .true.)
                   t % matching_bins(i_filter_surf) = IN_TOP
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! incoming
-                  cmfd % mu_sq(6,h,i,j,k) = t % results(2,score_index) % sum
+                  !cmfd % mu_sq(6,h,i,j,k) = t % results(2,score_index) % sum
+                  cmfd % mu_sq(16,h,i,j,k) = t % results(2,score_index) % sum
+                  cmfd % mu_sq(17,h,i,j,k) = t % results(3,score_index) % sum
+                  cmfd % mu_sq(18,h,i,j,k) = t % results(4,score_index) % sum
                   t % matching_bins(i_filter_surf) = OUT_TOP
                   score_index = sum((t % matching_bins - 1) * t % stride) + 1 ! outgoing
-                  cmfd % mu_sq(6,h,i,j,k) = cmfd % mu_sq(6,h,i,j,k) + &
+                  !cmfd % mu_sq(6,h,i,j,k) = cmfd % mu_sq(6,h,i,j,k) + &
+                  !                            t % results(2,score_index) % sum
+                  cmfd % mu_sq(16,h,i,j,k) = cmfd % mu_sq(16,h,i,j,k) + &
                                               t % results(2,score_index) % sum
+                  cmfd % mu_sq(17,h,i,j,k) = cmfd % mu_sq(17,h,i,j,k) + &
+                                              t % results(3,score_index) % sum
+                  cmfd % mu_sq(18,h,i,j,k) = cmfd % mu_sq(18,h,i,j,k) + &
+                                              t % results(4,score_index) % sum
                 end if
 
               end if TALLY
@@ -740,6 +794,7 @@ contains
     integer :: nz                 ! maximum number of cells in z direction
     integer :: ng                 ! maximum number of energy groups
     integer :: nxyz(3,2)          ! single vector containing boundary locations
+    integer :: f                  ! iteration counter for mu_sq
     integer :: i                  ! iteration counter for x
     integer :: j                  ! iteration counter for y
     integer :: k                  ! iteration counter for z
@@ -756,17 +811,18 @@ contains
     real(8) :: net_current        ! net current on a face
     real(8) :: neig_flux          ! flux in neighbor cell
     real(8) :: dhat               ! dhat equivalence parameter
-!If using functionals, we need some extra variables:
+!If using functionals, we need a few extra variables:
     real(8) :: cell_curr_all(3)   ! vol-avg current in current cell (in i,j,k)
     real(8) :: cell_curr          ! vol-avg current in current cell (in i,j, OR k)
     real(8) :: neig_curr          ! vol-avg current in neighbor cell (i,j, or k)
     real(8) :: cell_sigtr         ! average transport x-sect in current cell
     real(8) :: neig_sigtr         ! average transport x-sect in neighbor cell
-    real(8) :: mu_sq              ! area integrated mu^2 wted flux at one face 
-    real(8) :: neig_mu_sq         ! area integrated mu-sq funct at one face, neighbor cell
-    real(8) :: mu_sq_all(6)       ! area integrated mu-sq functs at each face
+    real(8) :: mu_sq(6)           ! area integrated mu^2 wted flux (1 dir.) for faces of 3D cell 
+    real(8) :: mu_sq_all(18)      ! area integrated mu-sq functs (3 dir.) at each face
+    real(8) :: neig_mu_sq(6)      ! "        ", 2 faces away
     real(8) :: corr               ! total value of functional correction
     integer :: musq_sign          ! sign of mu-squared term
+    real(8) :: musq_term
 
     ! get maximum of spatial and group indices
     nx = cmfd%indices(1)
@@ -779,7 +835,7 @@ contains
     nxyz(2,:) = (/1,ny/)
     nxyz(3,:) = (/1,nz/)
 
-    ! geting loop over group and spatial indices
+    ! loop over group and spatial indices
     ZLOOP:  do k = 1,nz
 
       YLOOP: do j = 1,ny
@@ -838,7 +894,10 @@ contains
               ! IMPORTANT: We want the value for the face OPPOSITE
               ! the interface we are currently calculating! That's why
               ! the index calculation is so silly :)
-              mu_sq = mu_sq_all(l + mod(l,2) - mod((l+1),2))
+              !mu_sq = mu_sq_all(l + mod(l,2) - mod((l+1),2))
+              do f = 1,6
+                mu_sq(f) = mu_sq_all(3*(f-1)+xyz_idx)
+              end do
               ! write(*,'(/A,I3,A,2I3)') "cell musq face: ", (l + mod(l,2) - mod((l+1),2)), " cell ", i, j
                       
               ! store cell-avg current for this direction
@@ -849,11 +908,29 @@ contains
                 
                 ! compute dhat
                 if (use_functs) then
-                  !write(*,'(A,2E20.7,A,E20.7)') "bound curr, net and vol: ", net_current, (cell_curr)/&
-                  !(cell_sigtr), "  musq: ",  shift_idx*(mu_sq_all(l)-mu_sq)/&
-                  !(cell_sigtr)
                   ! Use 'neighbor' mu_sq from opposite edge of THIS cell
-                  corr = (cell_curr + shift_idx*(mu_sq_all(l)-mu_sq))/(cell_sigtr)
+                  !musq_term = mu_sq(2) - mu_sq(1) + mu_sq(4) - mu_sq(3) + mu_sq(6) - mu_sq(5)
+                  if(xyz_idx == 1) then
+                    !musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + mu_sq(6)&
+                    !          - mu_sq(5) + mu_sq(4) - mu_sq(3)
+                              musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
+                  else if(xyz_idx == 2) then
+                    !musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + mu_sq(2)&
+                    !          - mu_sq(1) + mu_sq(6) - mu_sq(5)
+                              musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
+                  else
+                    !musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + mu_sq(4)&
+                    !          - mu_sq(3) + mu_sq(2) - mu_sq(1)
+                              musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
+                  end if
+                  
+                  
+                  !corr = (cell_curr + shift_idx*(mu_sq_all(l)-mu_sq))/(cell_sigtr)
+                  !write(*, '(A,E20.7,A,E20.7,A,E20.7)'), "bound net curr ", net_current, " vol curr ",&
+                  !      (cell_curr)/(cell_sigtr), " musq term " ,&
+                  !      shift_idx*musq_term/(cell_sigtr)
+                  corr = (cell_curr + shift_idx*musq_term)/(cell_sigtr)
+                  !write(*, '(A,E20.7)') "BOUND corr term: ", corr
                   
                   dhat = (net_current - shift_idx*cell_dtilde(l)*cell_flux - corr) /&
                          cell_flux
@@ -880,7 +957,9 @@ contains
                   ! only get the single face value we need:
                   !neig_mu_sq = cmfd % mu_sq(l,g,neig_idx(1),neig_idx(2),neig_idx(3))/&
                   !           product(cmfd%hxyz(:,neig_idx(1),neig_idx(2),neig_idx(3)))
-                  neig_mu_sq = cmfd % mu_sq(l,g,neig_idx(1),neig_idx(2),neig_idx(3))
+                  do f = 1,6
+                    neig_mu_sq(f) = cmfd % mu_sq(3*(f-1)+xyz_idx,g,neig_idx(1),neig_idx(2),neig_idx(3))
+                  end do
                   !write(*,'(A,I3,A,2I3)') "neig musq face: ", l, " cell ", neig_idx(1), neig_idx(2)
                   ! THIS ONLY WORKS FOR ISOTROPIC SCATTERING RIGHT NOW
                   neig_sigtr = cmfd % totalxs(g,neig_idx(1),neig_idx(2),neig_idx(3)) * product(cmfd%hxyz(:,i,j,k))
@@ -895,7 +974,15 @@ contains
 
                     ! compute dhat
                     if (use_functs) then
-                      corr = (cell_curr + shift_idx*(mu_sq_all(l)-mu_sq))/(cell_sigtr)
+                      !corr = (cell_curr + shift_idx*(mu_sq_all(l)-mu_sq))/(cell_sigtr)
+                      ! Use 'neighbor' mu_sq from opposite edge of THIS cell
+                      musq_term = mu_sq(2) - mu_sq(1) + mu_sq(4) - mu_sq(3) + mu_sq(6) - mu_sq(5)
+                      corr = (cell_curr + shift_idx*musq_term)/(cell_sigtr)
+                      !write(*, '(A,E20.7,A,E20.7,A,E20.7)'), "bound net curr ", net_current, " vol curr ",&
+                      !      cell_curr, " musq term " , musq_term
+                      ! NEED TO FIX THIS!
+                      write(*,'(A)') "CAN'T USE COREMAP YET!!!"
+                      
                       dhat = (net_current - shift_idx*cell_dtilde(l)*cell_flux - corr) /&
                              cell_flux
                     else
@@ -907,7 +994,24 @@ contains
 
                     ! compute dhat 
                     if (use_functs) then
-                      corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq - mu_sq))/(cell_sigtr + neig_sigtr)
+                      if(xyz_idx == 1) then
+                        musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(6) + neig_mu_sq(6))&
+                                  - (mu_sq(5) + neig_mu_sq(5)) + (mu_sq(4) + neig_mu_sq(4)) - (mu_sq(3) + neig_mu_sq(3))
+                      else if(xyz_idx == 2) then
+                        musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(2) + neig_mu_sq(2))&
+                                  - (mu_sq(1) + neig_mu_sq(1)) + (mu_sq(6) + neig_mu_sq(6)) - (mu_sq(5) + neig_mu_sq(5))
+                      else
+                        musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(4) + neig_mu_sq(4))&
+                                  - (mu_sq(3) + neig_mu_sq(3)) + (mu_sq(2) + neig_mu_sq(2)) - (mu_sq(1) + neig_mu_sq(1))
+                      end if
+                      corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))))/&
+                             (cell_sigtr + neig_sigtr)
+                      !corr = (cell_curr + neig_curr + shift_idx*musq_term)/(cell_sigtr + neig_sigtr)
+                      !write(*, '(A,E20.7,A,E20.7,A,E20.7,A,E20.7)'), "INTERIOR net curr ", net_current, " vol curr ",&
+                      !      (cell_curr+neig_curr)/(cell_sigtr + neig_sigtr), " musq term " ,&
+                      !      shift_idx*musq_term/(cell_sigtr + neig_sigtr), " musq wo cross ",&
+                      !      shift_idx*(neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)))/(cell_sigtr + neig_sigtr)
+                      !write(*, '(A,E20.7)') "INTERIOR corr term: ", corr
                       dhat = (net_current + shift_idx*cell_dtilde(l)* &
                              (neig_flux - cell_flux) - corr)/(neig_flux + cell_flux)
                     else
@@ -920,7 +1024,26 @@ contains
                 else ! not for fuel-reflector case
                   ! compute dhat 
                   if (use_functs) then
-                    corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq - mu_sq))/(cell_sigtr + neig_sigtr)
+                    if(xyz_idx == 1) then
+                      !write(*, '(A,I3,A,I3,A,I3,A,I3)') " shift ", shift_idx, " cell ", i, " x-direction, face ",&  
+                      !l + mod(l,2) - mod((l+1),2), " neighbor face ", l
+                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(6) + neig_mu_sq(6))&
+                                - (mu_sq(5) + neig_mu_sq(5)) + (mu_sq(4) + neig_mu_sq(4)) - (mu_sq(3) + neig_mu_sq(3))
+                    else if(xyz_idx == 2) then
+                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(2) + neig_mu_sq(2))&
+                                - (mu_sq(1) + neig_mu_sq(1)) + (mu_sq(6) + neig_mu_sq(6)) - (mu_sq(5) + neig_mu_sq(5))
+                    else
+                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(4) + neig_mu_sq(4))&
+                                - (mu_sq(3) + neig_mu_sq(3)) + (mu_sq(2) + neig_mu_sq(2)) - (mu_sq(1) + neig_mu_sq(1))
+                    end if
+                    corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))))/&
+                           (cell_sigtr + neig_sigtr)
+                    !corr = (cell_curr + neig_curr + shift_idx*musq_term)/(cell_sigtr + neig_sigtr)
+                    write(*, '(A,E20.7,A,E20.7,A,E20.7,A,E20.7)'), "INTERIOR net curr ", net_current, " vol curr ",&
+                            (cell_curr+neig_curr)/(cell_sigtr + neig_sigtr), " musq term " ,&
+                            shift_idx*musq_term/(cell_sigtr + neig_sigtr), " musq wo cross ",&
+                            shift_idx*(neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)))/(cell_sigtr + neig_sigtr)
+                    !write(*, '(A,E20.7)') "INTERIOR corr term: ", corr
                     !write(*,'(A,I2,A,I2,1X,I2,A,I2,1X,I2)') "f: ", l, " c: ", i, j," n : ", neig_idx(1), &
                     !neig_idx(2)
                     !write(*, '(A,2E20.7)') "raw curr data ", cell_curr, neig_curr

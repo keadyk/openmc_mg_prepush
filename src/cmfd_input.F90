@@ -441,7 +441,7 @@ contains
 #ifdef MULTIGROUP
         ! set tally estimator to tracklength
         ! t % estimator = ESTIMATOR_TRACKLENGTH
-        t % estimator = ESTIMATOR_ANALOG
+         t % estimator = ESTIMATOR_ANALOG
         ! wARNING-- WON'T WORK FOR ANISO SCATTERING
 #else 
         ! set tally estimator to analog
@@ -532,9 +532,9 @@ contains
         ! allocate macro reactions
         if(use_functs) then
           ! extra scoring bin for mu-squared values
-          allocate(t % score_bins(2))
-          t % n_score_bins = 2
-          t % n_user_score_bins = 2
+           allocate(t % score_bins(2))
+           t % n_score_bins = 2
+           t % n_user_score_bins = 2
         else
           allocate(t % score_bins(1))
           t % n_score_bins = 1
