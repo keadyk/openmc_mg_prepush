@@ -12,5 +12,4 @@
 		<density value="1.0" units="atom/b-cm"/>
 		<nuclide name="FModk" ao="1.00"/>
 	</material>
-	</material>
 </materials>

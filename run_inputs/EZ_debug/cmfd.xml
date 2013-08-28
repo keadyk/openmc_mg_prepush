@@ -3,12 +3,12 @@
 	<active_flush>50</active_flush>
 	<feedback>false</feedback>
 	<write_balance>true</write_balance>
-	<use_functs>true</use_functs>
+	<use_functs>false</use_functs>
 	<mesh>
 		<type>rectangular</type>
 		<lower_left>0.0 0.0 0.0</lower_left>
-		<upper_right>5.0 10.0 10.0</upper_right>
-		<dimension>20 20 1</dimension>
-		<albedo>0.0 0.0 0.0 0.0 0.0 0.0</albedo>
+		<upper_right>10 10 10</upper_right>
+		<dimension>4 1 1</dimension>
+		<albedo>1.0 0.0 1.0 1.0 1.0 1.0</albedo>
 	</mesh>
 </cmfd>

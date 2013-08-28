@@ -807,7 +807,6 @@ contains
     real(8) :: mu_sq_all(18)      ! area integrated mu-sq functs (3 dir.) at each face
     real(8) :: neig_mu_sq(6)      ! "        ", 2 faces away
     real(8) :: corr               ! total value of functional correction
-    integer :: musq_sign          ! sign of mu-squared term
     real(8) :: musq_term
 
     ! get maximum of spatial and group indices
@@ -862,16 +861,6 @@ contains
               dir_idx = 2 - mod(l,2) ! - is 1, + is 2
               shift_idx = -2*mod(l,2) +1          ! shift neig by -1 or +1
               
-              ! determine sign of mu-sq term if using functionals
-              ! FIX THIS !!!! Don't need an if statement :D 
-              if (use_functs) then
-                if (l == 1 .or. l == 2) then
-                  musq_sign = -1
-                else
-                  musq_sign = 1
-                end if
-              end if
-              
               ! calculate net current on l face (divided by surf area)
               net_current = (current(2*l) - current(2*l-1)) / &
                    product(cmfd%hxyz(:,i,j,k)) * cmfd%hxyz(xyz_idx,i,j,k)
@@ -897,16 +886,16 @@ contains
                   ! Use 'neighbor' mu_sq from opposite edge of THIS cell
                   !musq_term = mu_sq(2) - mu_sq(1) + mu_sq(4) - mu_sq(3) + mu_sq(6) - mu_sq(5)
                   if(xyz_idx == 1) then
-                    musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*(mu_sq(6) &
-                              + mu_sq(5) + mu_sq(4) + mu_sq(3))
+                    musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*((mu_sq(6) &
+                              - mu_sq(5)) + (mu_sq(4) - mu_sq(3)))
                     !          musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
                   else if(xyz_idx == 2) then
-                    musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*(mu_sq(2) &
-                              + mu_sq(1) + mu_sq(6) + mu_sq(5))
+                    musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*((mu_sq(2) &
+                              - mu_sq(1)) + (mu_sq(6) - mu_sq(5)))
                     !          musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
                   else
-                    musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*(mu_sq(4) &
-                              + mu_sq(3) + mu_sq(2) + mu_sq(1))
+                    musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*((mu_sq(4) &
+                              - mu_sq(3)) + (mu_sq(2) - mu_sq(1)))
                     !          musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
                   end if
                   
@@ -1013,14 +1002,14 @@ contains
                     if(xyz_idx == 1) then
                       !write(*, '(A,I3,A,I3,A,I3,A,I3)') " shift ", shift_idx, " cell ", i, " x-direction, face ",&  
                       !l + mod(l,2) - mod((l+1),2), " neighbor face ", l
-                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + shift_idx*(mu_sq(6) + neig_mu_sq(6)&
-                                + mu_sq(5) + neig_mu_sq(5) + mu_sq(4) + neig_mu_sq(4) + mu_sq(3) + neig_mu_sq(3))
+                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + shift_idx*((mu_sq(6) + neig_mu_sq(6))&
+                                - (mu_sq(5) + neig_mu_sq(5)) + (mu_sq(4) + neig_mu_sq(4)) - (mu_sq(3) + neig_mu_sq(3)))
                     else if(xyz_idx == 2) then
-                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + shift_idx*(mu_sq(2) + neig_mu_sq(2)&
-                                + mu_sq(1) + neig_mu_sq(1) + mu_sq(6) + neig_mu_sq(6) + mu_sq(5) + neig_mu_sq(5))
+                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + shift_idx*((mu_sq(2) + neig_mu_sq(2))&
+                                - (mu_sq(1) + neig_mu_sq(1)) + (mu_sq(6) + neig_mu_sq(6)) - (mu_sq(5) + neig_mu_sq(5)))
                     else
-                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + shift_idx*(mu_sq(4) + neig_mu_sq(4)&
-                                + mu_sq(3) + neig_mu_sq(3) + mu_sq(2) + neig_mu_sq(2) + mu_sq(1) + neig_mu_sq(1))
+                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + shift_idx*((mu_sq(4) + neig_mu_sq(4))&
+                                - (mu_sq(3) + neig_mu_sq(3)) + (mu_sq(2) + neig_mu_sq(2)) - (mu_sq(1) + neig_mu_sq(1)))
                     end if
                     !corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))))/&
                     !       (cell_sigtr + neig_sigtr)

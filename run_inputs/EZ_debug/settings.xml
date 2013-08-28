@@ -14,8 +14,8 @@
 	</source>
 	<entropy>
 		<lower_left>0.0 0.0 0.0</lower_left>
-		<upper_right>5.0 10.0 10.0</upper_right>
-		<dimension>20 20 1</dimension>
+		<upper_right>10.0 10.0 10.0</upper_right>
+		<dimension>4 1 1</dimension>
 	</entropy>
 	<run_cmfd>true</run_cmfd>
 	<survival_biasing>false</survival_biasing>
