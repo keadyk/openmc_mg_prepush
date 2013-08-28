@@ -897,17 +897,17 @@ contains
                   ! Use 'neighbor' mu_sq from opposite edge of THIS cell
                   !musq_term = mu_sq(2) - mu_sq(1) + mu_sq(4) - mu_sq(3) + mu_sq(6) - mu_sq(5)
                   if(xyz_idx == 1) then
-                    !musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + mu_sq(6)&
-                    !          - mu_sq(5) + mu_sq(4) - mu_sq(3)
-                              musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
+                    musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*(mu_sq(6) &
+                              + mu_sq(5) + mu_sq(4) + mu_sq(3))
+                    !          musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
                   else if(xyz_idx == 2) then
-                    !musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + mu_sq(2)&
-                    !          - mu_sq(1) + mu_sq(6) - mu_sq(5)
-                              musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
+                    musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*(mu_sq(2) &
+                              + mu_sq(1) + mu_sq(6) + mu_sq(5))
+                    !          musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
                   else
-                    !musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + mu_sq(4)&
-                    !          - mu_sq(3) + mu_sq(2) - mu_sq(1)
-                              musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
+                    musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*(mu_sq(4) &
+                              + mu_sq(3) + mu_sq(2) + mu_sq(1))
+                    !          musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
                   end if
                   
                   
@@ -982,13 +982,13 @@ contains
                     if (use_functs) then
                       if(xyz_idx == 1) then
                         musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(6) + neig_mu_sq(6))&
-                                  - (mu_sq(5) + neig_mu_sq(5)) + (mu_sq(4) + neig_mu_sq(4)) - (mu_sq(3) + neig_mu_sq(3))
+                                  + (mu_sq(5) + neig_mu_sq(5)) + (mu_sq(4) + neig_mu_sq(4)) + (mu_sq(3) + neig_mu_sq(3))
                       else if(xyz_idx == 2) then
                         musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(2) + neig_mu_sq(2))&
-                                  - (mu_sq(1) + neig_mu_sq(1)) + (mu_sq(6) + neig_mu_sq(6)) - (mu_sq(5) + neig_mu_sq(5))
+                                  + (mu_sq(1) + neig_mu_sq(1)) + (mu_sq(6) + neig_mu_sq(6)) + (mu_sq(5) + neig_mu_sq(5))
                       else
                         musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(4) + neig_mu_sq(4))&
-                                  - (mu_sq(3) + neig_mu_sq(3)) + (mu_sq(2) + neig_mu_sq(2)) - (mu_sq(1) + neig_mu_sq(1))
+                                  + (mu_sq(3) + neig_mu_sq(3)) + (mu_sq(2) + neig_mu_sq(2)) + (mu_sq(1) + neig_mu_sq(1))
                       end if
                       corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))))/&
                              (cell_sigtr + neig_sigtr)
@@ -1013,22 +1013,22 @@ contains
                     if(xyz_idx == 1) then
                       !write(*, '(A,I3,A,I3,A,I3,A,I3)') " shift ", shift_idx, " cell ", i, " x-direction, face ",&  
                       !l + mod(l,2) - mod((l+1),2), " neighbor face ", l
-                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(6) + neig_mu_sq(6))&
-                                - (mu_sq(5) + neig_mu_sq(5)) + (mu_sq(4) + neig_mu_sq(4)) - (mu_sq(3) + neig_mu_sq(3))
+                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + shift_idx*(mu_sq(6) + neig_mu_sq(6)&
+                                + mu_sq(5) + neig_mu_sq(5) + mu_sq(4) + neig_mu_sq(4) + mu_sq(3) + neig_mu_sq(3))
                     else if(xyz_idx == 2) then
-                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(2) + neig_mu_sq(2))&
-                                - (mu_sq(1) + neig_mu_sq(1)) + (mu_sq(6) + neig_mu_sq(6)) - (mu_sq(5) + neig_mu_sq(5))
+                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + shift_idx*(mu_sq(2) + neig_mu_sq(2)&
+                                + mu_sq(1) + neig_mu_sq(1) + mu_sq(6) + neig_mu_sq(6) + mu_sq(5) + neig_mu_sq(5))
                     else
-                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + (mu_sq(4) + neig_mu_sq(4))&
-                                - (mu_sq(3) + neig_mu_sq(3)) + (mu_sq(2) + neig_mu_sq(2)) - (mu_sq(1) + neig_mu_sq(1))
+                      musq_term = (neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))) + shift_idx*(mu_sq(4) + neig_mu_sq(4)&
+                                + mu_sq(3) + neig_mu_sq(3) + mu_sq(2) + neig_mu_sq(2) + mu_sq(1) + neig_mu_sq(1))
                     end if
-                    corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))))/&
-                           (cell_sigtr + neig_sigtr)
-                    !corr = (cell_curr + neig_curr + shift_idx*musq_term)/(cell_sigtr + neig_sigtr)
-                    write(*, '(A,E20.7,A,E20.7,A,E20.7,A,E20.7)'), "INTERIOR net curr ", net_current, " vol curr ",&
-                            (cell_curr+neig_curr)/(cell_sigtr + neig_sigtr), " musq term " ,&
-                            shift_idx*musq_term/(cell_sigtr + neig_sigtr), " musq wo cross ",&
-                            shift_idx*(neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)))/(cell_sigtr + neig_sigtr)
+                    !corr = (cell_curr + neig_curr + shift_idx*(neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))))/&
+                    !       (cell_sigtr + neig_sigtr)
+                    corr = (cell_curr + neig_curr + shift_idx*musq_term)/(cell_sigtr + neig_sigtr)
+                    !write(*, '(A,E20.7,A,E20.7,A,E20.7,A,E20.7)'), "INTERIOR net curr ", net_current, " vol curr ",&
+                    !        (cell_curr+neig_curr)/(cell_sigtr + neig_sigtr), " musq term " ,&
+                    !        shift_idx*musq_term/(cell_sigtr + neig_sigtr), " musq wo cross ",&
+                    !        shift_idx*(neig_mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)))/(cell_sigtr + neig_sigtr)
                     !write(*, '(A,E20.7)') "INTERIOR corr term: ", corr
                     !write(*,'(A,I2,A,I2,1X,I2,A,I2,1X,I2)') "f: ", l, " c: ", i, j," n : ", neig_idx(1), &
                     !neig_idx(2)
@@ -1040,6 +1040,7 @@ contains
                     
                     dhat = (net_current + shift_idx*cell_dtilde(l)* &
                        (neig_flux - cell_flux) - corr)/(neig_flux + cell_flux)
+                    !write(*, '(A,E20.7,A,E20.7)') "dhat ", dhat, ", corr term value: ", corr
                   else
                     dhat = (net_current + shift_idx*cell_dtilde(l)* &
                              (neig_flux - cell_flux))/(neig_flux + cell_flux)

@@ -358,84 +358,13 @@
       </item>
       <item path="../src/cmfd_execute.F90" ex="false" tool="2" flavor2="0">
       </item>
-      <item path="../src/cmfd_header.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/cmfd_input.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/cmfd_jacobian_operator.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/cmfd_loss_operator.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/cmfd_message_passing.F90" ex="false" tool="2" flavor2="0">
-      </item>
       <item path="../src/cmfd_output.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/cmfd_power_solver.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/cmfd_prod_operator.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/cmfd_snes_solver.F90" ex="false" tool="2" flavor2="0">
       </item>
       <item path="../src/eigenvalue.F90" ex="false" tool="2" flavor2="0">
       </item>
-      <item path="../src/endf.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/error.F90" ex="false" tool="2" flavor2="0">
-      </item>
       <item path="../src/finalize.F90" ex="false" tool="2" flavor2="0">
       </item>
-      <item path="../src/fission.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/fixed_source.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/geometry.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/global.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/hdf5_summary.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/initialize.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/input_xml.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/interpolation.F90" ex="false" tool="2" flavor2="0">
-      </item>
       <item path="../src/main.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/mesh.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/multigroup.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/multigroup_cross_section.F90"
-            ex="false"
-            tool="2"
-            flavor2="0">
-      </item>
-      <item path="../src/multigroup_physics.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/output.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/output_interface.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/particle_restart.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/particle_restart_write.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/plot.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/random_lcg.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/search.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/source.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/state_point.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/string.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/tally.F90" ex="false" tool="2" flavor2="0">
-      </item>
-      <item path="../src/tally_initialize.F90" ex="false" tool="2" flavor2="0">
       </item>
     </conf>
     <conf name="C5G7" type="0">

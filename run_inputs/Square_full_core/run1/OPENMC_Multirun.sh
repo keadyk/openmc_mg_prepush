@@ -9,7 +9,7 @@ fi
 echo "Number of runs: $1"
 echo "Running k-eigenvalue calculations..."
 
-for seed in $(seq 11 $1)
+for seed in $(seq 1 $1)
 do
 
 echo -e "RUN: $seed"

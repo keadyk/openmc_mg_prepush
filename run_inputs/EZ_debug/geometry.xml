@@ -6,13 +6,13 @@
     <cell id="3" material="2" surfaces="3 -4 9 -10 11 -12"/>
 	<cell id="4" material="2" surfaces="4 -5 9 -10 11 -12"/>
 <!--@@@@@@@@@@@@@@@@@@@@@@@@@@@ BEGIN SURFACES @@@@@@@@@@@@@@@@@@@@@@@@@@@@@-->
-    <surface id="1" type="x-plane" coeffs="0.0" boundary="reflecting"/>
+    <surface id="1" type="x-plane" coeffs="0.0" boundary="vacuum"/>
     <surface id="2" type="x-plane" coeffs="2.5"/> 
     <surface id="3" type="x-plane" coeffs="5.0"/>    
     <surface id="4" type="x-plane" coeffs="7.5"/>
     <surface id="5" type="x-plane" coeffs="10.0" boundary="vacuum"/>
-    <surface id="9" type="y-plane" coeffs="0.0" boundary="reflecting"/>
-    <surface id="10" type="y-plane" coeffs="10.0" boundary="reflecting"/>
-    <surface id="11" type="z-plane" coeffs="0.0" boundary="reflecting"/>
-    <surface id="12" type="z-plane" coeffs="10.0" boundary="reflecting"/>
+    <surface id="9" type="y-plane" coeffs="0.0" boundary="vacuum"/>
+    <surface id="10" type="y-plane" coeffs="10.0" boundary="vacuum"/>
+    <surface id="11" type="z-plane" coeffs="0.0" boundary="vacuum"/>
+    <surface id="12" type="z-plane" coeffs="10.0" boundary="vacuum"/>
 </geometry>
