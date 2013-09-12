@@ -227,11 +227,9 @@ contains
     ! display message
     message = "Loading ACE cross section table: " // listing % name
     call write_message(6)
-
     if (filetype == ASCII) then
       ! =======================================================================
       ! READ ACE TABLE IN ASCII FORMAT
-
       ! Find location of table
       open(UNIT=in, FILE=filename, STATUS='old', ACTION='read')
       rewind(UNIT=in)
@@ -246,7 +244,7 @@ contains
       read(UNIT=in, FMT=100) comment, mat, & 
            (zaids(i), awrs(i), i=1,16), NXS, JXS
 100   format(A70,A10/4(I7,F11.0)/4(I7,F11.0)/4(I7,F11.0)/4(I7,F11.0)/&
-           ,8I9/8I9/8I9/8I9/8I9/8I9)
+          ,8I9/8I9/8I9/8I9/8I9/8I9)
 
       ! determine table length
       length = NXS(1)
@@ -261,7 +259,6 @@ contains
     elseif (filetype == BINARY) then
       ! =======================================================================
       ! READ ACE TABLE IN BINARY FORMAT
-
       ! Open ACE file
       open(UNIT=in, FILE=filename, STATUS='old', ACTION='read', &
            ACCESS='direct', RECL=record_length)

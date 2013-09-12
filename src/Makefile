@@ -28,9 +28,12 @@ PETSC    = no
 # External Library Paths
 #===============================================================================
 
-MPI_DIR   = /opt/mpich/3.0.2-$(COMPILER)
-HDF5_DIR  = /opt/hdf5/1.8.10-patch1-$(COMPILER)
-PETSC_DIR = /opt/petsc/3.3-p6-$(COMPILER)
+#MPI_DIR   = /opt/mpich/3.0.2-$(COMPILER)
+#HDF5_DIR  = /opt/hdf5/1.8.10-$(COMPILER)
+#PETSC_DIR = /opt/petsc/3.3-p6-$(COMPILER)
+MPI_DIR   = /home/keadyk/PETSC_src/petsc-3.4.0/arch-linux2-c-debug/
+#Note to self: install HDF5
+PETSC_DIR = /home/keadyk/PETSC_src/petsc-3.4.0
 
 #===============================================================================
 # Add git SHA-1 hash
@@ -48,8 +51,8 @@ ifeq ($(COMPILER),gnu)
   LDFLAGS =
 
   # Debugging
-  ifeq ($(DEBUG),yes)
-    F90FLAGS += -g -Wall -pedantic -std=f2008 -fbounds-check \
+  ifeq ($(DEBUG),yes) #I ADDED THE NO CHARACTER TRUNCATION FLAG
+    F90FLAGS += -g -Wall -Wno-character-truncation -pedantic -std=f2008 -fbounds-check \
                 -ffpe-trap=invalid,overflow,underflow
     LDFLAGS  += -g
   endif
@@ -72,7 +75,7 @@ endif
 
 ifeq ($(COMPILER),intel)
   F90 = ifort
-  F90FLAGS := -cpp -warn -assume byterecl -traceback
+  F90FLAGS := -fpp -warn -assume byterecl -traceback
   LDFLAGS =
 
   # Debugging

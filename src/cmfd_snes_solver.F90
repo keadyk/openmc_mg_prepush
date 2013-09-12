@@ -1,3 +1,4 @@
+! NOTE TO SELF-- CHANGED ALL INSTANCES OF PETSC_NULL to PETSC_NULL_OBJECT! (gfortran complained!)
 module cmfd_snes_solver
 
 # ifdef PETSC

@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <cross_sections>
-  <directory>/opt/mcnp/data</directory>
+  <directory>/home/keadyk/Desktop/Research_stuff/OPENMC/src/cross_sections/</directory>
   <filetype>ascii</filetype>
   <ace_table alias="H-1.70c" awr="0.999167" location="1" name="1001.70c" path="endf70a" temperature="2.5301e-08" zaid="1001"/>
   <ace_table alias="H-1.71c" awr="0.999167" location="2058" name="1001.71c" path="endf70a" temperature="5.1704e-08" zaid="1001"/>

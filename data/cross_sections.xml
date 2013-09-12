@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <cross_sections>
   <directory>
-    /opt/mcnp/data
+    /home/keadyk/Desktop/Research_stuff/OPENMC/src/cross_sections/
   </directory>
   <filetype>
     binary

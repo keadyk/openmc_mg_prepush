@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <settings>
 
+  <cross_sections>
+    /home/keadyk/Desktop/Research_stuff/OPENMC/cross_sections_ascii.xml
+  </cross_sections>
+
   <!-- Parameters for k-eigenvalue calculation -->
   <eigenvalue>
     <batches>15</batches>

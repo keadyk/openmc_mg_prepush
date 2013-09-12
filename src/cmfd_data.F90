@@ -968,7 +968,7 @@ contains
   end subroutine fix_neutron_balance
 
 !===============================================================================
-! FIX_NEUTRON_BALANCE
+! COMPUTE_EFFECTIVE_DOWNSCATTER
 !===============================================================================
 
   subroutine compute_effective_downscatter()
