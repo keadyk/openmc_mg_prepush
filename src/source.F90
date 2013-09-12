@@ -15,7 +15,6 @@ module source
   use random_lcg,         only: prn, set_particle_seed
   use string,             only: to_str
 
-
 #ifdef MPI
   use mpi
 #endif

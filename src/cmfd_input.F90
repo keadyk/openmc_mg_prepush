@@ -163,7 +163,7 @@ contains
 
     ! tally during inactive batches
     call lower_case(inactive_)
-    if (inactive_ == 'false' .or. inactive_ == '0') cmfd_tally_on = .false.
+    if (inactive_ == 'false' .or. inactive_ == '0') cmfd_inactive = .false.
 
     ! inactive batch flush window
     cmfd_inact_flush(1) = inactive_flush_
@@ -381,11 +381,15 @@ contains
         
 #ifdef MULTIGROUP
         ! set tally estimator to tracklength if we wanna
-        !t % estimator = ESTIMATOR_TRACKLENGTH
+         t % estimator = ESTIMATOR_TRACKLENGTH
+         message = "Using track-length estimators for CMFD."
+         call warning()
         ! WARNING: IF YOU WANT TO REVERT TO TRACKLENGTH, DON'T FORGET
         ! TO CHANGE YOUR SCORE BINS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ! Analog is much cheaper, easier:
-        t % estimator = ESTIMATOR_ANALOG        
+        ! t % estimator = ESTIMATOR_ANALOG      
+        ! message = "Using analog estimators for CMFD."
+        ! call warning()
 #else
         ! set tally estimator to analog
         t % estimator = ESTIMATOR_ANALOG
@@ -402,15 +406,15 @@ contains
         ! allocate scoring bins 
         ! (3 extra bins for 3 volume-avg currs if using functional method)
         if (use_functs) then
-          allocate(t % score_bins(7))
-          t % n_score_bins = 7
-          t % n_user_score_bins = 7
+          allocate(t % score_bins(6))
+          t % n_score_bins = 6
+          t % n_user_score_bins = 6
         else
-          allocate(t % score_bins(4))
-          t % n_score_bins = 4
-          t % n_user_score_bins = 4
+          allocate(t % score_bins(3))
+          t % n_score_bins = 3
+          t % n_user_score_bins = 3
         end if
-
+        
         ! allocate scattering order data
         allocate(t % scatt_order(3))
         t % scatt_order = 0
@@ -419,8 +423,8 @@ contains
         t % score_bins(1)  = SCORE_FLUX
         t % score_bins(2)  = SCORE_TOTAL
 #ifdef MULTIGROUP
-        !t % score_bins(3) = SCORE_SCATTER
-        t % score_bins(3)  = SCORE_SCATTER_N
+        t % score_bins(3) = SCORE_SCATTER
+        !t % score_bins(3)  = SCORE_SCATTER_N
         t % scatt_order(3) = 1
 #else
         t % score_bins(3)  = SCORE_SCATTER_N
@@ -428,10 +432,11 @@ contains
 #endif
 
         if(use_functs) then
-          t % score_bins(5)  = SCORE_SIGWT_CURRX
-          t % score_bins(6)  = SCORE_SIGWT_CURRY
-          t % score_bins(7)  = SCORE_SIGWT_CURRZ
+          t % score_bins(4)  = SCORE_SIGWT_CURRX
+          t % score_bins(5)  = SCORE_SIGWT_CURRY
+          t % score_bins(6)  = SCORE_SIGWT_CURRZ
         end if
+
 
       else if (i == 2) then
 
@@ -440,8 +445,8 @@ contains
 
 #ifdef MULTIGROUP
         ! set tally estimator to tracklength
-        ! t % estimator = ESTIMATOR_TRACKLENGTH
-         t % estimator = ESTIMATOR_ANALOG
+        t % estimator = ESTIMATOR_TRACKLENGTH
+        ! t % estimator = ESTIMATOR_ANALOG
         ! wARNING-- WON'T WORK FOR ANISO SCATTERING
 #else 
         ! set tally estimator to analog
@@ -488,8 +493,8 @@ contains
 
         ! set macro_bins
 #ifdef MULTIGROUP
-        !t % score_bins(1) = SCORE_SCATTER
-        t % score_bins(1) = SCORE_NU_SCATTER
+        t % score_bins(1) = SCORE_SCATTER
+        !t % score_bins(1) = SCORE_NU_SCATTER
 #else
         t % score_bins(1) = SCORE_NU_SCATTER
 #endif

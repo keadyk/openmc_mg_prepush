@@ -21,7 +21,7 @@ module eigenvalue
   use random_lcg,         only: prn, set_particle_seed, prn_skip
   use search,             only: binary_search
   use source,             only: get_source_particle
-  use state_point,        only: write_state_point, replay_batch_history
+  use state_point,        only: write_state_point
   use string,             only: to_str
   use tally,              only: synchronize_tallies, setup_active_usertallies, &
                                 reset_result

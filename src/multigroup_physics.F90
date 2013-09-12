@@ -597,31 +597,12 @@ contains
   k = 0.0
   offset = 0
   
-!  message = "-------THIS IS ONE SCATTER-------"
-!  call warning()
-!  message = "initial group, sampled rand, total sigS"
-!  call warning()
-!  write(*, '(I3,2X,2E14.7)') E, xi, rxn % total_scatter(E)
-!message = "max index!"
-!call warning()
-!write(*,'(I3)') size(rxn % sigma)
   ! determine outgoing energy group
   E_new = rxn % max_scatter(E) - 1
   do while(k < cutoff) 
-!    message = "attempting scatter from " // to_str(E) // " to " // to_str(E_new) // "."
 !    call warning()
     ! add this group's cross section
     k = k + rxn % sigma(rxn % group_index(E) + offset)
-!    message = "sum and cutoff: "
-!   call warning()
-!    write(*, '(2E14.7)') k, cutoff
-!    message = "index: "
-!    call warning()
-!    write(*, '(I3)') (rxn % group_index(E) + offset)
-!    message = "corresponding cross section:"
-!    call warning()
-!    write(*, '(E14.7)') rxn % sigma(rxn % group_index(E) + offset)
-!   write(*, '(I3)') E_new
     offset = offset + 1
     E_new = E_new + 1
   end do

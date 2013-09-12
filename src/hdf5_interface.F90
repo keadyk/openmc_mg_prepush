@@ -1,22 +1,4 @@
 module hdf5_interface
-
-#ifdef MULTIGROUP
-  use multigroup_header, only: Reaction
-#else
-  use ace_header,        only: Reaction, UrrData
-#endif
-  use bank_header,       only: Bank
-  use constants 
-  use endf,              only: reaction_name
-  use error,             only: fatal_error
-  use geometry_header,   only: Cell, Surface, Universe, Lattice
-  use global
-  use material_header,   only: Material
-  use output,            only: write_message, time_stamp
-  use string,            only: to_str
-  use tally_header,      only: TallyObject
-
-
 #ifdef HDF5
 
   use hdf5

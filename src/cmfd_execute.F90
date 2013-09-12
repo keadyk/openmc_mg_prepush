@@ -79,7 +79,9 @@ contains
             call cmfd_snes_execute(adjoint = .true.)
           end if
         end if
-
+        
+        !We need to store the final CMFD flux here...
+        cmfd % phi_final = cmfd % phi
       end if
 
     end if
@@ -110,7 +112,8 @@ contains
 
     use global,            only: cmfd_begin, cmfd_on, cmfd_tally_on,         &
                                  cmfd_inact_flush, cmfd_act_flush, cmfd_run, &
-                                 current_batch, cmfd_hold_weights
+                                 current_batch, cmfd_hold_weights,           &
+                                 cmfd_inactive, n_inactive
 
     ! check to activate CMFD diffusion and possible feedback
     ! this guarantees that when cmfd begins at least one batch of tallies are
@@ -132,6 +135,14 @@ contains
     ! dont want to count)
 !    if (cmfd_run .and. current_batch < n_inactive .and. mod(current_batch-1,cmfd_inact_flush(1))   &
 !       == 0 .and. cmfd_inact_flush(2) >= 0) then
+    ! ADDED BY KK ON SEPTEMBER 5TH -- IF INACTIVE FLAG IS TRUE,
+    ! FLUSH TALLIES EVERY CYCLE WHILE WE'RE IN INACTIVE CYCLES
+    if (cmfd_run .and. .not. cmfd_inactive .and. cmfd_begin < current_batch & 
+       .and. current_batch < n_inactive) then
+        cmfd_hold_weights = .true.
+        call cmfd_tally_reset()
+        !write(*,'("Inactive cycle: CMFD tallies flushed")')
+    end if
     if (cmfd_run .and. mod(current_batch,cmfd_inact_flush(1))   &
        == 0 .and. cmfd_inact_flush(2) > 0 .and. cmfd_begin < current_batch) then
         cmfd_hold_weights = .true.
@@ -356,6 +367,7 @@ contains
                                sum(cmfd%sourcecounts) / cmfd%sourcecounts
         end where
       end if
+      !write(*,'("wt factor:",E20.7)'), cmfd%weightfactors(1,2,1,1)
 
       ! broadcast weight factors to all procs
       call MPI_BCAST(cmfd%weightfactors, ng*nx*ny*nz, MPI_REAL8, 0, &
@@ -373,6 +385,8 @@ contains
       ! determine energy group
       ! e_bin = source_bank(i) % E
       ! fix this at one group for now :)
+      ! WARNING: THIS WILL ONLY WORK FOR ONE-GROUP CMFD...
+      ! WHICH IS FINE FOR NOW CAUSE THAT'S ALL WE'RE USING :)
       e_bin = 1
 #else
       ! determine energy bin
@@ -407,6 +421,7 @@ contains
 
     ! deallocate
     if (allocated(egrid)) deallocate(egrid)
+    !write(*, '("Reweighted particles")')
 
   end subroutine cmfd_reweight
 

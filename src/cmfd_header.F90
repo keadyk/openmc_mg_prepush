@@ -64,6 +64,9 @@ module cmfd_header
     real(8), allocatable :: phi(:)
     real(8) :: keff = ZERO
 
+    ! FINAL eigenfunction from cmfd run
+    real(8), allocatable :: phi_final(:)
+
     ! eigenvector/eigenvalue from adjoint run
     real(8), allocatable :: adj_phi(:)
     real(8) :: adj_keff = ZERO
@@ -121,6 +124,9 @@ contains
     ! allocate source distributions
     if (.not. allocated(this % cmfd_src)) allocate(this % cmfd_src(ng,nx,ny,nz))
     if (.not. allocated(this % openmc_src)) allocate(this % openmc_src(ng,nx,ny,nz))
+    
+    ! allocate final flux distribution
+    if (.not. allocated(this % phi_final)) allocate(this % phi_final(ng*nx*ny*nz))
 
     ! allocate source weight modification vars
     if (.not. allocated(this % sourcecounts)) allocate(this % sourcecounts(ng,nx,ny,nz))
@@ -128,6 +134,7 @@ contains
 
     ! set everthing to 0 except weight multiply factors if feedback isnt on
     this % flux          = ZERO
+    this % phi_final     = ZERO
     this % totalxs       = ZERO
     this % p1scattxs     = ZERO
     this % scattxs       = ZERO
@@ -196,6 +203,7 @@ contains
     if (allocated(this % coremap))       deallocate(this % coremap)
     if (allocated(this % indexmap))      deallocate(this % indexmap)
     if (allocated(this % phi))           deallocate(this % phi)
+    if (allocated(this % phi_final))     deallocate(this % phi_final)
     if (allocated(this % sourcecounts))  deallocate(this % sourcecounts)
     if (allocated(this % weightfactors)) deallocate(this % weightfactors)
     if (allocated(this % cmfd_src))      deallocate(this % cmfd_src)

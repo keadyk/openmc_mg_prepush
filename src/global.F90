@@ -20,8 +20,7 @@ module global
   use source_header,    only: ExtSource
   use tally_header,     only: TallyObject, TallyMap, TallyResult
   use timer_header,     only: Timer
-
-
+  
 #ifdef MPI
   use mpi
 #endif
@@ -363,6 +362,11 @@ module global
 
   ! when and how long to flush cmfd tallies during inactive batches
   integer :: cmfd_inact_flush(2) = (/9999,1/)
+  
+  ! accumulate tallies during inactive batch
+  ! (false flushes tallies each inactive batch,
+  ! so inactive feedback uses only batch values)
+  logical :: cmfd_inactive = .true.
 
   ! batch to last flush before active batches
   integer :: cmfd_act_flush = 0

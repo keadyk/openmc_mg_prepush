@@ -39,6 +39,8 @@ mpiio_interface.o \
 output.o \
 output_interface.o \
 particle_header.o \
+particle_restart.o \
+particle_restart_write.o \
 plot.o \
 plot_header.o \
 ppmlib.o \

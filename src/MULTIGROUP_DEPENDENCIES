@@ -46,6 +46,7 @@ multigroup_physics.o: material_header.o
 multigroup_physics.o: mesh.o
 multigroup_physics.o: output.o
 multigroup_physics.o: particle_header.o
+multigroup_physics.o: particle_restart_write.o
 multigroup_physics.o: random_lcg.o
 multigroup_physics.o: search.o
 multigroup_physics.o: string.o

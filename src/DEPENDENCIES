@@ -216,8 +216,6 @@ mesh.o: mesh_header.o
 mesh.o: particle_header.o
 mesh.o: search.o
 
-output.o: ace_header.o
-
 output.o: constants.o
 output.o: endf.o
 output.o: error.o

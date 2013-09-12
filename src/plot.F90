@@ -111,9 +111,6 @@ contains
     real(8) :: xyz(3)
     type(Image) :: img
 
-    type(Cell), pointer :: c => null()
-    type(Material), pointer :: mat => null()
-
     ! Initialize and allocate space for image
     call init_image(img)
     call allocate_image(img, pl % pixels(1), pl % pixels(2))
@@ -154,43 +151,8 @@ contains
     do y = 1, img % height
       do x = 1, img % width
 
-        call deallocate_coord(p % coord0 % next)
-        p % coord => p % coord0
-
-        call find_cell(found_cell)
-
-        if (.not. found_cell) then
-          ! If no cell, revert to default color
-          r = pl % not_found % rgb(1)
-          g = pl % not_found % rgb(2)
-          b = pl % not_found % rgb(3)
-        else
-          if (pl % color_by == PLOT_COLOR_MATS) then
-            ! Assign color based on material
-            c => cells(p % coord % cell)
-            mat => materials(c % material)
-            
-            if (c % material == MATERIAL_VOID) then
-              ! By default, color void cells white
-              r = 255
-              g = 255
-              b = 255
-            else
-               r = pl % colors(c % material) % rgb(1)
-               g = pl % colors(c % material) % rgb(2)
-               b = pl % colors(c % material) % rgb(3)
-            end if
-          else if (pl % color_by == PLOT_COLOR_CELLS) then
-            ! Assign color based on cell
-            r = pl % colors(p % coord % cell) % rgb(1)
-            g = pl % colors(p % coord % cell) % rgb(2)
-            b = pl % colors(p % coord % cell) % rgb(3)
-          else
-            r = 0
-            g = 0
-            b = 0
-          end if
-        end if
+        ! get pixel color
+        call position_rgb(pl, rgb, id)
 
         ! Create a pixel at (x,y) with color (r,g,b)
         call set_pixel(img, x, y, rgb(1), rgb(2), rgb(3))
