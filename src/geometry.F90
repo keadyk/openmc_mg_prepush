@@ -8,7 +8,7 @@ module geometry
   use particle_header,        only: LocalCoord, deallocate_coord
   use particle_restart_write, only: write_particle_restart
   use string,                 only: to_str
-  use tally,                  only: score_surface_current
+  use tally,                  only: score_surface_current, score_reflecting_musq
 
   implicit none
      
@@ -428,6 +428,9 @@ contains
       if (active_current_tallies % size() > 0) then
         p % coord0 % xyz = p % coord0 % xyz - TINY_BIT * p % coord0 % uvw
         call score_surface_current()
+        ! We need an extra routine here to handle mu_sq tallies,
+        ! which have non-zero contributions at reflecting boundaries...
+        if (use_functs) call score_reflecting_musq()
         p % coord0 % xyz = p % coord0 % xyz + TINY_BIT * p % coord0 % uvw
       end if
 
@@ -469,6 +472,11 @@ contains
         ! Reflect direction according to normal
         v = v - 2*dot_prod*y/(R*R)
         w = w - 2*dot_prod*z/(R*R)
+        
+        norm = sqrt(u*u + v*v + w*w)
+        u = u/norm
+        v = v/norm
+        w = w/norm
 
       case (SURF_CYL_Y)
         ! Find x-x0, z-z0 and dot product of direction and surface normal
@@ -480,6 +488,11 @@ contains
         ! Reflect direction according to normal
         u = u - 2*dot_prod*x/(R*R)
         w = w - 2*dot_prod*z/(R*R)
+        
+        norm = sqrt(u*u + v*v + w*w)
+        u = u/norm
+        v = v/norm
+        w = w/norm
 
       case (SURF_CYL_Z)
         
@@ -496,16 +509,9 @@ contains
         v = v - 2*dot_prod*y/(R*R)
 
         norm = sqrt(u*u + v*v + w*w)
-        !write(*, '(A15,E20.7)') "how about now? ", norm
-        
-      !  if(norm < 0.9999 .or. norm > 1.0001) then
-          ! renormalize directions
-          u = u/norm
-          v = v/norm
-          w = w/norm
-          norm = sqrt(u*u + v*v + w*w)
-          !write(*,'(A8,E20.7)') "better? ", norm
-      !  end if
+        u = u/norm
+        v = v/norm
+        w = w/norm
         
       case (SURF_SPHERE)
         ! Find x-x0, y-y0, z-z0 and dot product of direction and surface

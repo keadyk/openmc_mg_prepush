@@ -290,6 +290,8 @@ contains
 #endif
 
     ! local variables
+    integer :: j
+    integer :: k
     integer :: nx ! maximum number of cells in x direction
     integer :: ny ! maximum number of cells in y direction
     integer :: nz ! maximum number of cells in z direction
@@ -326,11 +328,11 @@ contains
       allocate(cmfd%weightfactors(ng,nx,ny,nz))
       cmfd % weightfactors = ONE
     end if
-
+    
     ! allocate energy grid and reverse cmfd energy grid
     if (.not. allocated(egrid)) allocate(egrid(ng+1))
     egrid = (/(cmfd%egrid(ng-i+2),i = 1,ng+1)/)
-
+    
     ! compute new weight factors
     if (new_weights) then
 
@@ -369,7 +371,9 @@ contains
 
 #ifdef MULTIGROUP
       ! determine energy group
-      e_bin = source_bank(i) % E
+      ! e_bin = source_bank(i) % E
+      ! fix this at one group for now :)
+      e_bin = 1
 #else
       ! determine energy bin
       n_groups = size(cmfd%egrid) - 1

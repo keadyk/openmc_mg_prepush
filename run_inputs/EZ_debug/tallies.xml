@@ -1,0 +1,7 @@
+<tallies>
+	<tally>
+		<label>Flux tally</label>
+		<filter type="cell" bins="1 2 3 4" />
+		<scores>flux</scores>
+	</tally>
+</tallies>

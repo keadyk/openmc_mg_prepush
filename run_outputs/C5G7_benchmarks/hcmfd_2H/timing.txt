@@ -1,0 +1,194 @@
+Assem case WITH ANALOG TALLIES
+
+ ===========================================================================
+ ======================>     SIMULATION FINISHED     <======================
+ ===========================================================================
+
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     =  1.2540E+00 seconds
+   Reading cross sections          =  2.0000E-03 seconds
+   Unionizing energy grid          =  0.0000E+00 seconds
+ Total time in simulation          =  1.6050E+03 seconds
+   Time in transport only          =  1.5799E+03 seconds
+ Total CMFD time                   =  2.3260E+01 seconds
+   Time in inactive batches        =  1.1585E+02 seconds
+   Time in active batches          =  1.4892E+03 seconds
+   Time synchronizing fission bank =  7.1600E-01 seconds
+     Sampling source sites         =  4.9100E-01 seconds
+     SEND/RECV source sites        =  2.2400E-01 seconds
+   Time accumulating tallies       =  6.0000E-03 seconds
+ Total time for finalization       =  4.0000E-03 seconds
+ Total time elapsed                =  1.6063E+03 seconds
+ Calculation Rate (inactive)       =  8631.93 neutrons/second
+ Calculation Rate (active)         =  6043.66 neutrons/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     =  1.18702 +/-  0.00037
+ k-effective (Track-length)  =  1.18731 +/-  0.00047
+ k-effective (Absorption)    =  1.18679 +/-  0.00025
+ k-effective (HCMFD)         =  1.18647
+ Combined k-effective        =  1.18684 +/-  0.00024
+ Leakage Fraction            =  0.00179 +/-  0.00001
+
+
+RUN FINISHED; exit value 0; real time: 26m 46s; user: 3s; system: 26m 39s
+
+
+Assem case WITH TRACKLENGTH TALLIES
+ ===========================================================================
+ ======================>     SIMULATION FINISHED     <======================
+ ===========================================================================
+
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     =  1.2550E+00 seconds
+   Reading cross sections          =  1.0000E-03 seconds
+   Unionizing energy grid          =  0.0000E+00 seconds
+ Total time in simulation          =  2.5269E+03 seconds
+   Time in transport only          =  2.5015E+03 seconds
+ Total CMFD time                   =  2.3561E+01 seconds
+   Time in inactive batches        =  2.0993E+02 seconds
+   Time in active batches          =  2.3169E+03 seconds
+   Time synchronizing fission bank =  7.1100E-01 seconds
+     Sampling source sites         =  4.8800E-01 seconds
+     SEND/RECV source sites        =  2.2200E-01 seconds
+   Time accumulating tallies       =  3.0000E-03 seconds
+ Total time for finalization       =  4.0000E-03 seconds
+ Total time elapsed                =  2.5281E+03 seconds
+ Calculation Rate (inactive)       =  4763.45 neutrons/second
+ Calculation Rate (active)         =  3884.44 neutrons/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     =  1.18658 +/-  0.00040
+ k-effective (Track-length)  =  1.18676 +/-  0.00047
+ k-effective (Absorption)    =  1.18660 +/-  0.00025
+ k-effective (HCMFD)         =  1.18680 
+ Combined k-effective        =  1.18662 +/-  0.00024
+ Leakage Fraction            =  0.00178 +/-  0.00001
+
+RUN FINISHED; exit value 0; real time: 42m 8s; user: 3s; system: 42m 0s
+
+
+Quarter Assem case with ANALOG TALLIES:
+ ===========================================================================
+ ======================>     SIMULATION FINISHED     <======================
+ ===========================================================================
+
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     =  1.2470E+00 seconds
+   Reading cross sections          =  2.0000E-03 seconds
+   Unionizing energy grid          =  0.0000E+00 seconds
+ Total time in simulation          =  1.5878E+03 seconds
+   Time in transport only          =  1.5652E+03 seconds
+ Total CMFD time                   =  2.0740E+01 seconds
+   Time in inactive batches        =  1.1530E+02 seconds
+   Time in active batches          =  1.4725E+03 seconds
+   Time synchronizing fission bank =  7.4600E-01 seconds
+     Sampling source sites         =  5.2200E-01 seconds
+     SEND/RECV source sites        =  2.1900E-01 seconds
+   Time accumulating tallies       =  1.9000E-02 seconds
+ Total time for finalization       =  1.3000E-02 seconds
+ Total time elapsed                =  1.5890E+03 seconds
+ Calculation Rate (inactive)       =  8673.33 neutrons/second
+ Calculation Rate (active)         =  6112.13 neutrons/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     =  1.18661 +/-  0.00041
+ k-effective (Track-length)  =  1.18677 +/-  0.00048
+ k-effective (Absorption)    =  1.18679 +/-  0.00025
+ k-effective (HCMFD)         =  1.18647
+ Combined k-effective        =  1.18680 +/-  0.00025
+ Leakage Fraction            =  0.00180 +/-  0.00001
+
+
+
+RUN FINISHED; exit value 0; real time: 26m 29s; user: 2s; system: 26m 25s
+
+Quarter Assem Case with TRACKLENGTH TALLIES:
+ ===========================================================================
+ ======================>     SIMULATION FINISHED     <======================
+ ===========================================================================
+
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     =  1.2610E+00 seconds
+   Reading cross sections          =  2.0000E-03 seconds
+   Unionizing energy grid          =  0.0000E+00 seconds
+ Total time in simulation          =  2.5236E+03 seconds
+   Time in transport only          =  2.5004E+03 seconds
+ Total CMFD time                   =  2.1412E+01 seconds
+   Time in inactive batches        =  2.0771E+02 seconds
+   Time in active batches          =  2.3159E+03 seconds
+   Time synchronizing fission bank =  7.1300E-01 seconds
+     Sampling source sites         =  4.8400E-01 seconds
+     SEND/RECV source sites        =  2.2400E-01 seconds
+   Time accumulating tallies       =  1.9000E-02 seconds
+ Total time for finalization       =  1.3000E-02 seconds
+ Total time elapsed                =  2.5249E+03 seconds
+ Calculation Rate (inactive)       =  4814.34 neutrons/second
+ Calculation Rate (active)         =  3886.18 neutrons/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     =  1.18673 +/-  0.00041
+ k-effective (Track-length)  =  1.18699 +/-  0.00054
+ k-effective (Absorption)    =  1.18629 +/-  0.00026
+ k-effective (HCMFD)         =  1.18639 
+ Combined k-effective        =  1.18633 +/-  0.00026
+ Leakage Fraction            =  0.00182 +/-  0.00001
+
+
+RUN FINISHED; exit value 0; real time: 42m 5s; user: 3s; system: 41m 54s
+
+
+
+
+Sixty-fourth assembly case with ANALOG TALLIES:
+ ===========================================================================
+ ======================>     SIMULATION FINISHED     <======================
+ ===========================================================================
+
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     =  1.2530E+00 seconds
+   Reading cross sections          =  2.0000E-03 seconds
+   Unionizing energy grid          =  0.0000E+00 seconds
+ Total time in simulation          =  1.6883E+03 seconds
+   Time in transport only          =  1.6218E+03 seconds
+ Total CMFD time                   =  6.4524E+01 seconds
+   Time in inactive batches        =  1.2123E+02 seconds
+   Time in active batches          =  1.5671E+03 seconds
+   Time synchronizing fission bank =  7.0900E-01 seconds
+     Sampling source sites         =  4.8700E-01 seconds
+     SEND/RECV source sites        =  2.1900E-01 seconds
+   Time accumulating tallies       =  1.3100E-01 seconds
+ Total time for finalization       =  2.0500E-01 seconds
+ Total time elapsed                =  1.6897E+03 seconds
+ Calculation Rate (inactive)       =  8248.85 neutrons/second
+ Calculation Rate (active)         =  5743.26 neutrons/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     =  1.18574 +/-  0.00039
+ k-effective (Track-length)  =  1.18598 +/-  0.00047
+ k-effective (Absorption)    =  1.18587 +/-  0.00026
+ k-effective (HCMFD)         =  1.18576 
+ Combined k-effective        =  1.18586 +/-  0.00026
+ Leakage Fraction            =  0.00181 +/-  0.00001
+
+
+RUN FINISHED; exit value 0; real time: 28m 9s; user: 5s; system: 28m 0s
+
+
+
+

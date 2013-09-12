@@ -148,7 +148,6 @@ contains
 
         ! Write filter information
         FILTER_LOOP: do j = 1, t % n_filters
-
           ! Write type of filter
           call write_data(t % filters(j) % type, "type", &
                group="tallies/tally" // trim(to_str(i)) // "/filter" // to_str(j))
@@ -203,7 +202,7 @@ contains
       end do TALLY_METADATA
 
     end if
-
+    
     ! Check for the no-tally-reduction method
     if (.not. reduce_tallies) then
       ! If using the no-tally-reduction method, we need to collect tally

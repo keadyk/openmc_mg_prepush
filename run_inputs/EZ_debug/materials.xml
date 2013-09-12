@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<materials>
+	<default_xs>01m</default_xs>
+	<material> <!-- Fuel -->
+		<id>1</id>
+		<density value="1.0" units="atom/b-cm"/>
+		<nuclide name="FFuelk" ao="1.00"/>
+	</material>
+	<material> <!-- Gap -->
+		<id>2</id>
+		<density value="1.0" units="atom/b-cm"/>
+		<nuclide name="FModk" ao="1.00"/>
+	</material>
+	</material>
+</materials>

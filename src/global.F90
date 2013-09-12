@@ -478,7 +478,9 @@ contains
     call tally_dict % clear()
     call plot_dict % clear()
     call nuclide_dict % clear()
+#ifndef MULTIGROUP
     call sab_dict % clear()
+#endif
     call xs_listing_dict % clear()
     
   end subroutine free_memory

@@ -2546,7 +2546,7 @@ contains
        elseif (ends_with(listing % name, 't')) then
           listing % type = ACE_THERMAL
        elseif (ends_with(listing % name, 'm')) then
-          listing % type = MULTIGROUP
+          listing % type = MG_NEUTRON
        end if
        
        ! don't read alias if this is a thermal table

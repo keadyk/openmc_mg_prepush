@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <settings>
 	<cross_sections>
-		/home/keadyk/Desktop/Research_stuff/OPENMC/cross_sections_ascii.xml
+		/home/keadyk/Desktop/Research_stuff/OPENMC/data/cross_sections_ascii.xml
 	</cross_sections>
 	<eigenvalue>
 		<batches>100</batches>

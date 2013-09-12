@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <cross_sections>
-  <directory>/home/keadyk/Desktop/Research_stuff/OPENMC/src/cross_sections/</directory>
+  <directory>/home/keadyk/Desktop/Research_stuff/OPENMC/data/cross_sections/</directory>
   <filetype>ascii</filetype>
   <ace_table alias="H-1.70c" awr="0.999167" location="1" name="1001.70c" path="endf70a" temperature="2.5301e-08" zaid="1001"/>
   <ace_table alias="H-1.71c" awr="0.999167" location="2058" name="1001.71c" path="endf70a" temperature="5.1704e-08" zaid="1001"/>
@@ -2164,6 +2164,8 @@
   <ace_table alias="Cladk.01m" awr="1.000000" location="15" name="Cladk.01m" path="kpkmgxs" zaid="00002"/>
   <ace_table alias="Gapk.01m" awr="1.000000" location="29" name="Gapk.01m" path="kpkmgxs" zaid="00003"/>  
   <ace_table alias="Fuelk.01m" awr="1.000000" location="43" name="Fuelk.01m" path="kpkmgxs" zaid="00004"/>
+  <ace_table alias="FFuelk.01m" awr="1.000000" location="58" name="FFuelk.01m" path="kpkmgxs" zaid="00005"/>
+  <ace_table alias="FModk.01m" awr="1.000000" location="73" name="FModk.01m" path="kpkmgxs" zaid="00006"/>
 <!-- Added by Kendra Keady on July 10 for C5G7 benchmark problem-->
   <ace_table alias="H20k.02m" awr="1.000000" location="1" name="H20k.02m" path="c5g7xs" zaid="00001"/>  
   <ace_table alias="FissCk.02m" awr="1.000000" location="31" name="FissCk.02m" path="c5g7xs" zaid="00002"/>
@@ -2172,4 +2174,5 @@
   <ace_table alias="MOX7k.02m" awr="1.000000" location="131" name="MOX7k.02m" path="c5g7xs" zaid="00005"/>  
   <ace_table alias="MOX8k.02m" awr="1.000000" location="166" name="MOX8k.02m" path="c5g7xs" zaid="00006"/>
   <ace_table alias="UO2k.02m" awr="1.000000" location="201" name="UO2k.02m" path="c5g7xs" zaid="00007"/>      
+  <ace_table alias="H-2.84c" awr="1.9968" location="1" name="1002.84c" path="custom_xs" temperature="2.53010E-08" zaid="1002" />
 </cross_sections>

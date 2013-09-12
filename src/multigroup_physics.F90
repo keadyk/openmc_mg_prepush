@@ -1,6 +1,6 @@
 module multigroup_physics
 
-  use multigroup_header, only: Nuclide, Reaction, DistEnergy
+  use multigroup_header, only: Nuclide, Reaction
   use constants
   use multigroup_cross_section,     only: calculate_xs
   use endf,              only: reaction_name

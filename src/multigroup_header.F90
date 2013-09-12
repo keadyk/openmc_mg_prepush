@@ -17,23 +17,12 @@ module multigroup_header
     integer, allocatable :: location(:) ! location of each table
     real(8), allocatable :: data(:)     ! angular distribution data
     ! angular dist data will be n_data cosine values for ANGLE_NLEG_EQUI type,
-    ! or n_data cosine values + (n_data - 1) cum. probs for ANGLE_TABULAR type  
+    ! or n_data cosine values + (n_data - 1) cum. probs for ANGLE_TABULAR type 
+    
+    ! Type-Bound procedures
+    contains
+      procedure :: clear => distangle_clear ! Deallocates DistAngle
   end type DistAngle
-
-!===============================================================================
-! DISTENERGY contains data for a secondary energy distribution for all
-! scattering laws
-!===============================================================================
-
-  type DistEnergy
-    integer    :: law                 ! secondary distribution law
-    ! type(Tab1) :: p_valid             ! probability of law validity
-    real(8), allocatable :: data(:)   ! energy distribution data
-
-    ! For reactions that may have multiple energy distributions such as (n.2n),
-    ! this pointer allows multiple laws to be stored
-    type(DistEnergy), pointer :: next => null()
-  end type DistEnergy
 
 !===============================================================================
 ! REACTION contains the multigroup cross-sections for a single reaction
@@ -51,7 +40,10 @@ module multigroup_header
     logical :: has_angle_dist                ! Angle distribution present?
     logical :: has_energy_dist               ! Energy distribution present?
     type(DistAngle)           :: adist       ! Secondary angular distribution
-    type(DistEnergy), pointer :: edist       ! Secondary energy distribution
+    
+    ! Type-Bound procedures
+    contains
+      procedure :: clear => reaction_clear ! Deallocates Reaction
   end type Reaction
 
 !===============================================================================
@@ -105,6 +97,9 @@ module multigroup_header
     integer :: n_reaction ! # of reactions
     type(Reaction), pointer :: reactions(:) => null()
 
+    ! Type-Bound procedures
+    contains
+      procedure :: clear => nuclide_clear ! Deallocates Nuclide
   end type Nuclide
 
 !===============================================================================
@@ -155,5 +150,67 @@ module multigroup_header
     real(8) :: nu_fission    ! macroscopic production xs
   end type MaterialMacroXS
 
+  contains
+  
+!===============================================================================
+! DISTANGLE_CLEAR resets and deallocates data in Reaction.
+!===============================================================================    
+  
+    subroutine distangle_clear(this)
+      
+      class(DistAngle), intent(inout) :: this ! The DistAngle object to clear
+      
+      if (allocated(this % energy)) &
+           deallocate(this % energy, this % type, this % location, this % data)
+      
+    end subroutine distangle_clear    
+    
+!===============================================================================
+! REACTION_CLEAR resets and deallocates data in Reaction.
+!===============================================================================    
+  
+    subroutine reaction_clear(this)
+      
+      class(Reaction), intent(inout) :: this ! The Reaction object to clear
+      
+      if (allocated(this % sigma)) &
+           deallocate(this % sigma)
+        
+      call this % adist % clear()
+      
+    end subroutine reaction_clear    
+         
+
+!===============================================================================
+! NUCLIDE_CLEAR resets and deallocates data in Nuclide.
+!===============================================================================    
+  
+    subroutine nuclide_clear(this)
+      
+      class(Nuclide), intent(inout) :: this ! The Nuclide object to clear
+      
+      integer :: i ! Loop counter
+      
+      if (allocated(this % grid_index)) &
+           deallocate(this % grid_index)
+      
+      if (allocated(this % index_fission)) &
+           deallocate(this % index_fission)
+        
+      if (allocated(this % nu_t_data)) &
+           deallocate(this % nu_t_data)
+        
+      if (allocated(this % nu_p_data)) &
+           deallocate(this % nu_p_data)
+      
+      if (associated(this % reactions)) then
+        do i = 1, size(this % reactions)
+          call this % reactions(i) % clear()
+        end do
+        deallocate(this % reactions)
+      end if
+      
+    end subroutine nuclide_clear    
+  
 end module multigroup_header
 

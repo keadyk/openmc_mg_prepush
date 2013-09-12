@@ -53,6 +53,8 @@ multigroup_physics.o: tally.o
 
 output.o : multigroup_header.o 
 
+particle_restart.o: multigroup_physics.o
+
 source.o : multigroup_physics.o
 
 tally.o : multigroup_header.o

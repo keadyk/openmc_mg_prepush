@@ -374,16 +374,18 @@ contains
                
         ! set label
         if (use_functs) then
-          t % label = "CMFD flux, total, scatter-1, diffusion, &
-                      &vol curr"
+          t % label = "CMFD flux, total, scatter-1, vol curr"
         else
-          t % label = "CMFD flux, total, scatter-1, diffusion"
+          t % label = "CMFD flux, total, scatter-1"
         end if
         
 #ifdef MULTIGROUP
-        ! set tally estimator to tracklength
+        ! set tally estimator to tracklength if we wanna
         !t % estimator = ESTIMATOR_TRACKLENGTH
-        t % estimator = ESTIMATOR_ANALOG
+        ! WARNING: IF YOU WANT TO REVERT TO TRACKLENGTH, DON'T FORGET
+        ! TO CHANGE YOUR SCORE BINS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ! Analog is much cheaper, easier:
+        t % estimator = ESTIMATOR_ANALOG        
 #else
         ! set tally estimator to analog
         t % estimator = ESTIMATOR_ANALOG
@@ -416,11 +418,15 @@ contains
         ! set macro_bins
         t % score_bins(1)  = SCORE_FLUX
         t % score_bins(2)  = SCORE_TOTAL
-        ! FIX THIS FOR TRACKLENGTH TALLIES
+#ifdef MULTIGROUP
+        !t % score_bins(3) = SCORE_SCATTER
         t % score_bins(3)  = SCORE_SCATTER_N
         t % scatt_order(3) = 1
-        !t % score_bins(3) = SCORE_SCATTER
-        t % score_bins(4)  = SCORE_DIFFUSION
+#else
+        t % score_bins(3)  = SCORE_SCATTER_N
+        t % scatt_order(3) = 1
+#endif
+
         if(use_functs) then
           t % score_bins(5)  = SCORE_SIGWT_CURRX
           t % score_bins(6)  = SCORE_SIGWT_CURRY
@@ -432,9 +438,16 @@ contains
         ! set label
         t % label = "CMFD neutron production"
 
+#ifdef MULTIGROUP
+        ! set tally estimator to tracklength
+        ! t % estimator = ESTIMATOR_TRACKLENGTH
+        t % estimator = ESTIMATOR_ANALOG
+        ! wARNING-- WON'T WORK FOR ANISO SCATTERING
+#else 
         ! set tally estimator to analog
         t % estimator = ESTIMATOR_ANALOG
-
+#endif
+        
         ! set tally type to volume
         t % type = TALLY_VOLUME
 
@@ -474,7 +487,12 @@ contains
         t % scatt_order = 0
 
         ! set macro_bins
+#ifdef MULTIGROUP
+        !t % score_bins(1) = SCORE_SCATTER
         t % score_bins(1) = SCORE_NU_SCATTER
+#else
+        t % score_bins(1) = SCORE_NU_SCATTER
+#endif
         t % score_bins(2) = SCORE_NU_FISSION
 
       else if (i == 3) then

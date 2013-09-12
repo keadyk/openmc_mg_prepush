@@ -26,7 +26,6 @@ contains
 !===============================================================================
 
   subroutine finalize_run()
-
     ! Start finalization timer
     call time_finalize % start()
 

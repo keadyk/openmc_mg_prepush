@@ -204,6 +204,7 @@ contains
     integer :: i_end     ! ending position
     integer :: line_wrap ! length of line
     integer :: length    ! length of message
+    integer :: offset    ! number of characters to next space
 
     ! Set length of line
     line_wrap = 80
@@ -214,7 +215,6 @@ contains
     if (.not. present(level) .or. level <= verbosity) then
       ! Determine length of message
       length = len_trim(message)
-
       i_start = 0
       do
         if (length - i_start < line_wrap - 1) then
@@ -223,15 +223,29 @@ contains
           exit
 
         else
-          ! Determine last space in current line
-          i_end = i_start + index(message(i_start+1:i_start+line_wrap), &
-               ' ', BACK=.true.)
+          ! Determine place to break line:
+          offset = index(message(i_start+1:i_start+line_wrap),' ', BACK=.true.)
+          if(offset > 0) then
+            ! there's a space!
+            i_end = i_start + offset
+          else
+            ! No space -- look for a forward slash!
+            offset = index(message(i_start+1:i_start+line_wrap),'/', BACK=.true.)
+            if(offset > 0) then
+              ! (need the -1 so we don't skip the slash!)
+              i_end = i_start + offset - 1
+            else
+              ! No slash either -- Just print 'line_wrap' chars.
+              i_end = i_start + line_wrap
+            end if
+          end if
 
           ! Write up to last space
           write(ou, fmt='(1X,A)') message(i_start+1:i_end-1)
 
           ! Advance starting position
           i_start = i_end
+
           if (i_start > length) exit
         end if
       end do
@@ -331,10 +345,10 @@ contains
     write(ou,*) '    Multiplicity = ' // to_str(rxn % multiplicity)
 #ifndef MULTIGROUP
     write(ou,*) '    Threshold = ' // to_str(rxn % threshold)
-#endif
     if (rxn % has_energy_dist) then
       write(ou,*) '    Energy: Law ' // to_str(rxn % edist % law)
     end if
+#endif
     write(ou,*)
 
   end subroutine print_reaction
@@ -982,18 +996,20 @@ contains
         size_angle = 0
       end if
 
+      size_energy = 0
+#ifndef MULTIGROUP
       ! Determine size of energy distribution and law
       if (rxn % has_energy_dist) then
         size_energy = size(rxn % edist % data) * 8
         law = to_str(rxn % edist % law)
       else
-        size_energy = 0
         law = 'None'
       end if
+#endif
 
 #ifdef MULTIGROUP
-      write(unit_,'(3X,A11,3X,L1,3X,I11,1X,I11)') &
-           reaction_name(rxn % MT), rxn % scatter_in_cm, size_angle, size_energy
+      write(unit_,'(3X,A11,3X,L1,3X,I11,1X)') &
+           reaction_name(rxn % MT), rxn % scatter_in_cm, size_angle
 #else
       write(unit_,'(3X,A11,1X,F8.3,3X,L1,3X,A4,1X,I6,1X,I11,1X,I11)') &
            reaction_name(rxn % MT), rxn % Q_value, rxn % scatter_in_cm, &

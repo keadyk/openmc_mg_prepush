@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <cmfd>
-	<feedback>true</feedback>
-	<active_flush>20</active_flush>
+	<active_flush>10</active_flush>
+	<feedback>false</feedback>
 	<mesh>
 		<type>rectangular</type>
 		<lower_left>0 0 0</lower_left>
 		<upper_right>64.26 64.26 10</upper_right>
-		<dimension>6 6 1</dimension>
+		<dimension>12 12 1</dimension>
 		<albedo>1.0 0.0 0.0 1.0 1.0 1.0</albedo>
 	</mesh>
 	<use_functs>true</use_functs>

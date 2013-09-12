@@ -3,9 +3,9 @@
 
   <mesh id="1">
     <type>rectangular</type>
-    <dimension>6 6 1</dimension>
+    <dimension>19 19 1</dimension>
     <lower_left>0 0 0</lower_left>
-    <upper_right>64.26 64.26 10</upper_right>
+    <upper_right>406.98 406.98 10</upper_right>
   </mesh>
 
   <tally id="1">

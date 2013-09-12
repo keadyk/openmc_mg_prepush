@@ -240,6 +240,21 @@ output_interface.o: tally_header.o
 
 particle_header.o: constants.o
 
+particle_restart.o: bank_header.o
+particle_restart.o: constants.o
+particle_restart.o: geometry_header.o
+particle_restart.o: global.o
+particle_restart.o: hdf5_interface.o
+particle_restart.o: output.o
+particle_restart.o: particle_header.o
+particle_restart.o: random_lcg.o
+particle_restart.o: source.o
+
+particle_restart_write.o: bank_header.o
+particle_restart_write.o: global.o
+particle_restart_write.o: hdf5_interface.o
+particle_restart_write.o: string.o
+
 plot.o: constants.o
 plot.o: error.o
 plot.o: geometry.o

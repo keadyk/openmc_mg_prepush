@@ -102,7 +102,6 @@ contains
     ! END OF RUN WRAPUP
 
     if (master) call header("SIMULATION FINISHED", level=1)
-
   end subroutine run_eigenvalue
 
 !===============================================================================
@@ -207,11 +206,12 @@ contains
     if (statepoint_batch % contains(current_batch)) then
       ! Calculate combined estimate of k-effective
       if (master) call calculate_combined_keff()
-
+      
       ! Create state point file
       call write_state_point()
     end if
 
+    
     if (master .and. current_batch == n_batches) then
       ! Make sure combined estimate of k-effective is calculated at the last
       ! batch in case no state point is written

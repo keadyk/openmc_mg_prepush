@@ -2,15 +2,19 @@ module particle_restart
 
   use, intrinsic :: ISO_FORTRAN_ENV
 
-  use bank_header,     only: Bank
+  use bank_header,        only: Bank
   use constants
-  use geometry_header, only: BASE_UNIVERSE
+  use geometry_header,    only: BASE_UNIVERSE
   use global
-  use particle_header, only: deallocate_coord
-  use output,          only: write_message, print_particle
-  use physics,         only: transport
-  use random_lcg,      only: set_particle_seed
-  use source,          only: initialize_particle
+  use particle_header,    only: deallocate_coord
+  use output,             only: write_message, print_particle
+#ifdef MULTIGROUP
+  use multigroup_physics, only:  transport
+#else
+  use physics,            only: transport
+#endif
+  use random_lcg,         only: set_particle_seed
+  use source,             only: initialize_particle
 
 #ifdef HDF5
   use hdf5_interface 

@@ -1,7 +1,6 @@
 module multigroup
 
-  use multigroup_header, only: Nuclide, Reaction, XsListing, &
-                              DistEnergy
+  use multigroup_header, only: Nuclide, Reaction, XsListing
   use constants
   use endf,              only: reaction_name
   use error,             only: fatal_error, warning
@@ -241,9 +240,8 @@ contains
     
 !    message = "group energy, width, mass: "
 !    call warning()
-!    write(*,FMT=200) (nuc % group_energy(i), nuc % group_width(i), nuc % group_mass(i), i=1,30)
-!200 format(3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/&
-!           3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7)
+!    write(*,FMT=200) (nuc % group_energy(i), nuc % group_width(i), nuc % group_mass(i), i=1,7)
+!200 format(3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7)
 
   end subroutine read_erg
   
@@ -288,10 +286,8 @@ contains
       nuc % nu_t_data = get_real(length)
 !      message = "nu total data: "
 !      call warning()
-!      write(*,'(E14.7)') nuc % nu_t_data(1)
-!      write(*,FMT=200) (nuc % nu_t_data(i), i=1,30)
-!200 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
-!           E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+!      write(*,FMT=201) (nuc % nu_t_data(i), i=1,7)
+!201 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
       
     else if (JXS3 /= 0 .and. NXS10 == 2) then
       ! =======================================================================
@@ -354,9 +350,8 @@ contains
 !      message = "chi data: "
 !      call warning()
 !      write(*,'(E14.7)') nuc % chi_data(1)
-!      write(*,FMT=200) (nuc % chi_data(i), i=1,30)
-!200 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
-!           E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+!      write(*,FMT=202) (nuc % chi_data(i), i=1,7)
+!202 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
     end if  
   end subroutine read_chi_data
   
@@ -369,7 +364,7 @@ contains
       
       type(Nuclide), pointer :: nuc
       
-      integer :: i       ! iterator for debug writes
+!      integer :: i       ! iterator for debug writes
       integer :: JXS2    ! location of total cross sections
       integer :: JXS3    ! location of fission cross sections
       integer :: JXS6    ! location of absorption cross section data
@@ -403,9 +398,8 @@ contains
 !        message = "sigma total data: "
 !        call warning()
 !        write(*,'(E14.7)') nuc % total(1)
-!        write(*,FMT=200) (nuc % total(i), i=1,30)
-!200     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
-!               E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+!        write(*,FMT=203) (nuc % total(i), i=1,7)
+!203     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
                 
       endif
       
@@ -438,9 +432,8 @@ contains
 !        message = "sigma fission data: "
 !        call warning()
 !        write(*,'(E14.7)') nuc % fission(1)
-!        write(*,FMT=201) (nuc % fission(i), i=1,30)
-!201     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
-!               E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+!        write(*,FMT=204) (nuc % fission(i), i=1,7)
+!204     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
         
       endif
       
@@ -465,9 +458,8 @@ contains
 !        message = "sigma gamma data: "
 !        call warning()
 !        write(*,'(E14.7)') nuc % absorption(1)
-!        write(*,FMT=201) (nuc % absorption(i), i=1,30)
-!201     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/&
-!               E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+!        write(*,FMT=205) (nuc % absorption(i), i=1,7)
+!205     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
         
       endif
       
@@ -662,7 +654,7 @@ contains
 !      message = "sum of scatt, abs, fission vs. TOTAL! "
 !      call warning()
 !      do i=1,nuc % n_group
-!        write(*,'(2E14.7)') (rxn % total_scatter(i) + nuc % absorption(i)), nuc % total(i)  
+!        write(*,'(2E14.7)') (rxn % total_scatter(i) + nuc % absorption(i) + nuc % fission(i)), nuc % total(i)  
 !      end do
       
   end subroutine read_scattering

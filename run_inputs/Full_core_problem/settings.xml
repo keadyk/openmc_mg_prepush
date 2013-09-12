@@ -4,27 +4,25 @@
 		/home/keadyk/Desktop/Research_stuff/OPENMC/data/cross_sections_ascii.xml
 	</cross_sections>
 	<eigenvalue>
-		<batches>100</batches>
-		<inactive>50</inactive>
+		<batches>20</batches>
+		<generations_per_batch>20</generations_per_batch>
+		<inactive>2</inactive>
 		<particles>100000</particles>
 	</eigenvalue>
 	<output>summary cross_sections</output>
+	<output_path>/home/keadyk/Desktop/Research_stuff/OPENMC/run_outputs/Full_core_problem</output_path>
 	<source>
-		<space type="point" parameters="0 0 0" />
+		<space type="box" parameters="64.26 64.26 0  342.72 342.72 10" />
 	</source>
 	<entropy>
-		<lower_left>-0.412 -0.412 -10</lower_left>
-		<upper_right>0.412 0.412 10</upper_right>
-		<dimension>2 2 2</dimension>
+		<lower_left>0 0 0</lower_left>
+		<upper_right>406.98 406.98 10</upper_right>
+		<dimension>19 19 1</dimension>
 	</entropy>
 	<run_cmfd>false</run_cmfd>
 	<survival_biasing>true</survival_biasing>
-	<cutoff>
-		<weight>0.1</weight>
-		<weight_avg>0.5</weight_avg>
-	</cutoff>
 	<verbosity>
-		8
+		5
 	</verbosity>
 </settings>
 

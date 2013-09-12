@@ -366,7 +366,6 @@ contains
           ! Add score to tally
           t % results(score_index, filter_index) % value = &
                t % results(score_index, filter_index) % value + score
-
         end do SCORE_LOOP
 
       end do NUCLIDE_LOOP
@@ -564,9 +563,16 @@ contains
 
               case (SCORE_SCATTER)
                 ! Scattering cross section is pre-calculated
+#ifdef MULTIGROUP
+                score = (micro_xs(i_nuclide) % total - &
+                     micro_xs(i_nuclide) % absorption - &
+                     micro_xs(i_nuclide) % fission) * &
+                     atom_density * flux
+#else
                 score = (micro_xs(i_nuclide) % total - &
                      micro_xs(i_nuclide) % absorption) * &
                      atom_density * flux
+#endif
 
               case (SCORE_ABSORPTION)
                 ! Absorption cross section is pre-calculated
@@ -647,7 +653,6 @@ contains
                   end do REACTION_LOOP
                 else
                   message = "Invalid score type on tally " // to_str(t % id) // "."
-                  !write(*, '(A20)') "the micro xs version"
                   call fatal_error()
                 end if
               end select
@@ -666,16 +671,16 @@ contains
                 score = material_xs % total * flux
 
               case (SCORE_SCATTER)
+#ifdef MULTIGROUP
+                score = (material_xs % total - material_xs % absorption - &
+                        material_xs % fission) * flux
+#else
                 ! Scattering cross section is pre-calculated
                 score = (material_xs % total - material_xs % absorption) * flux
-
+#endif        
               case (SCORE_ABSORPTION)
                 ! Absorption cross section is pre-calculated
                 score = material_xs % absorption * flux
-
-              case (SCORE_DIFFUSION)
-                ! Temporarily store sigS in score:
-                score = 1.0/(3.0 * (material_xs % total)) * flux
 
               case (SCORE_FISSION)
                 ! Fission cross section is pre-calculated
@@ -761,7 +766,6 @@ contains
 
                 else
                   message = "Invalid score type on tally " // to_str(t % id) // "."
-                  !write(*, '(A20)') "the material version"
                   call fatal_error()
                 end if
               end select
@@ -944,8 +948,12 @@ contains
         score = material_xs % total * flux
 
       case (SCORE_SCATTER)
+#ifdef MULTIGROUP
+        score = (material_xs % total - material_xs % absorption - &
+                material_xs % fission) * flux
+#else
         score = (material_xs % total - material_xs % absorption) * flux
-
+#endif
       case (SCORE_ABSORPTION)
         score = material_xs % absorption * flux
 
@@ -1092,7 +1100,7 @@ contains
     m => meshes(t % filters(i_filter_mesh) % int_bins(1))
     call get_mesh_indices(m, xyz0, ijk0(:m % n_dimension), start_in_mesh)
     call get_mesh_indices(m, xyz1, ijk1(:m % n_dimension), end_in_mesh)
-
+    
     ! Check if start or end is in mesh -- if not, check if track still
     ! intersects with mesh
     if ((.not. start_in_mesh) .and. (.not. end_in_mesh)) then
@@ -1212,7 +1220,7 @@ contains
       j = minloc(d(:m % n_dimension), 1)
       distance = d(j)
 
-      ! Now use the minimum distance and diretion of the particle to determine
+      ! Now use the minimum distance and direction of the particle to determine
       ! which surface was crossed
 
       if (all(ijk0(:m % n_dimension) >= 1) .and. all(ijk0(:m % n_dimension) <= m % dimension)) then
@@ -1286,9 +1294,16 @@ contains
                   score = micro_xs(i_nuclide) % total * &
                        atom_density * flux
                 case (SCORE_SCATTER)
+#ifdef MULTIGROUP
+                  score = (micro_xs(i_nuclide) % total - &
+                       micro_xs(i_nuclide) % absorption -&
+                       micro_xs(i_nuclide) % fission) * &
+                       atom_density * flux      
+#else
                   score = (micro_xs(i_nuclide) % total - &
                        micro_xs(i_nuclide) % absorption) * &
                        atom_density * flux
+#endif
                 case (SCORE_ABSORPTION)
                   score = micro_xs(i_nuclide) % absorption * &
                        atom_density * flux
@@ -1324,7 +1339,6 @@ contains
                 case default
                   message = "Invalid score type on tally " // &
                        to_str(t % id) // "."
-                       !write(*, '(A20)') "the mesh tal version"
                   call fatal_error()
                 end select
 
@@ -1336,11 +1350,14 @@ contains
                 case (SCORE_TOTAL)
                   score = material_xs % total * flux
                 case (SCORE_SCATTER)
+#ifdef MULTIGROUP
+                  score = (material_xs % total - material_xs % absorption -&
+                           material_xs % fission) * flux
+#else
                   score = (material_xs % total - material_xs % absorption) * flux
+#endif    
                 case (SCORE_ABSORPTION)
                   score = material_xs % absorption * flux
-                case (SCORE_DIFFUSION)
-                  score = 1.0/(3.0 * (material_xs % total)) * flux
                 case (SCORE_FISSION)
                   score = material_xs % fission * flux
                 case (SCORE_NU_FISSION)
@@ -1356,6 +1373,7 @@ contains
                 case(SCORE_SIGWT_CURRX)
                   ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
                   score = material_xs % total * flux * p % coord0 % uvw(1)
+                  !write(*, '(A,3E20.7)') "score, x-dir, location", score, p%coord0%uvw(1), p%coord0%xyz(1)
                 case(SCORE_SIGWT_CURRY)
                   ! WARNING! THIS ONLY WORKS FOR ISOTROPIC SCATTERING!!!
                   score = material_xs % total * flux * p % coord0 % uvw(2)
@@ -1367,7 +1385,6 @@ contains
                 case default
                   message = "Invalid score type on tally " // &
                        to_str(t % id) // "."
-                       !write(*, '(A20)') "the mesh mat version"
                   call fatal_error()
                 end select
               end if
@@ -1378,7 +1395,6 @@ contains
               ! Add score to tally
               t % results(score_index, filter_index) % value = &
                    t % results(score_index, filter_index) % value + score
-
             end do SCORE_LOOP
 
           end do NUCLIDE_BIN_LOOP
@@ -1882,7 +1898,7 @@ contains
                 ! (see constants.F90 for integer values of IN_TOP, OUT_TOP, ..)
                 t % results(l, filter_index) % value = &
                      t % results(l, filter_index) % value + p % wgt * &
-                     abs(uvw(floor(0.5*(t % matching_bins(i_filter_surf) + 1))))
+                     abs(uvw(floor(0.5*(t % matching_bins(i_filter_surf) + 1))))                
             end select
           end do               
 
@@ -1896,6 +1912,193 @@ contains
 
   end subroutine score_surface_current
 
+!===============================================================================
+! SCORE_REFLECTING_MUSQ scores the mu_squared functional at reflecting bounds,
+! where the particle technically doesn't cross the surface but still has a non-
+! zero contribution to the mu-squared tally (it's magic, basically)
+!===============================================================================
+  
+  subroutine score_reflecting_musq()
+    
+    integer :: i_mesh               ! mesh identifier
+    integer :: j                    ! energy filter (in)
+    integer :: ijk0(3)              ! indices of starting coordinates
+    integer :: ijk1(3)              ! indices of ending coordinates
+    integer :: n_cross              ! number of surface crossings
+    integer :: n                    ! number of incoming energy bins
+    integer :: filter_index         ! index of scoring bin
+    integer :: i_filter_mesh        ! index of mesh filter in filters array
+    integer :: i_filter_surf        ! index of surface filter in filters
+    integer :: score_index          ! scoring bin index
+    real(8) :: xyz0(3)              ! starting/intermediate coordinates
+    real(8) :: xyz1(3)              ! ending coordinates of particle
+    real(8) :: uvw(3)               ! pre-reflect angle of particle
+    real(8) :: xyz_cross(3)         ! coordinates of bounding surfaces
+    real(8) :: temp_coord(3)        ! temporary coordinates for bump
+    logical :: start_in_mesh        ! particle's starting xyz in mesh?
+    logical :: end_in_mesh          ! particle's ending xyz in mesh?
+    logical :: x_same               ! same starting/ending x index (i)
+    logical :: y_same               ! same starting/ending y index (j)
+    logical :: z_same               ! same starting/ending z index (k)
+    type(TallyObject),    pointer :: t => null()
+    type(StructuredMesh), pointer :: m => null()
+    type(Surface),  pointer :: surf => null()      
+    
+    ! TO DO-- FIND A BETTER WAY TO SKIP THIS IF WE KNOW THERE ISN'T A 
+    ! CMFD MESH SURFACE COINCIDENT WITH THE REFLECTING BOUNDARY
+
+    ! associate cmfd curr/mu_sq tallies and mesh
+    t => cmfd_tallies(3)
+    i_mesh = t % filters(t % find_filter(FILTER_MESH)) % int_bins(1)
+    m => meshes(i_mesh)
+
+    i_filter_mesh = t % find_filter(FILTER_MESH)
+    i_filter_surf = t % find_filter(FILTER_SURFACE)
+#ifndef MULTIGROUP
+    i_filter_ein  = t % find_filter(FILTER_ENERGYIN)
+    i_filter_eout = t % find_filter(FILTER_ENERGYOUT)
+#endif
+     
+    ! This is a hokey way of doing things, but for now, let's just continue to
+    ! 'bump' the particle forward artificially until we figure out which mesh/
+    ! surface combo is coincident with the surface the particle reflected off
+    
+    ! Initialize number of crossings
+    n_cross = 0
+    
+    ! Initialize temp. coordinate to particle location
+    temp_coord = p % coord0 % xyz
+    
+    ! set uvw to particle direction
+    uvw = p % coord0 % uvw
+    
+    ! Get mesh bin for particle
+    call get_mesh_indices(m, p % coord0 % xyz, ijk0(:m % n_dimension), &
+                            start_in_mesh)
+    
+    ! if we aren't in the mesh, we should probably return :)
+    if (.not. start_in_mesh) then
+      return
+    end if
+    
+    ! if we're in the mesh but in an inactive cell, return too :)
+    if (allocated(cmfd%coremap)) then
+      if (cmfd%coremap(ijk0(1),ijk0(2),ijk0(3)) == CMFD_NOACCEL) then
+        return
+      end if
+    end if
+                            
+    do while (n_cross == 0)
+      ! Update temp coordinates (remember, this is called BEFORE
+      ! the particle's direction is reflected)
+      temp_coord = temp_coord + TINY_BIT * p % coord0 % uvw
+
+      ! Get new indices
+      call get_mesh_indices(m, temp_coord, ijk1(:m % n_dimension), end_in_mesh)
+
+      ! Calculate number of surface crossings
+      n_cross = sum(abs(ijk1 - ijk0))
+    end do
+
+    ! determine incoming energy bin
+    j = t % find_filter(FILTER_ENERGYIN)
+    if (j > 0) then
+#ifdef MULTIGROUP
+      message = "Energy filters not allowed for multigroup tallies."
+      call fatal_error()
+#else
+      n = t % filters(j) % n_bins
+      ! check if energy of the particle is within energy bins
+      if (p % E < t % filters(j) % real_bins(1) .or. &
+           p % E > t % filters(j) % real_bins(n + 1)) then
+        cycle
+      end if
+
+      ! search to find incoming energy bin
+      t % matching_bins(j) = binary_search(t % filters(j) % real_bins, &
+           n + 1, p % E)
+#endif
+    end if
+    
+    ! Particle only could have reflected off of one surface
+    ! Determine if it was x,y, or z!
+    x_same = (ijk0(1) == ijk1(1))
+    y_same = (ijk0(2) == ijk1(2))
+    z_same = (ijk0(3) == ijk1(3))
+
+    ! Notice there is an extra factor of two; because the particle
+    ! is reflected from the surface there will be two contributions
+    ! to mu-squared with the same magnitude (unlike the current,
+    ! these do not cancel out!!)
+    if (x_same .and. y_same) then
+      ! Z crossing
+      if (uvw(3) > 0) then
+        ! out top of this mesh bin
+        t % matching_bins(i_filter_surf) = OUT_TOP
+        t % matching_bins(i_filter_mesh) = &
+             mesh_indices_to_bin(m, ijk0 + 1, .true.)
+        filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        t % results(2, filter_index) % value = &
+             t % results(2, filter_index) % value + 2 * p % wgt * &
+             abs(uvw(3))
+      else
+        ! in top of bottom mesh bin
+        ijk0(3) = ijk0(3) - 1
+        t % matching_bins(i_filter_surf) = IN_TOP
+        t % matching_bins(i_filter_mesh) = &
+             mesh_indices_to_bin(m, ijk0 + 1, .true.)
+       filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        t % results(2, filter_index) % value = &
+             t % results(2, filter_index) % value + 2 * p % wgt * &
+             abs(uvw(3))
+      end if
+    elseif (x_same .and. z_same) then
+      ! Y crossing
+      if (uvw(2) > 0) then
+        ! out front of this mesh bin
+        t % matching_bins(i_filter_surf) = OUT_FRONT
+        t % matching_bins(i_filter_mesh) = &
+             mesh_indices_to_bin(m, ijk0 + 1, .true.)
+        filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        t % results(2, filter_index) % value = &
+             t % results(2, filter_index) % value + 2 * p % wgt * &
+             abs(uvw(2))
+      else
+        ! in front of back mesh bin
+        ijk0(2) = ijk0(2) - 1
+        t % matching_bins(i_filter_surf) = IN_FRONT
+        t % matching_bins(i_filter_mesh) = &
+             mesh_indices_to_bin(m, ijk0 + 1, .true.)
+        filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        t % results(2, filter_index) % value = &
+             t % results(2, filter_index) % value + 2 * p % wgt * &
+             abs(uvw(2))
+      end if
+    elseif (y_same .and. z_same) then
+      ! X crossing
+      if (uvw(1) > 0) then
+        ! out right of this mesh bin
+        t % matching_bins(i_filter_surf) = OUT_RIGHT
+        t % matching_bins(i_filter_mesh) = &
+             mesh_indices_to_bin(m, ijk0 + 1, .true.)
+        filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        t % results(2, filter_index) % value = &
+             t % results(2, filter_index) % value + 2 * p % wgt * abs(uvw(1))
+      else
+        ! in right of left-hand mesh bin
+        ijk0(1) = ijk0(1) - 1
+        t % matching_bins(i_filter_surf) = IN_RIGHT
+        t % matching_bins(i_filter_mesh) = &
+             mesh_indices_to_bin(m, ijk0 + 1, .true.)
+         filter_index = sum((t % matching_bins - 1) * t % stride) + 1
+        t % results(2, filter_index) % value = &
+             t % results(2, filter_index) % value + 2 * p % wgt * abs(uvw(1))
+      end if
+    end if                  
+    
+  end subroutine score_reflecting_musq
+
+  
 !===============================================================================
 ! GET_NEXT_BIN determines the next scoring bin for a particular filter variable
 !===============================================================================
@@ -2248,5 +2451,5 @@ contains
     end do
 
   end subroutine setup_active_cmfdtallies
-
+  
 end module tally

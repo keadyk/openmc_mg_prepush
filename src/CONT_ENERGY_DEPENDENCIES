@@ -41,6 +41,8 @@ initialize.o: energy_grid.o
 
 output.o: ace_header.o
 
+particle_restart.o: physics.o
+
 physics.o: ace_header.o
 physics.o: constants.o
 physics.o: cross_section.o
