@@ -215,6 +215,11 @@ module constants
        NU_NONE       = 0, & ! No nu values (non-fissionable)
        NU_POLYNOMIAL = 1, & ! Nu values given by polynomial
        NU_TABULAR    = 2    ! Nu values given by tabular distribution
+   
+  ! Group fission fraction (chi) type
+  integer, parameter ::   &
+       CHI_NONE      = 0, & ! No chi values (non-fissionable)
+       CHI_TABULAR   = 1    ! Chi values given by tabular distribution
 
   ! Cross section filetypes
   integer, parameter :: &

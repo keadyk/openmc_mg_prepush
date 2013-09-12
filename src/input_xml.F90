@@ -369,6 +369,10 @@ contains
     ! Probability tables
     call lower_case(ptables_)
     if (ptables_ == 'false' .or. ptables_ == '0') urr_ptables_on = .false.
+    
+    ! Multigroup cross sections
+    call lower_case(multigroup_)
+    if (multigroup_ == 'true' .or. multigroup_ == '1') multigroup = .true.
 
     ! Cutoffs
     if (size(cutoff_) > 0) then
@@ -2490,7 +2494,7 @@ contains
     ! copy default record length and entries for binary files
     recl = record_length_
     entries = entries_
-
+    
     ! Allocate xs_listings array
     if (.not. associated(ace_tables_)) then
        message = "No ACE table listings present in cross_sections.xml file!"

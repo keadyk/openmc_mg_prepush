@@ -170,7 +170,7 @@ contains
     call already_read % clear()
     
   end subroutine read_xs
-
+  
 !===============================================================================
 ! READ_ACE_TABLE reads a single cross section table in either ASCII or binary
 ! format. This routine reads the header data for each table and then calls
@@ -743,7 +743,7 @@ contains
       rxn % adist % energy   = get_real(NE)
       rxn % adist % location = get_int(NE)
 
-      ! determine dize of data block
+      ! determine size of data block
       length = 0
       do j = 1, NE
         LC = rxn % adist % location(j)
@@ -782,7 +782,7 @@ contains
 
 !===============================================================================
 ! READ_ENERGY_DIST parses the secondary energy distribution for each reaction
-! with seconary neutrons (except elastic scattering)
+! with secondary neutrons (except elastic scattering)
 !===============================================================================
 
   subroutine read_energy_dist(nuc)

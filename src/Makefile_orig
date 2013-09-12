@@ -1,5 +1,5 @@
 program = openmc
-prefix = /home/keadyk/NetBeansProjects/OPENMC_builds
+prefix = /usr/local
 
 templates = $(wildcard templates/*.o)
 xml_fort = xml-fortran/xmlparse.o \
@@ -16,15 +16,13 @@ include OBJECTS
 # User Options
 #===============================================================================
 
-COMPILER   = gnu
-DEBUG      = no
-PROFILE    = no
-OPTIMIZE   = no
-# Multigroup only tested for gnu compiler!!
-MULTIGROUP = no
-MPI        = no
-HDF5       = no
-PETSC      = no
+COMPILER = gnu
+DEBUG    = no
+PROFILE  = no
+OPTIMIZE = no
+MPI      = no
+HDF5     = no
+PETSC    = no
 
 #===============================================================================
 # External Library Paths
@@ -69,11 +67,6 @@ ifeq ($(COMPILER),gnu)
   ifeq ($(OPTIMIZE),yes)
     F90FLAGS += -O3
   endif
-
-  # Multigroup simulation
-  ifeq ($(MULTIGROUP),yes)
-    F90FLAGS += -DMULTIGROUP
-  endif
 endif
 
 #===============================================================================
@@ -82,7 +75,7 @@ endif
 
 ifeq ($(COMPILER),intel)
   F90 = ifort
-  F90FLAGS := -fpp -warn -assume byterecl -traceback
+  F90FLAGS := -cpp -warn -assume byterecl -traceback
   LDFLAGS =
 
   # Debugging

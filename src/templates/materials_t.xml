@@ -39,6 +39,7 @@
   </typedef>
 
   <variable name="material_" tag="material" type="material_xml" dimension="1" />
+  <variable name="energy_groups_" tag="energy_groups" type="integer" />
   <variable name="default_xs_" tag="default_xs" type="word" length="3" />
 
 </template>

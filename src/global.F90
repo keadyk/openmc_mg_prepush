@@ -50,6 +50,7 @@ module global
   integer :: n_surfaces  ! # of surfaces
   integer :: n_materials ! # of materials
   integer :: n_plots     ! # of plots
+  integer :: n_groups    ! # of energy groups (multigroup only)
 
   ! These dictionaries provide a fast lookup mechanism -- the key is the
   ! user-specified identifier and the value is the index in the corresponding
@@ -92,8 +93,11 @@ module global
   integer :: n_grid      ! number of points on unionized grid
   real(8), allocatable :: e_grid(:) ! energies on unionized grid
 
-  ! Unreoslved resonance probablity tables
+  ! Unresolved resonance probability tables
   logical :: urr_ptables_on = .true.
+  
+  ! Multigroup solver option -- default to continuous energy
+  logical :: multigroup = .false.
 
   ! Default xs identifier (e.g. 70c)
   character(3):: default_xs

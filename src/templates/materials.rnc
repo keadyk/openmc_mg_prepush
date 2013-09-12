@@ -38,5 +38,7 @@ element materials {
     }*
   }+ &
 
+  element energy_groups { xsd:positiveInteger }? &
+
   element default_xs { xsd:string { maxLength = "3" } }?
 }

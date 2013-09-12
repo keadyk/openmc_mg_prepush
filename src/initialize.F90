@@ -1,6 +1,10 @@
 module initialize
 
+#ifdef MULTIGROUP
+  use multigroup,       only: read_mg_xs
+#else
   use ace,              only: read_xs
+#endif
   use bank_header,      only: Bank
   use constants
   use dict_header,      only: DictIntInt, ElemKeyValueII

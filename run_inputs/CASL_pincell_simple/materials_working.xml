@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<materials>
+	<material> <!-- Fuel -->
+		<id>501</id>
+		<density value="10.24" units="g/cc"/>
+		<nuclide name="U-235" xs="70c" ao="0.0141715"/>
+		<nuclide name="U-238" xs="70c" ao="0.3191618"/>
+		<nuclide name="O-16" xs="70c" ao="0.6666667"/>
+	</material>
+	<material> <!-- Integral Fuel Burnable Absorber-->
+		<id>502</id>
+		<density value="1.69" units="g/cc"/>
+		<nuclide name="Zr-90" xs="70c" ao="0.1715"/>
+		<nuclide name="Zr-91" xs="70c" ao="0.0374"/>
+		<nuclide name="Zr-92" xs="70c" ao="0.0572"/>
+		<nuclide name="Zr-94" xs="70c" ao="0.0579"/>
+		<nuclide name="Zr-96" xs="70c" ao="0.0093"/>
+		<nuclide name="B-10" xs="70c" ao="0.1326666666"/>
+		<nuclide name="B-11" xs="70c" ao="0.5340000000"/>
+	</material>
+	<material> <!-- Gap -->
+		<id>503</id>
+		<density value="0.001" units="g/cc"/>
+		<nuclide name="O-16" xs="70c" ao="1.0"/>
+	</material>
+	<material> <!-- Clad -->
+		<id>504</id>
+		<density value="6.504" units="g/cc"/>
+		<nuclide name="Zr-90" xs="70c" ao="0.5054"/>
+		<nuclide name="Zr-91" xs="70c" ao="0.1102"/>
+		<nuclide name="Zr-92" xs="70c" ao="0.1685"/>
+		<nuclide name="Zr-94" xs="70c" ao="0.1707"/>
+		<nuclide name="Zr-96" xs="70c" ao="0.0275"/>
+		<nuclide name="Sn-112" xs="70c" ao="0.0001455" />
+   	    <nuclide name="Sn-114" xs="70c" ao="0.0000990" />
+        <nuclide name="Sn-115" xs="70c" ao="0.0000510" />
+        <nuclide name="Sn-116" xs="70c" ao="0.0021810" />
+        <nuclide name="Sn-117" xs="70c" ao="0.0011520" />
+        <nuclide name="Sn-118" xs="70c" ao="0.0036330" />
+        <nuclide name="Sn-119" xs="70c" ao="0.0012885" />
+        <nuclide name="Sn-120" xs="70c" ao="0.0048870" />
+        <nuclide name="Sn-122" xs="70c" ao="0.00069450" />
+        <nuclide name="Sn-124" xs="70c" ao="0.00086850" />
+		<nuclide name="Fe-54" xs="70c" ao="0.000070140"/>
+		<nuclide name="Fe-56" xs="70c" ao="0.001101048"/>
+		<nuclide name="Fe-57" xs="70c" ao="0.000025428"/>
+		<nuclide name="Fe-58" xs="70c" ao="0.000003384"/>
+		<nuclide name="Cr-50" xs="70c" ao="0.00004345" />
+		<nuclide name="Cr-52" xs="70c" ao="0.00083789" />
+		<nuclide name="Cr-53" xs="70c" ao="0.00009501" />
+		<nuclide name="Cr-54" xs="70c" ao="0.00002365" />
+		<nuclide name="N-14" xs="70c" ao="0.000498180"/>
+		<nuclide name="N-15" xs="70c" ao="0.000001820"/>
+	</material>
+	<material> <!-- Moderator -->
+		<id>505</id>
+		<density value="1.0" units="g/cc"/>
+		<nuclide name="H-1" xs="70c" ao="0.66666566"/>
+		<nuclide name="H-2" xs="70c" ao="0.00013399"/>
+		<nuclide name="O-16" xs="70c" ao="0.333333"/>
+		<sab name="lwtr" xs="10t">
+	</material>
+</materials>

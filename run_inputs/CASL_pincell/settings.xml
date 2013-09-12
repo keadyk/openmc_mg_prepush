@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<settings>
+	<cross_sections>
+		/home/keadyk/Desktop/Research_stuff/OPENMC/cross_sections_ascii.xml
+	</cross_sections>
+	<eigenvalue>
+		<batches>100</batches>
+		<inactive>50</inactive>
+		<particles>10000</particles>
+	</eigenvalue>
+	<output>summary cross_sections</output>
+	<source>
+		<space type="point" parameters="0 0 0" />
+	</source>
+	<entropy>
+		<lower_left>-0.412 -0.412 -10</lower_left>
+		<upper_right>0.412 0.412 10</upper_right>
+		<dimension>2 2 1</dimension>
+	</entropy>
+	<!-- Can't use CMFD if you're not compiled w/ PETsc -->
+	<run_cmfd>true</run_cmfd>
+	<verbosity>5</verbosity>
+</settings>
+
