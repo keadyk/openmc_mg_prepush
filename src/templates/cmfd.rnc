@@ -54,5 +54,9 @@ element cmfd {
 
   element active_flush { xsd:int }? &
 
+  element use_functs { xsd:boolean }? &
+
+  element accumulate { xsd:boolean }? &
+
   element keff_tol { xsd:double }?
 }

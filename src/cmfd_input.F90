@@ -127,6 +127,10 @@ contains
     ! set the solver type
     cmfd_solver_type = solver_(1:10)
     
+    ! are we accumulating our tallies?
+    call lower_case(accumulate_)
+    if(accumulate_ == 'true' .or. accumulate_ == '1') accum = .true.
+    
     ! are we using the extra functionals?
     call lower_case(use_functs_)
     if(use_functs_ == 'true' .or. use_functs_ == '1') use_functs = .true.

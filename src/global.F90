@@ -331,6 +331,9 @@ module global
   
   ! use additional functionals to stabilize cmfd
   logical :: use_functs = .false.
+  
+  ! accumulate cmfd tallies over cycles
+  logical :: accum = .false.
 
   ! activate auto-balance of tallies (2grp only)
 ! logical :: cmfd_balance = .false.

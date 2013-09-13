@@ -137,12 +137,20 @@ contains
 !       == 0 .and. cmfd_inact_flush(2) >= 0) then
     ! ADDED BY KK ON SEPTEMBER 5TH -- IF INACTIVE FLAG IS TRUE,
     ! FLUSH TALLIES EVERY CYCLE WHILE WE'RE IN INACTIVE CYCLES
-    if (cmfd_run .and. .not. cmfd_inactive .and. cmfd_begin < current_batch & 
-       .and. current_batch < n_inactive) then
+    !if (cmfd_run .and. .not. cmfd_inactive .and. cmfd_begin < current_batch & 
+    !   .and. current_batch < n_inactive) then
+    !    cmfd_hold_weights = .true.
+    !    call cmfd_tally_reset()
+    !    !write(*,'("Inactive cycle: CMFD tallies flushed")')
+    !end if
+    ! HIJACKED BY KK ON SEPTEMBER 12th -- turn off accumulating entirely if 
+    ! inactive flag is false-- FIX THIS LATER!!!!
+    if (cmfd_run .and. .not. cmfd_inactive .and. cmfd_begin < current_batch) then
         cmfd_hold_weights = .true.
         call cmfd_tally_reset()
         !write(*,'("Inactive cycle: CMFD tallies flushed")')
     end if
+    
     if (cmfd_run .and. mod(current_batch,cmfd_inact_flush(1))   &
        == 0 .and. cmfd_inact_flush(2) > 0 .and. cmfd_begin < current_batch) then
         cmfd_hold_weights = .true.
