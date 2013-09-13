@@ -583,11 +583,19 @@ contains
       
       ! get location for incident particle XPN block (if one exists)
       XSS_index = JXS16
-      LXPN = int(XSS(XSS_index))
+      if(XSS_index == 0) then
+        LXPN = 0
+      else
+        LXPN = int(XSS(XSS_index))
+      end if
       
       ! get location for incident particle PN block (if one exists)
       XSS_index = JXS17
-      LPN = int(XSS(XSS_index))
+      if(XSS_index == 0) then
+        LPN = 0
+      else
+        LPN = int(XSS(XSS_index))
+      end if
 
       if(LXPN > 0 .and. LPN > 0) then
         ! at least one ang distribution exists

@@ -2531,6 +2531,7 @@ contains
 
        ! copy a number of attributes
        listing % name       = trim(ace_tables_(i) % name)
+       listing % alias      = trim(ace_tables_(i) % alias)
        listing % zaid       = ace_tables_(i) % zaid
        listing % awr        = ace_tables_(i) % awr
        listing % kT         = ace_tables_(i) % temperature

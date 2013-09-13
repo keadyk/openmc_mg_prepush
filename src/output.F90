@@ -978,7 +978,7 @@ contains
 
     ! Information on each reaction
 #ifdef MULTIGROUP
-    write(unit_,*) '  Reaction  COM   Law    size(angle) size(energy) '
+    write(unit_,*) '  Reaction  COM   Law '
 #else
     write(unit_,*) '  Reaction     Q-value  COM  Law    IE    size(angle) size(energy)'
 #endif
@@ -986,16 +986,13 @@ contains
       rxn => nuc % reactions(i)
 
       ! Determine size of angle distribution
+      size_angle = 0
+#ifndef MULTIGROUP
       if (rxn % has_angle_dist) then
-#ifdef MULTIGROUP
-        size_angle = rxn % adist % n_data * 16 + size(rxn % adist % data) * 8
-#else
         size_angle = rxn % adist % n_energy * 16 + size(rxn % adist % data) * 8
-#endif
-      else
-        size_angle = 0
       end if
-
+#endif
+      
       size_energy = 0
 #ifndef MULTIGROUP
       ! Determine size of energy distribution and law
@@ -1008,8 +1005,8 @@ contains
 #endif
 
 #ifdef MULTIGROUP
-      write(unit_,'(3X,A11,3X,L1,3X,I11,1X)') &
-           reaction_name(rxn % MT), rxn % scatter_in_cm, size_angle
+      write(unit_,'(3X,A11,3X,L1,3X)') &
+           reaction_name(rxn % MT), rxn % scatter_in_cm
 #else
       write(unit_,'(3X,A11,1X,F8.3,3X,L1,3X,A4,1X,I6,1X,I11,1X,I11)') &
            reaction_name(rxn % MT), rxn % Q_value, rxn % scatter_in_cm, &

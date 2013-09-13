@@ -63,6 +63,11 @@ module cmfd_header
     ! eigenvector/eigenvalue from cmfd run
     real(8), allocatable :: phi(:)
     real(8) :: keff = ZERO
+    
+    ! accumulated eigenvector/eigenvector_sq from cmfd run
+    ! (only used if .not. cmfd_accum)
+    real(8), allocatable :: phi_sum(:)
+    real(8), allocatable :: phi_sum_sq(:)
 
     ! FINAL eigenfunction from cmfd run
     real(8), allocatable :: phi_final(:)
@@ -90,6 +95,8 @@ contains
 
   subroutine allocate_cmfd(this)
 
+    use global,  only: cmfd_accum    
+    
     type(cmfd_type) :: this 
 
     integer :: nx  ! number of mesh cells in x direction
@@ -126,7 +133,12 @@ contains
     if (.not. allocated(this % openmc_src)) allocate(this % openmc_src(ng,nx,ny,nz))
     
     ! allocate final flux distribution
-    if (.not. allocated(this % phi_final)) allocate(this % phi_final(ng*nx*ny*nz))
+    if(cmfd_accum) then
+      if (.not. allocated(this % phi_final)) allocate(this % phi_final(ng*nx*ny*nz))
+    else
+      if (.not. allocated(this % phi_sum)) allocate(this % phi_sum(ng*nx*ny*nz))
+      if (.not. allocated(this % phi_sum_sq)) allocate(this % phi_sum_sq(ng*nx*ny*nz))
+    end if
 
     ! allocate source weight modification vars
     if (.not. allocated(this % sourcecounts)) allocate(this % sourcecounts(ng,nx,ny,nz))
@@ -134,7 +146,6 @@ contains
 
     ! set everthing to 0 except weight multiply factors if feedback isnt on
     this % flux          = ZERO
-    this % phi_final     = ZERO
     this % totalxs       = ZERO
     this % p1scattxs     = ZERO
     this % scattxs       = ZERO
@@ -148,6 +159,12 @@ contains
     this % openmc_src    = ZERO
     this % sourcecounts  = ZERO
     this % weightfactors = ONE
+    if(cmfd_accum) then
+      this % phi_final   = ZERO
+    else
+      this % phi_sum     = ZERO
+      this % phi_sum_sq  = ZERO
+    end if
 
   end subroutine allocate_cmfd
 
