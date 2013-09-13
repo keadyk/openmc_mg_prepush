@@ -1283,9 +1283,9 @@ contains
 
     if (entropy_on) then
       if (cmfd_run) then
-        message = " Bat./Gen.      k       Entropy         Average k          CMFD k    CMFD Ent   Flush?"
+        message = " Bat./Gen.      k       Entropy         Average k          CMFD k    CMFD Ent/F"
         call write_message(1)
-        message = " =========   ========   ========   ====================   ========   ========   ======"
+        message = " =========   ========   ========   ====================   ========   =========="
         call write_message(1)
       else
         message = " Bat./Gen.      k       Entropy         Average k"
@@ -1371,8 +1371,8 @@ contains
          FMT='(3X, F8.5)', ADVANCE='NO') cmfd % entropy
          
     ! write out cmfd flush flag
-    if (cmfd_on .and. entropy_on) write(UNIT=OUTPUT_UNIT, &
-         FMT='(3X, A1)', ADVANCE='NO') cmfd_cfl
+    if (cmfd_on) write(UNIT=OUTPUT_UNIT, &
+         FMT='(1X, A1)', ADVANCE='NO') cmfd_cfl
 
     ! next line
     write(UNIT=OUTPUT_UNIT, FMT=*)
