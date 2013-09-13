@@ -113,8 +113,13 @@ contains
     use global,            only: cmfd_begin, cmfd_on, cmfd_tally_on,         &
                                  cmfd_inact_flush, cmfd_act_flush, cmfd_run, &
                                  current_batch, cmfd_hold_weights,           &
-                                 cmfd_inactive, n_inactive
+                                 cmfd_inactive, n_inactive, cmfd_cfl,        &
+                                 cmfd_accum
 
+    ! initially set tally flush to F for false; will be changed if the
+    ! tally reset function is called
+    cmfd_cfl = 'F'
+    
     ! check to activate CMFD diffusion and possible feedback
     ! this guarantees that when cmfd begins at least one batch of tallies are
     ! accumulated
@@ -133,30 +138,26 @@ contains
     ! check to flush cmfd tallies during inactive batches (>= on number of
     ! flushes important as the code will flush on the first batch which we
     ! dont want to count)
-!    if (cmfd_run .and. current_batch < n_inactive .and. mod(current_batch-1,cmfd_inact_flush(1))   &
-!       == 0 .and. cmfd_inact_flush(2) >= 0) then
-    ! ADDED BY KK ON SEPTEMBER 5TH -- IF INACTIVE FLAG IS TRUE,
-    ! FLUSH TALLIES EVERY CYCLE WHILE WE'RE IN INACTIVE CYCLES
-    !if (cmfd_run .and. .not. cmfd_inactive .and. cmfd_begin < current_batch & 
-    !   .and. current_batch < n_inactive) then
-    !    cmfd_hold_weights = .true.
-    !    call cmfd_tally_reset()
-    !    !write(*,'("Inactive cycle: CMFD tallies flushed")')
-    !end if
-    ! HIJACKED BY KK ON SEPTEMBER 12th -- turn off accumulating entirely if 
-    ! inactive flag is false-- FIX THIS LATER!!!!
-    if (cmfd_run .and. .not. cmfd_inactive .and. cmfd_begin < current_batch) then
+    
+    ! check for different cases on which to flush tallies:
+    if(cmfd_run .and. cmfd_begin < current_batch) then
+      ! If accum=false, flush tallies every cycle (active or not)
+      if (.not. cmfd_accum) then
         cmfd_hold_weights = .true.
         call cmfd_tally_reset()
-        !write(*,'("Inactive cycle: CMFD tallies flushed")')
-    end if
-    
-    if (cmfd_run .and. mod(current_batch,cmfd_inact_flush(1))   &
-       == 0 .and. cmfd_inact_flush(2) > 0 .and. cmfd_begin < current_batch) then
+      ! If inactive=false, flush tallies every cycle during inactive batches 
+      elseif (.not. cmfd_inactive .and. current_batch < n_inactive) then
+        cmfd_hold_weights = .true.
+        call cmfd_tally_reset()
+      ! If this is a prescribed flush cycle, flush...
+      elseif (mod(current_batch,cmfd_inact_flush(1))== 0 .and. &
+          cmfd_inact_flush(2) > 0) then
         cmfd_hold_weights = .true.
         call cmfd_tally_reset()
         cmfd_inact_flush(2) = cmfd_inact_flush(2) - 1
+      end if  
     end if
+
 
   end subroutine cmfd_init_batch
 
@@ -473,7 +474,8 @@ contains
 
   subroutine cmfd_tally_reset()
 
-    use global,  only: n_cmfd_tallies, cmfd_tallies, message
+    use global,  only: n_cmfd_tallies, cmfd_tallies, message, &
+                       cmfd_cfl
     use output,  only: write_message
     use tally,   only: reset_result
 
@@ -482,6 +484,7 @@ contains
     ! print message
     message = "CMFD tallies reset"
     call write_message(7)
+    cmfd_cfl = 'T'
 
     ! begin loop around CMFD tallies
     do i = 1, n_cmfd_tallies

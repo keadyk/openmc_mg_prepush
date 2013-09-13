@@ -334,6 +334,9 @@ module global
   
   ! accumulate cmfd tallies over cycles
   logical :: cmfd_accum = .false.
+  
+  ! char flag for flushing tallies each cycle
+  character :: cmfd_cfl = 'F' 
 
   ! activate auto-balance of tallies (2grp only)
 ! logical :: cmfd_balance = .false.
