@@ -333,7 +333,7 @@ module global
   logical :: use_functs = .false.
   
   ! accumulate cmfd tallies over cycles
-  logical :: accum = .false.
+  logical :: cmfd_accum = .false.
 
   ! activate auto-balance of tallies (2grp only)
 ! logical :: cmfd_balance = .false.

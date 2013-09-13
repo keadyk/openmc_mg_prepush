@@ -129,7 +129,7 @@ contains
     
     ! are we accumulating our tallies?
     call lower_case(accumulate_)
-    if(accumulate_ == 'true' .or. accumulate_ == '1') accum = .true.
+    if(accumulate_ == 'true' .or. accumulate_ == '1') cmfd_accum = .true.
     
     ! are we using the extra functionals?
     call lower_case(use_functs_)
