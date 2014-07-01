@@ -4,7 +4,8 @@ module cmfd_header
 
   implicit none
   private
-  public :: allocate_cmfd, allocate_funct, deallocate_cmfd, deallocate_funct
+  public :: allocate_cmfd, allocate_funct, allocate_no_accum, deallocate_cmfd,&
+            deallocate_funct, deallocate_no_accum
 
   type, public :: cmfd_type
 
@@ -93,9 +94,7 @@ contains
 ! ALLOCATE_CMFD
 !==============================================================================
 
-  subroutine allocate_cmfd(this)
-
-    use global,  only: cmfd_accum    
+  subroutine allocate_cmfd(this)  
     
     type(cmfd_type) :: this 
 
@@ -133,12 +132,7 @@ contains
     if (.not. allocated(this % openmc_src)) allocate(this % openmc_src(ng,nx,ny,nz))
     
     ! allocate final flux distribution
-    if(cmfd_accum) then
-      if (.not. allocated(this % phi_final)) allocate(this % phi_final(ng*nx*ny*nz))
-    else
-      if (.not. allocated(this % phi_sum)) allocate(this % phi_sum(ng*nx*ny*nz))
-      if (.not. allocated(this % phi_sum_sq)) allocate(this % phi_sum_sq(ng*nx*ny*nz))
-    end if
+    if (.not. allocated(this % phi_final)) allocate(this % phi_final(ng*nx*ny*nz))
 
     ! allocate source weight modification vars
     if (.not. allocated(this % sourcecounts)) allocate(this % sourcecounts(ng,nx,ny,nz))
@@ -159,17 +153,12 @@ contains
     this % openmc_src    = ZERO
     this % sourcecounts  = ZERO
     this % weightfactors = ONE
-    if(cmfd_accum) then
-      this % phi_final   = ZERO
-    else
-      this % phi_sum     = ZERO
-      this % phi_sum_sq  = ZERO
-    end if
+    this % phi_final     = ZERO
 
   end subroutine allocate_cmfd
 
 !==============================================================================
-! ALLOCATE_CMFD
+! ALLOCATE_FUNCT allocates special variables used only for functional calcs
 !==============================================================================
 
   subroutine allocate_funct(this)
@@ -197,6 +186,37 @@ contains
     this % mu_sq = ZERO
     
   end subroutine allocate_funct
+
+!==============================================================================
+! ALLOCATE_NO_ACCUM allocates arrays used only when tally accumulation is 
+! turned OFF (these arrays are used to calc the CMFD RSDs)
+!==============================================================================
+  
+  subroutine allocate_no_accum(this)
+    
+    type(cmfd_type) :: this 
+
+    integer :: nx  ! number of mesh cells in x direction
+    integer :: ny  ! number of mesh cells in y direction
+    integer :: nz  ! number of mesh cells in z direction
+    integer :: ng  ! number of energy groups
+
+   ! extract spatial and energy indices from object
+    nx = this % indices(1)
+    ny = this % indices(2)
+    nz = this % indices(3)
+    ng = this % indices(4)
+    
+    ! These hold running phi sums
+    if (.not. allocated(this % phi_sum)) allocate(this % phi_sum(ng*nx*ny*nz))
+    ! These hold running phi sums squared
+    if (.not. allocated(this % phi_sum_sq)) allocate(this % phi_sum_sq(ng*nx*ny*nz))    
+    
+    ! finally, initialize!
+    this % phi_sum = ZERO
+    this % phi_sum_sq = ZERO
+    
+  end subroutine allocate_no_accum
   
 !===============================================================================
 ! DEALLOCATE_CMFD 
@@ -240,5 +260,18 @@ contains
     if (allocated(this % mu_sq))         deallocate(this % mu_sq) 
     
   end subroutine deallocate_funct
+  
+!===============================================================================
+! DEALLOCATE_NO_ACCUM 
+!===============================================================================
+
+  subroutine deallocate_no_accum(this)
+
+    type(cmfd_type) :: this    
+    
+    if (allocated(this % phi_sum))      deallocate(this % phi_sum) 
+    if (allocated(this % phi_sum_sq))   deallocate(this % phi_sum_sq) 
+    
+  end subroutine deallocate_no_accum
   
 end module cmfd_header

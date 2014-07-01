@@ -17,8 +17,9 @@ contains
   subroutine finalize_cmfd() 
 
     use global,      only: cmfd, cmfd_write_balance, cmfd_write_hdf5, &
-                           master, mpi_err, cmfd_accum
-    use cmfd_header, only: deallocate_cmfd
+                           master, mpi_err, use_functs, cmfd_accum
+    use cmfd_header, only: deallocate_cmfd, deallocate_funct, &
+                           deallocate_no_accum
 
     ! finalize petsc
     call PetscFinalize(mpi_err)
@@ -32,6 +33,12 @@ contains
     ! write out cmfd eigenfunction
     if (master) call write_cmfd_eigenfunction(cmfd)
 
+    ! If using functional method, deallocate functionals
+    if(use_functs) call deallocate_funct(cmfd)
+    
+    ! If not accumulating tallies, deallocate tallies
+    if(.not. cmfd_accum) call deallocate_no_accum(cmfd)
+    
     ! deallocate cmfd object
     call deallocate_cmfd(cmfd)
 

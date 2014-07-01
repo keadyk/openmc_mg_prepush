@@ -1,4 +1,4 @@
-program = openmcDEBUGGING
+program = openmc_MEGAPRINT
 prefix = /home/keadyk/NetBeansProjects/OPENMC_builds
 
 templates = $(wildcard templates/*.o)

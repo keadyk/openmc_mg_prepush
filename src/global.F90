@@ -338,12 +338,6 @@ module global
   ! char flag for flushing tallies each cycle
   character :: cmfd_cfl = 'F' 
 
-  ! activate auto-balance of tallies (2grp only)
-! logical :: cmfd_balance = .false.
-
-  ! calculate effective downscatter
-! logical :: cmfd_downscatter = .false.
-
   ! user-defined tally information
   integer :: n_cmfd_meshes              = 1 ! # of structured meshes
   integer :: n_cmfd_tallies             = 3 ! # of user-defined tallies

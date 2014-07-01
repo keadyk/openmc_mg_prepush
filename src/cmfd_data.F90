@@ -20,15 +20,20 @@ contains
 
   subroutine set_up_cmfd() 
 
-    use cmfd_header,         only: allocate_cmfd, allocate_funct
+    use cmfd_header,         only: allocate_cmfd, allocate_funct, allocate_no_accum
     use constants,           only: CMFD_NOACCEL
-    use global,              only: cmfd, cmfd_coremap, cmfd_run_2grp, use_functs
+    use global,              only: cmfd, cmfd_coremap, cmfd_run_2grp, use_functs,&
+                                   cmfd_accum
 
     ! initialize cmfd object
-    if (.not.allocated(cmfd%flux)) call allocate_cmfd(cmfd)
+    if (.not. allocated(cmfd%flux)) call allocate_cmfd(cmfd)
     ! initialize functionals if necessary
     if(use_functs) then
       if (.not. allocated(cmfd % vol_curr)) call allocate_funct(cmfd)
+    end if
+    
+    if(.not. cmfd_accum) then
+      if (.not. allocated(cmfd % phi_sum)) call allocate_no_accum(cmfd)
     end if
 
     ! check for core map and set it up
