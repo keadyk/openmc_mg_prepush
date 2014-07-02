@@ -9,7 +9,9 @@ element geometry {
     ) &
     (element surfaces { list { xsd:int+ } } | attribute surfaces { list { xsd:int+ } }) &
     (element rotation { list { xsd:double+ } } | attribute rotation { list { xsd:double+ } })? &
-    (element translation { list { xsd:double+ } } | attribute translation { list { xsd:double+ } })?
+    (element translation { list { xsd:double+ } } | attribute translation { list { xsd:double+ } })? &
+    (element roi { xsd:string { maxLength = "5" } } | attribute roi { xsd:string { maxLength = "5" } })? &
+    (element buffer { xsd:string { maxLength = "5" } } | attribute buffer { xsd:string { maxLength = "5" } })?
   }*
 
   & element surface {

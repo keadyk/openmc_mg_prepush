@@ -59,6 +59,7 @@ module geometry_header
      integer :: fill       ! universe # filling this cell
      integer :: material   ! Material within cell (0 for universe)
      integer :: n_surfaces ! Number of surfaces within
+     integer :: n_split    ! Split/roulette factor when particles enter/exit cell 
      integer, allocatable :: & 
           & surfaces(:)    ! List of surfaces bounding cell -- note that
                            ! parentheses, union, etc operators will be listed

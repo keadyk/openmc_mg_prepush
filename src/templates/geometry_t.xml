@@ -13,6 +13,8 @@
     <component name="surfaces" type="integer-array" />
     <component name="rotation" type="double-array" />
     <component name="translation" type="double-array" />
+    <component name="roi" type="word" length="5" default= "'false'" />
+    <component name="buffer" type="word" length="5" default="'false'" />
   </typedef>
 
   <typedef name="surface_xml">

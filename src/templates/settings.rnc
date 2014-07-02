@@ -47,6 +47,13 @@ element settings {
 
   element ptables { xsd:boolean }? &
 
+  element roi_method {
+    (element enabled { xsd:string { maxLength = "5"} } | 
+      attribute enabled { xsd:string { maxLength = "5"} })? &
+    (element split_factor { xsd:positiveInteger } | 
+      attribute split_factor { xsd:positiveInteger })?
+  }? &
+
   element run_cmfd { xsd:boolean }? &
 
   element seed { xsd:positiveInteger }? &

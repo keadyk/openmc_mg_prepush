@@ -133,14 +133,14 @@ contains
 
       ! Check number of particles
       if (len_trim(eigenvalue_ % particles) == 0) then
-        message = "Need to specify number of particles per cycles."
+        message = "Need to specify number of particles per cycle."
         call fatal_error()
       end if
 
       ! If the number of particles was specified as a command-line argument, we
       ! don't set it here
       if (n_particles == 0) n_particles = str_to_int(eigenvalue_ % particles)
-
+        
       ! Copy batch and generation information
       n_batches     = eigenvalue_ % batches
       n_inactive    = eigenvalue_ % inactive
@@ -365,6 +365,18 @@ contains
     ! Survival biasing
     call lower_case(survival_)
     if (survival_ == 'true' .or. survival_ == '1') survival_biasing = .true.
+    
+    ! ROI splitting/rouletting method (added by K. Keady 7/1/14)
+    if(size(roi_method_) > 0) then
+      call lower_case(roi_method_(1) % enabled)
+      if (roi_method_(1) % enabled == 'true' .or. roi_method_(1) % enabled == '1') then 
+        roi_on = .true.
+        n_split = roi_method_(1) % split_factor
+        message = "ROI method enabled, with split factor " // &
+             trim(to_str(n_split)) // "!!"
+        call write_message(5)
+      end if
+    end if
 
 #ifndef MULTIGROUP
     ! Probability tables
@@ -640,7 +652,7 @@ contains
       ! Copy data into cells
       c % id       = cell_(i) % id
       c % universe = cell_(i) % universe
-      c % fill     = cell_(i) % fill
+      c % fill     = cell_(i) % fill 
 
       ! Check to make sure 'id' hasn't been used
       if (cell_dict % has_key(c % id)) then
@@ -752,6 +764,30 @@ contains
         ! Copy translation vector
         allocate(c % translation(3))
         c % translation = cell_(i) % translation
+      end if
+      
+      ! If cell is designated ROI or buffer, set split 
+      ! number to global n_split; else, split number is unity
+      if(roi_on) then
+        if (cell_(i) % roi == 'true' .or. cell_(i) % roi == '1') then
+          c % n_split = n_split
+          message = "Cell " // trim(to_str(c % id)) // &
+                    " designated ROI, split factor " &
+                    // trim(to_str(c % n_split))
+          roi_count = roi_count + 1
+          call write_message(5)
+        elseif (cell_(i) % buffer == 'true' .or. cell_(i) % buffer == '1') then
+          c % n_split = n_split
+          message = "Cell " // trim(to_str(c % id)) // &
+                    " designated buffer, split factor " // &
+                    trim(to_str(c % n_split))
+          call write_message(5)
+        else
+          c % n_split = 1
+          message = "Cell " // trim(to_str(c % id)) // " split factor " &
+               // trim(to_str(c % n_split))
+          call write_message(5)
+        end if
       end if
 
       ! Add cell to dictionary

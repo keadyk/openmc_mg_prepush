@@ -172,7 +172,7 @@ module global
   integer    :: current_batch = 0 ! current batch
   integer    :: current_gen   = 0 ! current generation within a batch
   integer    :: overall_gen   = 0 ! overall generation in the run
-
+  
   ! External source
   type(ExtSource), target :: external_source
 
@@ -185,7 +185,7 @@ module global
   integer(8) :: work         ! number of particles per processor
   integer(8) :: maxwork      ! maximum number of particles per processor
   integer(8) :: current_work ! index in source bank of current history simulated
-
+  
   ! Temporary k-effective values
   real(8), allocatable :: k_generation(:) ! single-generation estimates of k
   real(8) :: keff = ONE       ! average k over active batches
@@ -250,7 +250,15 @@ module global
   logical :: survival_biasing = .false.
   real(8) :: weight_cutoff = 0.25
   real(8) :: weight_survive = 1.0
-
+  
+  ! ============================================================================
+  ! ROI METHOD VARIABLES 
+  
+  logical :: roi_on = .false.
+  type(Bank), allocatable, target :: split_bank(:) ! Split bank
+  integer :: n_split = 1                           ! Split factor at buffer/ROI
+  integer :: roi_count = 0                         ! Total # roi regions
+  
   ! ============================================================================
   ! HDF5 VARIABLES
 
@@ -402,7 +410,7 @@ module global
   logical :: output_summary = .false.
   logical :: output_xs      = .false.
   logical :: output_tallies = .true.
-
+  
 contains
 
 !===============================================================================
