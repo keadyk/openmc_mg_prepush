@@ -15,6 +15,7 @@ module multigroup_physics
   use output,            only: write_message
   use particle_header,   only: LocalCoord
   use random_lcg,        only: prn
+  use roi,               only: check_cell, check_src
   use search,            only: binary_search
   use string,            only: to_str
   use tally,             only: score_analog_tally, score_tracklength_tally, &
@@ -60,26 +61,32 @@ contains
       ! set birth cell attribute
       p % cell_born = p % coord % cell
     end if
-
+    
     ! Initialize number of events to zero
     n_event = 0
 
-    ! Add paricle's starting weight to count for normalizing tallies later
-    total_weight = total_weight + p % wgt
-
+    ! Add particle's starting weight to count for normalizing tallies later
+    ! ONLY IF IT IS NOT A SPLIT PARTICLE! The "parent" of a split particle
+    ! has already been counted, so we shouldn't count it again
+    if (.not. split_particle) then
+      total_weight = total_weight + p % wgt
+      ! In the roi method, we also have to 'split' fission particles born
+      ! in the active region...
+      if(active_batches .and. roi_on) then
+        call check_src(p % cell_born)
+      end if
+    end if
+      
     ! Force calculation of cross-sections by setting last energy to zero 
     micro_xs % last_E = 0
 
     do while (p % alive)
-
       ! Calculate microscopic and macroscopic cross sections -- note: if the
       ! material is the same as the last material and the energy of the
       ! particle hasn't changed, we don't need to lookup cross sections again.
 
       if (p % material /= p % last_material) call calculate_xs()
 
-!      write(*,'(A20,1E20.7)') "part init location: ", sqrt(p % coord0 % xyz(1)*p % coord0 % xyz(1) + &
-!                                                            p % coord0 % xyz(2)*p % coord0 % xyz(2))
       ! Find the distance to the nearest boundary
       call distance_to_boundary(d_boundary, surface_crossed, lattice_crossed)
 !      write(*,'(A20,1E20.7)') "dist to boundary :  ", d_boundary
@@ -106,9 +113,6 @@ contains
         coord => coord % next
       end do
       
-!      write(*,'(A20,1E20.7)') "part fin location:  ", sqrt(p % coord0 % xyz(1)*p % coord0 % xyz(1) + &
-!                                                      p % coord0 % xyz(2)*p % coord0 % xyz(2))
-
       ! Score track-length tallies
       if (active_tracklength_tallies % size() > 0) &
            call score_tracklength_tally(distance)
@@ -134,7 +138,11 @@ contains
           ! Particle crosses surface
           p % surface = surface_crossed
           call cross_surface(last_cell)
-          p % event = EVENT_SURFACE
+          p % event = EVENT_SURFACE        
+        end if
+        
+        if (roi_on .and. active_batches) then
+          if(p % alive) call check_cell(last_cell)
         end if
       else
         ! ====================================================================
@@ -147,6 +155,11 @@ contains
 
         p % surface = NONE
         call collision()
+        
+        !if(active_batches) then
+        !  message = "(Collision) " // to_str(p % wgt) 
+        !  call write_message(5)
+        !end if
 
         ! Save coordinates for tallying purposes
         p % last_xyz = p % coord0 % xyz
@@ -206,7 +219,9 @@ contains
     ! since the direction of the particle will change and we need to use the
     ! pre-collision direction to figure out what mesh surfaces were crossed
 
-    if (active_current_tallies % size() > 0) call score_surface_current()
+    if (active_current_tallies % size() > 0) then
+       call score_surface_current()
+    end if
 
     ! Sample nuclide/reaction for the material the particle is in
     call sample_reaction()

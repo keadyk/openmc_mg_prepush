@@ -770,7 +770,7 @@ contains
       ! number to global n_split; else, split number is unity
       if(roi_on) then
         if (cell_(i) % roi == 'true' .or. cell_(i) % roi == '1') then
-          c % n_split = n_split
+          c % n_split = n_split*n_split
           message = "Cell " // trim(to_str(c % id)) // &
                     " designated ROI, split factor " &
                     // trim(to_str(c % n_split))

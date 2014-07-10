@@ -1363,7 +1363,7 @@ contains
     if (cmfd_on) write(UNIT=OUTPUT_UNIT, FMT='(3X, F8.5)', ADVANCE='NO') &
          cmfd % keff 
 
-    ! write out cmfd entopy
+    ! write out cmfd entropy
     if (cmfd_on .and. entropy_on) write(UNIT=OUTPUT_UNIT, &
          FMT='(3X, F8.5)', ADVANCE='NO') cmfd % entropy
          
@@ -1547,6 +1547,9 @@ contains
       write(ou,102) "k-effective (Absorption)", global_tallies(K_ABSORPTION) &
            % sum, global_tallies(K_ABSORPTION) % sum_sq
       if (n_realizations > 3) write(ou,102) "Combined k-effective", k_combined
+      if(cmfd_run) write(ou,102) "k-effective (CMFD)", cmfd % keff_sum, &
+           cmfd % keff_std
+      
       write(ou,102) "Leakage Fraction", global_tallies(LEAKAGE) % sum, &
            global_tallies(LEAKAGE) % sum_sq
     else

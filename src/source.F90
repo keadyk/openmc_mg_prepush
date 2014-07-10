@@ -7,9 +7,7 @@ module source
   use global
   use output,             only: write_message
   use particle_header,    only: deallocate_coord
-#ifdef MULTIGROUP
-  ! not sure we need to include anything here!
-#else
+#ifndef MULTIGROUP
   use physics,            only: maxwell_spectrum, watt_spectrum
 #endif
   use random_lcg,         only: prn, set_particle_seed
@@ -164,6 +162,8 @@ contains
     ! set defaults
     call initialize_particle()
 
+    split_particle = .false.
+    
     ! Copy attributes from source to particle
     src => source_bank(index_source)
     call copy_source_attributes(src)
@@ -181,6 +181,45 @@ contains
          p % id == trace_particle) trace = .true.
 
   end subroutine get_source_particle
+  
+!===============================================================================
+! GET_SPLIT_PARTICLE returns the next split particle 
+!===============================================================================
+
+  subroutine get_split_particle(index_source)
+
+    integer(8), intent(in) :: index_source
+
+    integer(8) :: particle_seed  ! unique index for particle
+    type(Bank), pointer :: src => null()
+
+    ! set defaults
+    call initialize_particle()
+    
+    split_particle = .true.
+
+    ! Copy attributes from source to particle
+    src => split_bank(index_source)
+    call copy_source_attributes(src)
+
+    ! set identifier for particle (index starting from last fission part.)
+    p % id = n_particles + index_source - 1
+
+    ! set random number seed
+    particle_seed = (overall_gen - 1)*n_particles + p % id
+    call set_particle_seed(particle_seed)
+    
+    !message = "SPLIT particle seed: " // to_str(particle_seed)
+    !call write_message(5)
+    !message = "split stuff: " // to_str(p % wgt) // " " // to_str(p % coord % xyz(1)) // " " // to_str(p % coord % uvw(1))
+    !call write_message(5)
+
+    ! set particle trace
+    trace = .false.
+    if (current_batch == trace_batch .and. current_gen == trace_gen .and. &
+         p % id == trace_particle) trace = .true.
+
+  end subroutine get_split_particle
 
 !===============================================================================
 ! COPY_SOURCE_ATTRIBUTES

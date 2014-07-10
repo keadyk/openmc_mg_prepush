@@ -90,6 +90,10 @@ contains
     this % phi_sum_sq = sqrt((this % phi_sum_sq/n - this % phi_sum * &
                         this % phi_sum) / (n - 1))
                         
+    this % keff_sum = this % keff_sum/n
+    this % keff_std = sqrt((this % keff_std/n - this % keff_sum * &
+                        this % keff_sum) / (n - 1))
+                        
   end subroutine calc_cmfd_stats
   
 !===============================================================================

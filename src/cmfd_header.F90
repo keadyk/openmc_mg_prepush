@@ -1,7 +1,8 @@
 module cmfd_header 
 
   use constants,  only: CMFD_NOACCEL, ZERO, ONE
-
+  use global,     only: gen_per_batch, n_batches
+  
   implicit none
   private
   public :: allocate_cmfd, allocate_funct, allocate_no_accum, deallocate_cmfd,&
@@ -61,8 +62,11 @@ module cmfd_header
     ! weight adjustment factors 
     real(8), allocatable :: weightfactors(:,:,:,:)
 
-    ! eigenvector/eigenvalue from cmfd run
+    ! eigenvector/eigenvalue(s) from cmfd run
     real(8), allocatable :: phi(:)
+    real(8), allocatable :: k_gen_cmfd(:)
+    real(8) :: keff_sum = ZERO
+    real(8) :: keff_std = ZERO
     real(8) :: keff = ZERO
     
     ! accumulated eigenvector/eigenvector_sq from cmfd run
@@ -109,6 +113,9 @@ contains
     nz = this % indices(3)
     ng = this % indices(4)
 
+    ! allocate array for cmfd batch keff
+    if (.not. allocated(this % k_gen_cmfd)) allocate(this % k_gen_cmfd(n_batches*gen_per_batch))
+
     ! allocate flux, cross sections and diffusion coefficient
     if (.not. allocated(this % flux))       allocate(this % flux(ng,nx,ny,nz))
     if (.not. allocated(this % totalxs))    allocate(this % totalxs(ng,nx,ny,nz))
@@ -138,7 +145,7 @@ contains
     if (.not. allocated(this % sourcecounts)) allocate(this % sourcecounts(ng,nx,ny,nz))
     if (.not. allocated(this % weightfactors)) allocate(this % weightfactors(ng,nx,ny,nz))
 
-    ! set everthing to 0 except weight multiply factors if feedback isnt on
+    ! set everything to 0 except weight multiply factors if feedback isnt on
     this % flux          = ZERO
     this % totalxs       = ZERO
     this % p1scattxs     = ZERO
@@ -154,6 +161,7 @@ contains
     this % sourcecounts  = ZERO
     this % weightfactors = ONE
     this % phi_final     = ZERO
+    this % k_gen_cmfd    = ZERO
 
   end subroutine allocate_cmfd
 
@@ -226,6 +234,7 @@ contains
 
     type(cmfd_type) :: this
 
+    if (allocated(this % k_gen_cmfd))    deallocate(this % k_gen_cmfd)
     if (allocated(this % egrid))         deallocate(this % egrid)
     if (allocated(this % totalxs))       deallocate(this % totalxs)
     if (allocated(this % p1scattxs))     deallocate(this % p1scattxs)

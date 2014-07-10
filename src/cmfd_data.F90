@@ -185,9 +185,6 @@ contains
                 if ((flux - 0.0D0) < 1.0E-10_8) then
                   print *,h,i,j,k,flux
                   message = 'Detected zero flux without coremap overlay'
-                  !message = 'Detected zero flux w/o coremap overlay-- setting to 1e-5 for now'
-                  !call warning()
-                  !flux = 0.00001
                   call fatal_error()
                 end if
 
@@ -202,7 +199,7 @@ contains
                 ! calculate diffusion coefficient
                 cmfd % diffcof(h,i,j,k) = ONE/(3.0_8*(cmfd % totalxs(h,i,j,k) - &
                      cmfd % p1scattxs(h,i,j,k)))
-
+               
               else if (ital == 2) then
 
                 ! begin loop to get energy out tallies
@@ -691,6 +688,7 @@ contains
 
             ! get cell data
             cell_dc = cmfd%diffcof(g,i,j,k)
+            !write(*, '(A,E20.7)'), "diff coeff ", cell_dc
             cell_hxyz = cmfd%hxyz(:,i,j,k)
 
             ! setup of vector to identify boundary conditions
@@ -869,6 +867,11 @@ contains
               ! calculate net current on l face (divided by surf area)
               net_current = (current(2*l) - current(2*l-1)) / &
                    product(cmfd%hxyz(:,i,j,k)) * cmfd%hxyz(xyz_idx,i,j,k)
+                   
+              !if(l==1) then
+              !  write(*, '(A,E20.7,A,E20.7,A,E20.7,A,E20.7)') "curr and flux: ", cell_sigtr, " ",  cell_flux, " ", current(2*l), &
+              !& " ", current(2*l-1)
+              !end if
               
               ! store mu-sq funct value for this dir (don't normalize)
               ! IMPORTANT: We want the value for the face OPPOSITE
@@ -878,7 +881,6 @@ contains
               do f = 1,6
                 mu_sq(f) = mu_sq_all(3*(f-1)+xyz_idx)
               end do
-              ! write(*,'(/A,I3,A,2I3)') "cell musq face: ", (l + mod(l,2) - mod((l+1),2)), " cell ", i, j
                       
               ! store cell-avg current for this direction
               cell_curr = cell_curr_all(xyz_idx)
@@ -889,23 +891,17 @@ contains
                 ! compute dhat
                 if (use_functs) then
                   ! Use 'neighbor' mu_sq from opposite edge of THIS cell
-                  !musq_term = mu_sq(2) - mu_sq(1) + mu_sq(4) - mu_sq(3) + mu_sq(6) - mu_sq(5)
                   if(xyz_idx == 1) then
                     musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*((mu_sq(6) &
                               - mu_sq(5)) + (mu_sq(4) - mu_sq(3)))
-                    !          musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
                   else if(xyz_idx == 2) then
                     musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*((mu_sq(2) &
                               - mu_sq(1)) + (mu_sq(6) - mu_sq(5)))
-                    !          musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
                   else
                     musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2)) + shift_idx*((mu_sq(4) &
                               - mu_sq(3)) + (mu_sq(2) - mu_sq(1)))
-                    !          musq_term = mu_sq(l) - mu_sq(l + mod(l,2) - mod((l+1),2))
                   end if
                   
-                  
-                  !corr = (cell_curr + shift_idx*(mu_sq_all(l)-mu_sq))/(cell_sigtr)
                   !write(*, '(A,E20.7,A,E20.7,A,E20.7)'), "bound net curr ", net_current, " vol curr ",&
                   !      (cell_curr)/(cell_sigtr), " musq term " ,&
                   !      shift_idx*musq_term/(cell_sigtr)
@@ -1041,9 +1037,9 @@ contains
 !               print *,current(2*l),current(2*l-1),net_current
 !               dhat = ZERO
 !             end if
-
               ! record dhat in cmfd object
               cmfd%dhat(l,g,i,j,k) = dhat
+              ! write(*, '(A,E20.7)') "dhat ", dhat
 
               ! check for dhat reset
               if (dhat_reset) cmfd%dhat(l,g,i,j,k) = ZERO

@@ -428,6 +428,7 @@ contains
       if (active_current_tallies % size() > 0) then
         p % coord0 % xyz = p % coord0 % xyz - TINY_BIT * p % coord0 % uvw
         call score_surface_current()
+        
         ! We need an extra routine here to handle mu_sq tallies,
         ! which have non-zero contributions at reflecting boundaries...
         if (use_functs) call score_reflecting_musq()

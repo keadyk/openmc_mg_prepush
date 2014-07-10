@@ -20,7 +20,7 @@ module eigenvalue
 #endif
   use random_lcg,         only: prn, set_particle_seed, prn_skip
   use search,             only: binary_search
-  use source,             only: get_source_particle
+  use source,             only: get_source_particle, get_split_particle
   use state_point,        only: write_state_point
   use string,             only: to_str
   use tally,              only: synchronize_tallies, setup_active_usertallies, &
@@ -57,7 +57,7 @@ contains
     BATCH_LOOP: do current_batch = 1, n_batches
 
       call initialize_batch()
-
+      
       ! Handle restart runs
       if (restart_run .and. current_batch <= restart_batch) then
         call replay_batch_history()
@@ -72,7 +72,7 @@ contains
 
         ! Start timer for transport
         call time_transport % start()
-
+        
         ! ====================================================================
         ! LOOP OVER PARTICLES
         PARTICLE_LOOP: do current_work = 1, work
@@ -80,14 +80,56 @@ contains
           ! grab source particle from bank
           call get_source_particle(current_work)
 
+          !if (current_batch == 10 .or. current_batch == 11) then
+            !if(current_batch == 10) then
+          !message = "--------New source particle: " // trim(to_str(p % wgt)) // " " // trim(to_str(p % coord0 % xyz(1)))
+          !call write_message(5)
+          !end if
+          
           ! transport particle
           call transport()
 
         end do PARTICLE_LOOP
+        
+        !message = "Total weight after orig " // trim(to_str(total_weight))
+        !call write_message()
+        
+        ! TODO: Make this work in parallel (?)
+        if (roi_on .and. active_batches) then
+          ! ==================================================================
+          ! LOOP OVER SPLITS (added by K. Keady 7/2/14 :))
+          ! An interesting point: n_sbank can change as the split particles
+          ! run, because splits can split again :O
+          ! message = "Running split bank... " // trim(to_str(n_sbank))
+          ! call write_message(5)
+          current_split = 0
+          !SPLIT_LOOP: do current_split = 1, n_sbank
+          SPLIT_LOOP: do
+            current_split = current_split + 1
+            if (current_split > n_sbank) exit
+          !message = "Current and bank size: " // trim(to_str(current_split)) // " " // trim(to_str(n_sbank))
+          !call write_message(5)
+          ! grab source particle from bank    
+            call get_split_particle(current_split)
+            
+            !if (current_batch == 10 .or. current_batch == 11) then
+            !if(current_batch == 10) then
+            !message = "-------------------New split particle " // trim(to_str(p % wgt)) // " " // trim(to_str(p % coord0 % xyz(1)))
+            !call write_message(5)
+            !end if
+            
+            ! transport particle
+            call transport()
+
+          end do SPLIT_LOOP
+        end if 
 
         ! Accumulate time for transport
         call time_transport % stop()
-
+         
+        !message = "Total weight after splits " // trim(to_str(total_weight))
+        !call write_message()
+        
         call finalize_generation()
 
       end do GENERATION_LOOP
@@ -145,6 +187,9 @@ contains
 
     ! Reset number of fission bank sites
     n_bank = 0
+    
+    ! If using roi, reset number of split bank sites
+    if (roi_on) n_sbank = 0
 
     ! Count source sites if using uniform fission source weighting
     if (ufs) call count_source_for_ufs()
@@ -196,8 +241,11 @@ contains
       n_realizations = 0
     end if
 
-    ! Perform CMFD calculation if on
-    if (cmfd_on) call execute_cmfd()
+    ! Perform CMFD calculation & store k (if CMFD is on)
+    if (cmfd_on) then
+      call execute_cmfd()
+      call process_cmfd_keff()
+    end if
 
     ! Display output
     if (master) call print_batch_keff()
@@ -255,7 +303,7 @@ contains
     ! of fission bank sites -- each processor needs to know the total number of
     ! sites in order to figure out the probability for selecting
     ! sites. Furthermore, each proc also needs to know where in the 'global'
-    ! fission bank its own sites starts in order to ensure reproducibility by
+    ! fission bank its own sites start in order to ensure reproducibility by
     ! skipping ahead to the proper seed.
 
 #ifdef MPI
@@ -585,7 +633,7 @@ contains
     ! Normalize single batch estimate of k
     ! TODO: This should be normalized by total_weight, not by n_particles
     k_generation(overall_gen) = k_generation(overall_gen) / n_particles
-
+    
   end subroutine calculate_generation_keff
 
 !===============================================================================
@@ -629,8 +677,26 @@ contains
         keff_std = t_value * sqrt((k_sum(2)/n - keff**2) / (n - 1))
       end if
     end if
+    
 
   end subroutine calculate_average_keff
+  
+  !===============================================================================
+  ! PROCESS_CMFD_KEFF stores batch estimates of keff and accumulates the sum/
+  ! sum-squared values during active batches
+  !===============================================================================
+  
+  subroutine process_cmfd_keff()
+   
+    ! Don't forget to store the cmfd k_eff (if we're running cmfd!)
+    cmfd % k_gen_cmfd(overall_gen) = cmfd % keff
+    if (active_batches) then
+      cmfd % keff_sum = cmfd % keff_sum + cmfd % keff
+      ! (We store the sum squared in the std. dev. variable)
+      cmfd % keff_std = cmfd % keff_std + cmfd % keff * cmfd % keff
+    end if
+             
+  end subroutine process_cmfd_keff
 
 !===============================================================================
 ! CALCULATE_COMBINED_KEFF calculates a minimum variance estimate of k-effective
@@ -659,6 +725,8 @@ contains
 
     ! Initialize variables
     n = n_realizations
+    ! message = "# realiz: " // trim(to_str(n))
+    ! call write_message(5)
     g = ZERO
     S = ZERO
     k_combined = ZERO
@@ -770,10 +838,11 @@ contains
       ! Normalize to total weight to get fraction of source in each cell
       total = sum(source_frac)
       source_frac = source_frac / total
-
+      
+      !write(*,'(E20.7)') source_frac
+      
       ! Since the total starting weight is not equal to n_particles, we need to
       ! renormalize the weight of the source sites
-
       source_bank % wgt = source_bank % wgt * n_particles / total
     end if
 

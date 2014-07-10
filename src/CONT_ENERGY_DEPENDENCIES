@@ -59,6 +59,7 @@ physics.o: output.o
 physics.o: particle_header.o
 physics.o: particle_restart_write.o
 physics.o: random_lcg.o
+physics.o: roi.o
 physics.o: search.o
 physics.o: string.o
 physics.o: tally.o

@@ -269,6 +269,14 @@ plot_header.o: constants.o
 
 random_lcg.o: global.o
 
+roi.o: constants.o
+roi.o: error.o
+roi.o: global.o
+roi.o: output.o
+roi.o: particle_header.o
+roi.o: random_lcg.o
+roi.o: string.o
+
 search.o: error.o
 search.o: global.o
 

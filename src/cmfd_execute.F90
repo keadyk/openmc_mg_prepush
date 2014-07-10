@@ -528,8 +528,8 @@ contains
     integer :: i ! loop counter
 
     ! print message
-    message = "CMFD tallies reset"
-    call write_message(7)
+    !message = "CMFD tallies reset"
+    !call write_message(7)
     cmfd_cfl = 'T'
 
     ! begin loop around CMFD tallies

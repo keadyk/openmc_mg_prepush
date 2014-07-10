@@ -17,6 +17,7 @@ module physics
   use output,                 only: write_message
   use particle_header,        only: LocalCoord
   use particle_restart_write, only: write_particle_restart
+  use roi,                    only: check_cell
   use random_lcg,             only: prn
   use search,                 only: binary_search
   use string,                 only: to_str
@@ -69,7 +70,9 @@ contains
     n_event = 0
 
     ! Add paricle's starting weight to count for normalizing tallies later
-    total_weight = total_weight + p % wgt
+    ! ONLY IF IT IS NOT A SPLIT PARTICLE! The "parent" of a split particle
+    ! has already been counted, so we shouldn't count it again
+    if (.not. split_particle) total_weight = total_weight + p % wgt
 
     ! Force calculation of cross-sections by setting last energy to zero 
     micro_xs % last_E = ZERO
@@ -128,6 +131,10 @@ contains
           p % surface = surface_crossed
           call cross_surface(last_cell)
           p % event = EVENT_SURFACE
+        end if
+        
+        if (roi_on .and. active_batches) then
+          if(p % alive) call check_cell(last_cell)
         end if
       else
         ! ====================================================================

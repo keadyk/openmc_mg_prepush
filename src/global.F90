@@ -254,10 +254,14 @@ module global
   ! ============================================================================
   ! ROI METHOD VARIABLES 
   
-  logical :: roi_on = .false.
   type(Bank), allocatable, target :: split_bank(:) ! Split bank
-  integer :: n_split = 1                           ! Split factor at buffer/ROI
-  integer :: roi_count = 0                         ! Total # roi regions
+  real(8), allocatable            :: track_dist(:) ! Track distribution
+  logical    :: roi_on = .false.                   ! Is ROI enabled at all?
+  logical    :: split_particle = .false.           ! Flag for split daughter
+  integer(8) :: n_sbank                            ! Particles in split bank   
+  integer    :: n_split = 1                        ! Split factor in buffer/ROI
+  integer    :: roi_count = 0                      ! Total # roi regions    
+  integer(8) :: current_split                      ! index in spl bank, cur part
   
   ! ============================================================================
   ! HDF5 VARIABLES
@@ -462,14 +466,16 @@ contains
     ! Deallocate energy grid
     if (allocated(e_grid)) deallocate(e_grid)
 
-    ! Deallocate fission and source bank and entropy
+    ! Deallocate fission, source, split banks and entropy
     if (allocated(fission_bank)) deallocate(fission_bank)
     if (allocated(source_bank)) deallocate(source_bank)
+    if (allocated(split_bank)) deallocate(split_bank)
     if (allocated(entropy_p)) deallocate(entropy_p)
 
     ! Deallocate cmfd
     call deallocate_cmfd(cmfd)
-        ! initialize functionals if necessary
+    
+    ! deallocate functionals if necessary
     if(use_functs) then
       call deallocate_funct(cmfd)
     end if

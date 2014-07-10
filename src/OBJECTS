@@ -45,6 +45,7 @@ plot.o \
 plot_header.o \
 ppmlib.o \
 random_lcg.o \
+roi.o \
 search.o \
 set_header.o \
 source.o \

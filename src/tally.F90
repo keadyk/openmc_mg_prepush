@@ -1560,11 +1560,23 @@ contains
     type(StructuredMesh), pointer :: m => null()
     type(Surface),  pointer :: surf => null()
 
+    !if (current_batch == 10 .or. current_batch == 11) then
+    !  message = "weight of " // trim(to_str(p % wgt)) // " to be tallied " 
+    !  call warning()
+    !end if
+    
     TALLY_LOOP: do i = 1, active_current_tallies % size()
       ! Copy starting and ending location of particle
       xyz0 = p % last_xyz
       xyz1 = p % coord0 % xyz
 
+      !if (current_batch == 10 .or. current_batch == 11) then
+      !if(current_batch == 10) then
+      !  message = "start coordinates " // trim(to_str(xyz0(1))) // " " // trim(to_str(xyz0(2))) &
+      !  & // " end coordinates " // trim(to_str(xyz1(1))) // " " // trim(to_str(xyz1(2)))
+      !  call warning()
+      !end if
+      
       ! Get pointer to tally
       i_tally = active_current_tallies % get_item(i)
       t => tallies(i_tally)
@@ -1590,6 +1602,17 @@ contains
 
       ! Calculate number of surface crossings
       n_cross = sum(abs(ijk1 - ijk0))
+      
+      !if (current_batch == 10 .or. current_batch == 11) then
+      !if(current_batch == 10) then
+      !    message = "number of mesh crossings " // trim(to_str(n_cross))
+      !    call warning()
+      !    message = "st indices " // trim(to_str(ijk0(1))) // " " // trim(to_str(ijk0(2))) &
+      !    & // " end indices " // trim(to_str(ijk1(1))) // " " // trim(to_str(ijk1(2)))
+      !    call warning()
+      !end if 
+     
+      
       if (n_cross == 0) then
         cycle
       end if
