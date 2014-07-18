@@ -65,14 +65,26 @@ contains
       ! set birth cell attribute
       p % cell_born = p % coord % cell
     end if
+    
+    ! Increment track dist in birth cell
+    if(roi_on .and. active_batches) then
+      track_dist(p % coord % cell) = track_dist(p % coord % cell) + 1
+    end if
 
     ! Initialize number of events to zero
     n_event = 0
 
-    ! Add paricle's starting weight to count for normalizing tallies later
+    ! Add particle's starting weight to count for normalizing tallies later
     ! ONLY IF IT IS NOT A SPLIT PARTICLE! The "parent" of a split particle
     ! has already been counted, so we shouldn't count it again
-    if (.not. split_particle) total_weight = total_weight + p % wgt
+    if (.not. split_particle) then
+      total_weight = total_weight + p % wgt
+      ! In the roi method, we also have to 'split' fission particles born
+      ! in the active region...
+      if(active_batches .and. roi_on) then
+        call check_src(p % cell_born)
+      end if
+    end if
 
     ! Force calculation of cross-sections by setting last energy to zero 
     micro_xs % last_E = ZERO
@@ -134,7 +146,9 @@ contains
         end if
         
         if (roi_on .and. active_batches) then
-          if(p % alive) call check_cell(last_cell)
+          if (p % alive) call check_cell(last_cell)
+          ! If particle survives, tally its track in the new cell 
+          if (p % alive) track_dist(p % coord % cell) = track_dist(p % coord % cell) + 1
         end if
       else
         ! ====================================================================

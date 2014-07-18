@@ -5,7 +5,8 @@ module finalize
 # endif
   use global
   use output,         only: print_runtime, print_results, &
-                            print_overlap_check, write_tallies
+                            print_overlap_check, write_tallies, &
+                            write_track_dist
   use tally,          only: tally_statistics
 
 #ifdef MPI
@@ -38,6 +39,7 @@ contains
         if (master) call write_tallies()
       end if
       if (check_overlaps) call reduce_overlap_count()
+      if(roi_on) call write_track_dist()
     end if
 
 #ifdef PETSC

@@ -794,6 +794,8 @@ contains
         message = "Failed to allocate split bank."
         call fatal_error()
       end if
+      ! Allocate track-length distribution, which is basically a bank
+      allocate(track_dist(n_cells))
     end if
     
   end subroutine allocate_banks

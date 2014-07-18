@@ -164,18 +164,21 @@ contains
                                  cmfd_inact_flush, cmfd_act_flush, cmfd_run, &
                                  current_batch, cmfd_hold_weights,           &
                                  cmfd_inactive, n_inactive, cmfd_cfl,        &
-                                 cmfd_accum
+                                 cmfd_accum, n_batches, gen_per_batch, cmfd
 
     ! initially set tally flush to F for false; will be changed if the
     ! tally reset function is called
     cmfd_cfl = 'F'
     
+    ! Allocate k storage (if it's the first batch)
+    if (.not. allocated(cmfd % k_gen_cmfd)) allocate(cmfd % k_gen_cmfd(n_batches*gen_per_batch))
     ! check to activate CMFD diffusion and possible feedback
     ! this guarantees that when cmfd begins at least one batch of tallies are
     ! accumulated
     if (cmfd_run .and. cmfd_begin == current_batch) then
       cmfd_on = .true.
       cmfd_tally_on = .true.
+      ! allocate array for cmfd batch keff
     end if
 
     ! check to flush cmfd tallies for active batches, no more inactive flush

@@ -1605,6 +1605,33 @@ contains
   end subroutine print_overlap_check
 
 !===============================================================================
+! WRITE_TRACK_DIST writes the track distribution (by cell) to a file :)
+!===============================================================================
+  
+  subroutine write_track_dist()
+
+    integer :: i                                           ! index in cells array
+    character(MAX_FILE_LEN) :: filename                    ! name of output file
+    
+    ! Create filename for tally output
+    filename = trim(path_output) // "track_dist.out"
+
+    ! Open tally file for writing
+    open(UNIT=TRACK_DISTR, FILE=filename, STATUS='replace', ACTION='write')
+    
+    ! write out the tally
+    write(TRACK_DISTR,'(A)') "Cell (Index, ID), Fraction of Particle Tracks"
+    
+    do i = 1, n_cells
+      track_dist(i) = track_dist(i)/(real(n_active*gen_per_batch*n_particles, 8))
+      write(TRACK_DISTR,500) i, " ", cells(i) % id, " ", track_dist(i)
+    end do    
+    
+ 500 format (I3,A,I3,A,F8.5)
+    
+  end subroutine write_track_dist
+  
+!===============================================================================
 ! WRITE_TALLIES creates an output file and writes out the mean values of all
 ! tallies and their standard deviations
 !===============================================================================

@@ -1,7 +1,6 @@
 module cmfd_header 
 
   use constants,  only: CMFD_NOACCEL, ZERO, ONE
-  use global,     only: gen_per_batch, n_batches
   
   implicit none
   private
@@ -112,9 +111,6 @@ contains
     ny = this % indices(2)
     nz = this % indices(3)
     ng = this % indices(4)
-
-    ! allocate array for cmfd batch keff
-    if (.not. allocated(this % k_gen_cmfd)) allocate(this % k_gen_cmfd(n_batches*gen_per_batch))
 
     ! allocate flux, cross sections and diffusion coefficient
     if (.not. allocated(this % flux))       allocate(this % flux(ng,nx,ny,nz))

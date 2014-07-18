@@ -877,7 +877,7 @@ contains
               ! IMPORTANT: We want the value for the face OPPOSITE
               ! the interface we are currently calculating! That's why
               ! the index calculation is so silly :)
-              !mu_sq = mu_sq_all(l + mod(l,2) - mod((l+1),2))
+              ! mu_sq = mu_sq_all(l + mod(l,2) - mod((l+1),2))
               do f = 1,6
                 mu_sq(f) = mu_sq_all(3*(f-1)+xyz_idx)
               end do

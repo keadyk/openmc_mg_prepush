@@ -168,7 +168,6 @@ contains
 
       ! Bank split neutrons by copying particle data
       split_bank(i) % xyz = p % coord0 % xyz
-      !split_bank(i) % xyz = p % coord0 % xyz + TINY_BIT * p % coord0 % uvw
       
       ! Set direction of split bank site
       split_bank(i) % uvw = p % coord0 % uvw

@@ -62,6 +62,11 @@ contains
       p % cell_born = p % coord % cell
     end if
     
+    ! Increment track dist in birth cell
+    if(roi_on .and. active_batches) then
+      track_dist(p % coord % cell) = track_dist(p % coord % cell) + 1
+    end if
+    
     ! Initialize number of events to zero
     n_event = 0
 
@@ -142,7 +147,9 @@ contains
         end if
         
         if (roi_on .and. active_batches) then
-          if(p % alive) call check_cell(last_cell)
+          if (p % alive) call check_cell(last_cell)
+          ! If particle survives, tally its track in the new cell 
+          if (p % alive) track_dist(p % coord % cell) = track_dist(p % coord % cell) + 1
         end if
       else
         ! ====================================================================
