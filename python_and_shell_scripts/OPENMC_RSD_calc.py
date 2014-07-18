@@ -59,7 +59,10 @@ for l in range(nfiles): #For the expected number of files...
                     #strip all commas, parens. Grab indices!
                     j = int(values[2].strip('(,)'))
                     k = int(values[3].strip('(,)'))
-                    m = int(values[4].strip('(,)'))
+                    if(len(values) > 4):
+                        m = int(values[4].strip('(,)'))
+                    else:
+                        m = 1
                     #store indices:
                     if(tallyid == 1):
                         Findices[0].append(j)
