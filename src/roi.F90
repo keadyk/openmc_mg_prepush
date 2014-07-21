@@ -188,4 +188,17 @@ contains
  
   end subroutine split
   
+  subroutine adjust_weight_cutoffs()
+
+    integer :: i  ! Loop index
+    
+    do i = 1, n_cells
+      if(cells(i) % n_split > ONE) then
+        weight_cutoffs(i) = weight_cutoffs(i) / real(cells(i) % n_split)
+        weight_survives(i) = weight_survives(i) / real(cells(i) % n_split) 
+      end if
+    end do
+    
+  end subroutine adjust_weight_cutoffs
+  
 end module roi

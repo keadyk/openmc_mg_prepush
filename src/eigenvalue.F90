@@ -19,6 +19,7 @@ module eigenvalue
   use physics,            only: transport
 #endif
   use random_lcg,         only: prn, set_particle_seed, prn_skip
+  use roi,                only: adjust_weight_cutoffs
   use search,             only: binary_search
   use source,             only: get_source_particle, get_split_particle
   use state_point,        only: write_state_point
@@ -151,7 +152,7 @@ contains
 !===============================================================================
 
   subroutine initialize_batch()
-
+    
     message = "Simulating batch " // trim(to_str(current_batch)) // "..."
     call write_message(8)
 
@@ -166,7 +167,11 @@ contains
       ! Enable active batches (and tallies_on if it hasn't been enabled)
       active_batches = .true.
       tallies_on = .true.
-
+      
+      if(roi_on .and. survival_biasing) then
+        call adjust_weight_cutoffs()
+      end if
+      
       ! Add user tallies to active tallies list
       call setup_active_usertallies()
     end if
@@ -264,6 +269,8 @@ contains
       ! Make sure combined estimate of k-effective is calculated at the last
       ! batch in case no state point is written
       call calculate_combined_keff()
+      ! If using roi method, calculate normalized eigenfunction in roi region
+      if (roi_on) call calculate_norm_eigenfunction()
     end if
 
   end subroutine finalize_batch
@@ -697,7 +704,7 @@ contains
     end if
              
   end subroutine process_cmfd_keff
-
+  
 !===============================================================================
 ! CALCULATE_COMBINED_KEFF calculates a minimum variance estimate of k-effective
 ! based on a linear combination of the collision, absorption, and tracklength

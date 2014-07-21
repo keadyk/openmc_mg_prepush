@@ -247,9 +247,11 @@ module global
   ! ===========================================================================
   ! VARIANCE REDUCTION VARIABLES
 
-  logical :: survival_biasing = .false.
-  real(8) :: weight_cutoff = 0.25
-  real(8) :: weight_survive = 1.0
+  real(8), allocatable :: weight_cutoffs(:)  ! cell-dep. cutoff (ROI method)
+  real(8), allocatable :: weight_survives(:) ! cell-dep. cutoff (ROI method)
+  logical :: survival_biasing = .false.      ! is survival biasing on?
+  real(8) :: weight_cutoff = 0.25            ! default weight cutoff
+  real(8) :: weight_survive = 1.0            ! default survival weight
   
   ! ============================================================================
   ! ROI METHOD VARIABLES 

@@ -640,6 +640,15 @@ contains
     ! Allocate cells array
     allocate(cells(n_cells))
 
+    ! Also, allocate cell-dep cutoff/survival weights
+    if(survival_biasing) then
+      allocate(weight_cutoffs(n_cells))
+      allocate(weight_survives(n_cells))
+      ! Set initial values:
+      weight_cutoffs = weight_cutoff
+      weight_survives = weight_survive
+    end if
+    
     if (check_overlaps) then
       allocate(overlap_check_cnt(n_cells))
       overlap_check_cnt = 0
@@ -771,22 +780,22 @@ contains
       if(roi_on) then
         if (cell_(i) % roi == 'true' .or. cell_(i) % roi == '1') then
           c % n_split = n_split*n_split
-          message = "Cell " // trim(to_str(c % id)) // &
-                    " designated ROI, split factor " &
-                    // trim(to_str(c % n_split))
+          !message = "Cell " // trim(to_str(c % id)) // &
+          !          " designated ROI, split factor " &
+          !          // trim(to_str(c % n_split))
           roi_count = roi_count + 1
-          call write_message(5)
+          !call write_message(5)
         elseif (cell_(i) % buffer == 'true' .or. cell_(i) % buffer == '1') then
           c % n_split = n_split
-          message = "Cell " // trim(to_str(c % id)) // &
-                    " designated buffer, split factor " // &
-                    trim(to_str(c % n_split))
-          call write_message(5)
+          !message = "Cell " // trim(to_str(c % id)) // &
+          !          " designated buffer, split factor " // &
+          !          trim(to_str(c % n_split))
+          !call write_message(5)
         else
           c % n_split = 1
-          message = "Cell " // trim(to_str(c % id)) // " split factor " &
-               // trim(to_str(c % n_split))
-          call write_message(5)
+          !message = "Cell " // trim(to_str(c % id)) // " split factor " &
+          !     // trim(to_str(c % n_split))
+          !call write_message(5)
         end if
       end if
 

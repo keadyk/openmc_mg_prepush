@@ -404,9 +404,9 @@ contains
     ! WEIGHT CUTOFF (SURVIVAL BIASING ONLY)
 
     if (survival_biasing) then
-      if (p % wgt < weight_cutoff) then
-        if (prn() < p % wgt / weight_survive) then
-          p % wgt = weight_survive
+      if (p % wgt < weight_cutoffs(p % coord % cell)) then
+        if (prn() < p % wgt / weight_survives(p % coord % cell)) then
+          p % wgt = weight_survives(p % coord % cell)
           p % last_wgt = p % wgt
         else
           p % wgt = ZERO

@@ -8,7 +8,7 @@ file_string1 = "MC_flux.out"
 dest_file1 = open(file_string1, 'w')
 
 print "Created output file " + file_string1
-dest_file1.write("Mesh indices, flux, apparent RSD: ")
+dest_file1.write("Mesh indices, flux, apparent SD: ")
 
 index = 0
 fileflag = 1
@@ -65,7 +65,7 @@ FRSD = [0]*Fcells
 
 #All the error lines should be the same length
 for i in range(Fcells):
-	this_string = str(Findices[0][i]) + '\t' + str(Findices[1][i]) + '\t' + str(Findices[2][i]) + '\t' + str(Fval[i]) + '\t' + str(Ferror[i]/Fval[i]) #write cell indices, flux, app rsd
+	this_string = str(Findices[0][i]) + '\t' + str(Findices[1][i]) + '\t' + str(Findices[2][i]) + '\t' + str(Fval[i]) + '\t' + str(Ferror[i]) #write cell indices, flux, app rsd
 	dest_file1.write('\n' + this_string)
 
 dest_file1.close()

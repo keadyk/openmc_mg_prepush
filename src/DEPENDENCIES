@@ -81,6 +81,7 @@ eigenvalue.o: mesh.o
 eigenvalue.o: mesh_header.o
 eigenvalue.o: output.o
 eigenvalue.o: random_lcg.o
+eigenvalue.o: roi.o
 eigenvalue.o: search.o
 eigenvalue.o: source.o
 eigenvalue.o: state_point.o
