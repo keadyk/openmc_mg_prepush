@@ -788,7 +788,7 @@ contains
 
     if(roi_on) then
       ! Allocate split bank
-      allocate(split_bank(n_split*n_split*maxwork), STAT=alloc_err)
+      allocate(split_bank(n_split*n_split*(maxwork/10)), STAT=alloc_err)
       ! Check for allocation errors 
       if (alloc_err /= 0) then
         message = "Failed to allocate split bank."

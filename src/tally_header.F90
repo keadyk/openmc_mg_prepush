@@ -117,7 +117,7 @@ module tally_header
     integer :: total_filter_bins
     integer :: total_score_bins
     type(TallyResult), allocatable :: results(:,:)
-
+    
     ! reset property - allows a tally to be reset after every batch
     logical :: reset = .false.
 

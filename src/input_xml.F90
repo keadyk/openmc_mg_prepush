@@ -1493,7 +1493,7 @@ contains
     ! Check for <assume_separate> setting
     call lower_case(separate_)
     if (separate_ == 'true' .or. separate_ == '1') assume_separate = .true.
-
+    
     ! ==========================================================================
     ! READ MESH DATA
 
@@ -1510,6 +1510,10 @@ contains
         call fatal_error()
       end if
 
+      ! Check for <normalize> setting
+      call lower_case(mesh_(i) % normalize)
+      if (mesh_(i) % normalize == 'true' .or. mesh_(i) % normalize == '1') m % norm = .true.
+        
       ! Read mesh type
       call lower_case(mesh_(i) % type)
       select case (mesh_(i) % type)
@@ -2206,6 +2210,21 @@ contains
 
       ! Add tally to dictionary
       call tally_dict % add_key(t % id, i)
+      
+      ! Finally, check that normalized mesh filters have no additional
+      ! filters and only one score type! (Added by KK 7/22)
+      if (t % find_filter(FILTER_MESH) > 0) then
+        k = t % find_filter(FILTER_MESH)
+        i_mesh = t % filters(k) % int_bins(1)
+        m => meshes(i_mesh)
+            
+        if(m % norm) then
+          if(t % n_filters > 1 .or. t % n_score_bins > 1) then
+            message = "Mesh normalization with additional filters/scores is currently not supported!"
+            call fatal_error()
+          end if
+        end if
+      end if
 
     end do READ_TALLIES
 

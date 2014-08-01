@@ -10,6 +10,7 @@
     <component name="lower_left" type="double-array" />
     <component name="upper_right" type="double-array" />
     <component name="width" type="double-array" />
+    <component name="normalize" type="word" length="5" default="'false'"/>
   </typedef>
 
   <typedef name="filter_xml">
@@ -25,7 +26,6 @@
     <component name="filter" type="filter_xml" dimension="1" />
     <component name="scores" type="word-array" length="20" />
     <component name="nuclides" type="word-array" length="12" />
-
     <!-- Check for old tally filter format -->
     <component name="filters" type="filter_xml" dimension="1" />
   </typedef>

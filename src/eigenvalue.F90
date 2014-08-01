@@ -269,8 +269,6 @@ contains
       ! Make sure combined estimate of k-effective is calculated at the last
       ! batch in case no state point is written
       call calculate_combined_keff()
-      ! If using roi method, calculate normalized eigenfunction in roi region
-      if (roi_on) call calculate_norm_eigenfunction()
     end if
 
   end subroutine finalize_batch

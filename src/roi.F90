@@ -25,22 +25,24 @@ contains
 
     real(8)                   :: ratio           ! density ratio
     type(Cell),       pointer :: c_new           ! pointer to new cell
+    type(Cell),       pointer :: c_new0           ! pointer to new cell
     type(Cell),       pointer :: c_old           ! pointer to old
     ! type(LocalCoord), pointer :: coord => null() 
 
     c_new => cells(p % coord % cell)             ! set to point to current cell
+    c_new0 => cells(p % coord0 % cell)             ! set to point to current cell
     c_old => cells(last_cell)                    ! set to point to last cell
 
     
-    !if (active_batches) then
-      !message = "NEW: " // trim(to_str(c_new % id)) // ", OLD: " // trim(to_str(c_old % id)) 
-      !call write_message(5)
-    !end if
     
     ratio = real(c_new % n_split, 8)/real(c_old % n_split, 8)
-
-    ! message = "Ratio is: " // trim(to_str(ratio))
-    !call write_message(5)
+    
+    if(ratio /= ONE) then
+      message = "NEW: " // trim(to_str(c_new % id)) // ", OLD: " // trim(to_str(c_old % id)) 
+      call write_message(5)
+      message = "Ratio is: " // trim(to_str(ratio))
+      call write_message(5)
+    end if
     
     if (ratio < ONE) then
       ! Need to first bring current tallies 'up to date' before wt chg
@@ -148,7 +150,7 @@ contains
     split_w = p % wgt / ratio
     
     ! Skip if split bank is full already
-    if (n_sbank == n_split*n_split*work) then
+    if (n_sbank == n_split*n_split*(work/10)) then
       message = "Split bank full!"
       call write_message(5)
       return
@@ -164,7 +166,7 @@ contains
     !call write_message(5)
     
     ! Bank split neutrons, less the one that will continue running
-    do i = int(n_sbank,4) + 1, int(min(n_sbank + (tot_split-1), n_split*n_split*work),4)
+    do i = int(n_sbank,4) + 1, int(min(n_sbank + (tot_split-1), n_split*n_split*(work/10)),4)
 
       ! Bank split neutrons by copying particle data
       split_bank(i) % xyz = p % coord0 % xyz

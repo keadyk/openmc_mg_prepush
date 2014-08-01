@@ -89,19 +89,20 @@ contains
       ! Calculate microscopic and macroscopic cross sections -- note: if the
       ! material is the same as the last material and the energy of the
       ! particle hasn't changed, we don't need to lookup cross sections again.
-
+      
       if (p % material /= p % last_material) call calculate_xs()
-
+ 
+      ! Store current cell before dist-to-bound calc, as it sometimes gets changed (?)
+      last_cell = p % coord % cell
+      
       ! Find the distance to the nearest boundary
       call distance_to_boundary(d_boundary, surface_crossed, lattice_crossed)
-!      write(*,'(A20,1E20.7)') "dist to boundary :  ", d_boundary
       
       ! Sample a distance to collision
       if (material_xs % total == ZERO) then
         d_collision = INFINITY
       else
         d_collision = -log(prn()) / material_xs % total
-!        write(*,'(A20,1E20.7)') "dist to collision:  ", d_collision
       end if
 
       ! Select smaller of the two distances
@@ -132,7 +133,10 @@ contains
         ! ====================================================================
         ! PARTICLE CROSSES SURFACE
 !        write(*,'(A20)') "^ was bound crossing"
-        last_cell = p % coord % cell
+!        last_cell = p % coord % cell
+!        message = "Cell is " // trim(to_str(cells(last_cell) % id))
+!        call write_message(5)
+        
         p % coord % cell = NONE
         if (lattice_crossed /= NONE) then
           ! Particle crosses lattice boundary
@@ -150,11 +154,11 @@ contains
           if (p % alive) call check_cell(last_cell)
           ! If particle survives, tally its track in the new cell 
           if (p % alive) track_dist(p % coord % cell) = track_dist(p % coord % cell) + 1
-        end if
+        end if   
       else
         ! ====================================================================
         ! PARTICLE HAS COLLISION
- !       write(*,'(A20)') "^ was collision     "
+!        write(*,'(A20)') "(collision) "
         ! Score collision estimate of keff
         global_tallies(K_COLLISION) % value = &
              global_tallies(K_COLLISION) % value + p % wgt * &

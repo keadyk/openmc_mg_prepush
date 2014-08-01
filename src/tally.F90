@@ -2363,7 +2363,11 @@ contains
 
   subroutine accumulate_tally(t)
 
-    type(TallyObject), intent(inout) :: t
+    type(TallyObject), intent(inout) :: t   ! Tally to be accumulated
+    type(StructuredMesh), pointer    :: m
+    integer :: filter_id
+    integer :: index                        ! 
+
 
     ! Increment number of realizations
     if (reduce_tallies) then
@@ -2372,6 +2376,17 @@ contains
       t % n_realizations = t % n_realizations + n_procs
     end if
 
+    ! If this tally has a mesh filter, and the mesh has normalization enabled,
+    ! we need to normalize the tally across all mesh bins before accumulating
+    if(t % find_filter(FILTER_MESH) > 0) then
+      filter_id = t % find_filter(FILTER_MESH)
+      ! Get index of mesh from tally:
+      index = t % filters(filter_id) % int_bins(1)
+      m => meshes(index)
+      if(m % norm) then
+        call normalize_result(t, filter_id)
+      end if
+    end if
     ! Accumulate each TallyResult
     call accumulate_result(t % results)
 
@@ -2401,6 +2416,28 @@ contains
   end subroutine tally_statistics
 
 !===============================================================================
+
+!===============================================================================
+  subroutine normalize_result(t, id)  
+    
+    type(TallyObject), intent(inout) :: t  ! The tally to be normalized
+    integer, intent(in)              :: id ! The id of the mesh filter
+    integer :: i
+    integer :: j
+    real(8) :: sum
+    
+    ! t % results = t % results / sum
+    sum = 0
+    do j=1, t % filters(id) % n_bins
+      sum = sum + t % results(j, id) % value
+    end do
+    
+    do i=1 , t % filters(id) % n_bins
+      t % results(i, id) % value = (t % results(i, id) % value * total_weight)/ sum
+    end do
+    
+  end subroutine normalize_result
+!===============================================================================
 ! ACCUMULATE_RESULT accumulates results from many histories (or many generations)
 ! into a single realization of a random variable.
 !===============================================================================
@@ -2416,7 +2453,7 @@ contains
     ! variance on the tallies.
 
     val = this % value/total_weight
-    this % sum    = this % sum    + val
+    this % sum    = this % sum    + val 
     this % sum_sq = this % sum_sq + val*val
 
     ! Reset the single batch estimate
