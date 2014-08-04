@@ -116,6 +116,7 @@ contains
       coord => p % coord0
       do while (associated(coord))
         coord % xyz = coord % xyz + distance * coord % uvw
+        last_cell = coord % cell
         coord => coord % next
       end do
 
@@ -131,7 +132,6 @@ contains
       if (d_collision > d_boundary) then
         ! ====================================================================
         ! PARTICLE CROSSES SURFACE
-        last_cell = p % coord % cell
         p % coord % cell = NONE
         if (lattice_crossed /= NONE) then
           ! Particle crosses lattice boundary

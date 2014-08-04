@@ -30,19 +30,24 @@ contains
     ! type(LocalCoord), pointer :: coord => null() 
 
     c_new => cells(p % coord % cell)             ! set to point to current cell
-    c_new0 => cells(p % coord0 % cell)             ! set to point to current cell
     c_old => cells(last_cell)                    ! set to point to last cell
 
     
+!    if(surfaces(p % surface) % bc == BC_REFLECT) then
+      ! Particle bounced off a surface, no need to check ratio
+!      message = "Reflecting... skipping cell check"
+!      call write_message(5)
+!      return
+!    end if
     
     ratio = real(c_new % n_split, 8)/real(c_old % n_split, 8)
     
-    if(ratio /= ONE) then
-      message = "NEW: " // trim(to_str(c_new % id)) // ", OLD: " // trim(to_str(c_old % id)) 
-      call write_message(5)
-      message = "Ratio is: " // trim(to_str(ratio))
-      call write_message(5)
-    end if
+!    if(ratio /= ONE) then
+!      message = "NEW: " // trim(to_str(c_new % id)) // ", OLD: " // trim(to_str(c_old % id)) 
+!      call write_message(5)
+!      message = "Ratio is: " // trim(to_str(ratio))
+!      call write_message(5)
+!    end if
     
     if (ratio < ONE) then
       ! Need to first bring current tallies 'up to date' before wt chg

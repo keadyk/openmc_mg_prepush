@@ -91,13 +91,10 @@ contains
       ! particle hasn't changed, we don't need to lookup cross sections again.
       
       if (p % material /= p % last_material) call calculate_xs()
- 
-      ! Store current cell before dist-to-bound calc, as it sometimes gets changed (?)
-      last_cell = p % coord % cell
       
       ! Find the distance to the nearest boundary
       call distance_to_boundary(d_boundary, surface_crossed, lattice_crossed)
-      
+    
       ! Sample a distance to collision
       if (material_xs % total == ZERO) then
         d_collision = INFINITY
@@ -116,6 +113,8 @@ contains
         coord % xyz = coord % xyz + distance * coord % uvw
 !        write(*,'(A4,3E20.7)') " to ", coord % xyz(1), coord % xyz(2), coord % xyz(3)
 !        write(*,'(A10,3E20.7)') "along dir ", coord % uvw(1), coord % uvw(2), coord % uvw(3)
+        ! Update last cell id so it's guaranteed to be lowest-level
+        last_cell = coord % cell
         coord => coord % next
       end do
       
@@ -132,11 +131,7 @@ contains
       if (d_collision > d_boundary) then
         ! ====================================================================
         ! PARTICLE CROSSES SURFACE
-!        write(*,'(A20)') "^ was bound crossing"
-!        last_cell = p % coord % cell
-!        message = "Cell is " // trim(to_str(cells(last_cell) % id))
-!        call write_message(5)
-        
+
         p % coord % cell = NONE
         if (lattice_crossed /= NONE) then
           ! Particle crosses lattice boundary
@@ -155,10 +150,9 @@ contains
           ! If particle survives, tally its track in the new cell 
           if (p % alive) track_dist(p % coord % cell) = track_dist(p % coord % cell) + 1
         end if   
-      else
+      else       
         ! ====================================================================
         ! PARTICLE HAS COLLISION
-!        write(*,'(A20)') "(collision) "
         ! Score collision estimate of keff
         global_tallies(K_COLLISION) % value = &
              global_tallies(K_COLLISION) % value + p % wgt * &
@@ -166,11 +160,6 @@ contains
 
         p % surface = NONE
         call collision()
-        
-        !if(active_batches) then
-        !  message = "(Collision) " // to_str(p % wgt) 
-        !  call write_message(5)
-        !end if
 
         ! Save coordinates for tallying purposes
         p % last_xyz = p % coord0 % xyz

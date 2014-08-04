@@ -793,6 +793,7 @@ contains
 
     integer :: i            ! index for surface in cell
     integer :: index_surf   ! index in surfaces array (with sign)
+    integer :: cell_save    ! save original cell (added by KK 8/1/14)
     real(8) :: x,y,z        ! particle coordinates
     real(8) :: u,v,w        ! particle directions
     real(8) :: d            ! evaluated distance
@@ -812,7 +813,7 @@ contains
     dist = INFINITY
     lattice_crossed = NONE
     nullify(final_coord)
-
+    
     ! Get pointer to top-level coordinates
     coord => p % coord0
 
@@ -1356,10 +1357,11 @@ contains
       coord => coord % next
 
     end do LEVEL_LOOP
-
+    
     ! Move particle to appropriate coordinate level
     if (associated(final_coord)) p % coord => final_coord
 
+    
   end subroutine distance_to_boundary
 
 !===============================================================================
