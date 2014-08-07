@@ -32,9 +32,10 @@ contains
     use global,                 only: n_procs_cmfd, cmfd,                       &
                                       cmfd_solver_type, time_cmfd,              &
                                       cmfd_run_adjoint, cmfd_write_hdf5,        &
-                                      cmfd_feedback,cmfd_hold_weights,          &
+                                      cmfd_feedback, cmfd_hold_weights,         &
                                       cmfd_inact_flush, cmfd_keff_tol,          &
-                                      cmfd_act_flush, current_batch, keff,      &
+                                      cmfd_act_flush, cmfd_multiset,            & 
+                                      cmfd_set_size, current_batch, keff,       &
                                       n_batches, message, master, mpi_err,      &
                                       rank, cmfd_accum, n_inactive, path_output
     ! BEGIN VARIABLES ADDED BY K.KEADY ON 12/10/2013 
@@ -105,6 +106,10 @@ contains
       if(current_batch > n_inactive .and. .not. cmfd_accum) then
         cmfd % phi_sum = cmfd % phi_sum + cmfd % phi
         cmfd % phi_sum_sq = cmfd % phi_sum_sq + (cmfd % phi * cmfd % phi)
+      ! if using multiset method (prescribed flushes), do the same
+      elseif(current_batch > n_inactive .and. cmfd_multiset) then
+        cmfd % phi_sum = cmfd % phi_sum + cmfd % phi
+        cmfd % phi_sum_sq = cmfd % phi_sum_sq + (cmfd % phi * cmfd % phi)
       end if
       
       ! BEGIN SECTION ADDED BY K.KEADY ON 12/10/2013 TO LOOK AT CYCLE-TO-CYCLE
@@ -139,9 +144,20 @@ contains
     ! calculate fission source
     call calc_fission_source()
 
-    ! calculate weight factors
-    if (cmfd_feedback) call cmfd_reweight(.true.)
-
+    ! calculate weight factors if using std feedback
+    if (cmfd_feedback .and. .not. cmfd_multiset) then
+      call cmfd_reweight(.true.)
+    ! also calc wt factors if we're using the multiset method and this is NOT
+    ! the first cycle in a set 
+    elseif (cmfd_multiset) then
+      if(mod(current_batch,cmfd_set_size)/= 1) then
+        call cmfd_reweight(.true.)
+      elseif(mod(current_batch,cmfd_set_size)== 1) then
+        message = "Batch " // trim(to_str(current_batch)) // " feedback OFF" 
+        call warning()
+      end if
+    end if
+    
     ! stop cmfd timer
     if (master) then
       call time_cmfd % stop()
@@ -164,7 +180,9 @@ contains
                                  cmfd_inact_flush, cmfd_act_flush, cmfd_run, &
                                  current_batch, cmfd_hold_weights,           &
                                  cmfd_inactive, n_inactive, cmfd_cfl,        &
-                                 cmfd_accum, n_batches, gen_per_batch, cmfd
+                                 cmfd_accum, n_batches, gen_per_batch, cmfd, &
+                                 cmfd_multiset, cmfd_set_size, message
+    use error,             only: warning
 
     ! initially set tally flush to F for false; will be changed if the
     ! tally reset function is called
@@ -188,7 +206,7 @@ contains
       cmfd_inact_flush(2) = -1
     end if
 
-    ! check to flush cmfd tallies during inactive batches (>= on number of
+    ! check to flush cmfd tallies (>= on number of
     ! flushes important as the code will flush on the first batch which we
     ! dont want to count)
     
@@ -198,6 +216,13 @@ contains
       if (.not. cmfd_accum) then
         cmfd_hold_weights = .true.
         call cmfd_tally_reset()
+      ! If using the multiset method... 
+      elseif (cmfd_multiset) then
+        ! flush every (cmfd_set_size) cycles
+        if(mod(current_batch,cmfd_set_size)== 1) then
+          cmfd_hold_weights = .true.
+          call cmfd_tally_reset()
+        end if
       ! If inactive=false, flush tallies every cycle during inactive batches 
       elseif (.not. cmfd_inactive .and. current_batch < n_inactive) then
         cmfd_hold_weights = .true.
@@ -372,9 +397,9 @@ contains
     integer :: ijk(3) ! spatial bin location
     integer :: e_bin ! energy bin of source particle
     integer :: n_groups ! number of energy groups
-    logical :: outside ! any source sites outside mesh
     logical :: in_mesh ! source site is inside mesh
     logical :: new_weights ! calcualte new weights
+    logical :: outside ! any source sites outside mesh
     type(StructuredMesh), pointer :: m ! point to mesh
     real(8), allocatable :: egrid(:)
     

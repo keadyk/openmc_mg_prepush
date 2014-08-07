@@ -256,6 +256,7 @@ contains
     if (master) call print_batch_keff()
 
     ! Write out state point if it's been specified for this batch
+#ifndef MULTIGROUP
     if (statepoint_batch % contains(current_batch)) then
       ! Calculate combined estimate of k-effective
       if (master) call calculate_combined_keff()
@@ -263,6 +264,14 @@ contains
       ! Create state point file
       call write_state_point()
     end if
+#else
+    if (statepoint_batch % contains(current_batch)) then
+      ! Calculate combined estimate of k-effective
+      if (master) call calculate_combined_keff()
+      message = "Statepoint files not yet supported in multigroup mode!"
+      call warning()
+    end if
+#endif
 
     
     if (master .and. current_batch == n_batches) then

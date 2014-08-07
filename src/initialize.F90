@@ -143,8 +143,15 @@ contains
         if (output_summary) call write_summary()
 #endif
 
+#ifndef MULTIGROUP
         ! Write cross section information
         if (output_xs) call write_xs_summary()
+#else
+        if (output_xs) then
+          message = "Cross-section output not supported in multigroup mode!"
+          call warning()
+        end if
+#endif
       end if
     end if
 
@@ -796,6 +803,8 @@ contains
       end if
       ! Allocate track-length distribution, which is basically a bank
       allocate(track_dist(n_cells))
+      ! Initialize to zero
+      track_dist = ZERO
     end if
     
   end subroutine allocate_banks

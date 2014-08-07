@@ -23,7 +23,7 @@ contains
     use cmfd_header,         only: allocate_cmfd, allocate_funct, allocate_no_accum
     use constants,           only: CMFD_NOACCEL
     use global,              only: cmfd, cmfd_coremap, cmfd_run_2grp, use_functs,&
-                                   cmfd_accum
+                                   cmfd_accum, cmfd_multiset
 
     ! initialize cmfd object
     if (.not. allocated(cmfd%flux)) call allocate_cmfd(cmfd)
@@ -32,7 +32,8 @@ contains
       if (.not. allocated(cmfd % vol_curr)) call allocate_funct(cmfd)
     end if
     
-    if(.not. cmfd_accum) then
+    ! calc RSDs only if NOT accumulating, or using multiset method
+    if(cmfd_multiset .or. .not. cmfd_accum) then
       if (.not. allocated(cmfd % phi_sum)) call allocate_no_accum(cmfd)
     end if
 

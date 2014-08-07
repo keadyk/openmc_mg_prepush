@@ -18,6 +18,13 @@ element cmfd {
       attribute energy { list { xsd:double+ } })?
   } &
   
+  element multiset {
+    (element enabled { xsd:boolean } | 
+      attribute enabled { xsd:boolean })? &
+    (element set_size { xsd:positiveInteger } | 
+      attribute set_size { xsd:positiveInteger })?
+  }? &
+
   element norm { xsd:double }? &
 
   element feedback { xsd:boolean }? &

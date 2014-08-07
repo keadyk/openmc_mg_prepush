@@ -264,6 +264,7 @@ module global
   integer    :: n_split = 1                        ! Split factor in buffer/ROI
   integer    :: roi_count = 0                      ! Total # roi regions    
   integer(8) :: current_split                      ! index in spl bank, cur part
+  integer    :: last_cell                          ! Highest-level cell index
   
   ! ============================================================================
   ! HDF5 VARIABLES
@@ -381,7 +382,11 @@ module global
   ! (false flushes tallies each inactive batch,
   ! so inactive feedback uses only batch values)
   logical :: cmfd_inactive = .true.
-
+  
+  ! multi-set CMFD method (see Lee and Joo)
+  logical :: cmfd_multiset = .false.
+  integer :: cmfd_set_size = 5
+  
   ! batch to last flush before active batches
   integer :: cmfd_act_flush = 0
 

@@ -1627,7 +1627,7 @@ contains
       write(TRACK_DISTR,500) i, " ", cells(i) % id, " ", track_dist(i)
     end do    
     
- 500 format (I3,A,I3,A,F8.5)
+ 500 format (I3,A,I3,A,F11.9)
     
   end subroutine write_track_dist
   

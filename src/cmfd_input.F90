@@ -32,7 +32,7 @@ contains
 
   subroutine read_cmfd_xml()
     
-    use error,   only: fatal_error
+    use error,   only: fatal_error, warning
     use global
     use output,  only: write_message
     use string,  only: lower_case
@@ -129,12 +129,17 @@ contains
     
     ! are we accumulating our tallies?
     call lower_case(accumulate_)
-    if(accumulate_ == 'true' .or. accumulate_ == '1') cmfd_accum = .true.
+    if(accumulate_ == 'true' .or. accumulate_ == '1') then
+      cmfd_accum = .true.
+      ! (Shut off inactive accum too, for kicks)
+      cmfd_inactive = .false.
+    end if
     
     ! are we using the extra functionals?
     call lower_case(use_functs_)
     if(use_functs_ == 'true' .or. use_functs_ == '1') use_functs = .true.
 
+      
     ! set monitoring 
     call lower_case(snes_monitor_)
     call lower_case(ksp_monitor_)
@@ -179,6 +184,22 @@ contains
     ! tolerance on keff
     cmfd_keff_tol = keff_tol_
     
+    ! Is the multiset method enabled?
+    call lower_case(multiset_ % enabled)
+    if(multiset_ % enabled == 'true' .or. multiset_ % enabled == '1' ) then
+      cmfd_multiset = .true.
+      ! Get number of cycles per set
+      cmfd_set_size = multiset_ % set_size
+      ! Reset any conflicting variables to default
+      cmfd_accum = .true.
+      cmfd_act_flush = 0
+      cmfd_inact_flush = (/9999,1/)
+      cmfd_feedback = .true.
+      ! Print warning about variable overrides
+      message = "CMFD multi-set method overrides all other CMFD tally flush/accumulation options!"
+      call warning()
+    end if
+    
     ! create tally objects
     call create_cmfd_tally()
 
@@ -197,7 +218,7 @@ contains
 !        (+ 3 directions of volume-averaged current if functionals are used) 
 !   2: Energy in and energy out filter-> nu-scatter,nu-fission
 !   3: Surface current
-!        (+ mu-squared weighted flux if functionals are used) 
+!        (+ mu-squared weighted surface flux if functionals are used) 
 !===============================================================================
 
   subroutine create_cmfd_tally()

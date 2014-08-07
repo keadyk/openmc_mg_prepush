@@ -33,7 +33,6 @@ contains
 
     integer :: surface_crossed ! surface which particle is on
     integer :: lattice_crossed ! lattice boundary which particle crossed
-    integer :: last_cell       ! most recent cell particle was in
     integer :: n_event         ! number of collisions/crossings
     real(8) :: d_boundary      ! distance to nearest boundary
     real(8) :: d_collision     ! sampled distance to collision
@@ -397,9 +396,15 @@ contains
     ! WEIGHT CUTOFF (SURVIVAL BIASING ONLY)
 
     if (survival_biasing) then
-      if (p % wgt < weight_cutoffs(p % coord % cell)) then
-        if (prn() < p % wgt / weight_survives(p % coord % cell)) then
-          p % wgt = weight_survives(p % coord % cell)
+      if(active_batches) then
+        !message = "cell id " // trim(to_str(cells(p % coord % cell) % id)) // " wt cutoff " &
+        !          // trim(to_str(weight_cutoffs(p % coord % cell))) // " last cell " // trim(to_str(cells(last_cell) % id)) // &
+        !          " wt cutoff " // trim(to_str(weight_cutoffs(last_cell)))
+        !call write_message(5)
+      end if
+      if (p % wgt < weight_cutoffs(last_cell)) then
+        if (prn() < p % wgt / weight_survives(last_cell)) then
+          p % wgt = weight_survives(last_cell)
           p % last_wgt = p % wgt
         else
           p % wgt = ZERO

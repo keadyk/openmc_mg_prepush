@@ -17,7 +17,8 @@ contains
   subroutine finalize_cmfd() 
 
     use global,      only: cmfd, cmfd_write_balance, cmfd_write_hdf5, &
-                           master, mpi_err, use_functs, cmfd_accum
+                           master, mpi_err, use_functs, cmfd_accum, &
+                           cmfd_multiset
     use cmfd_header, only: deallocate_cmfd, deallocate_funct, &
                            deallocate_no_accum
 
@@ -28,7 +29,8 @@ contains
     if (master .and. cmfd_write_balance) call write_neutron_balance()
     
     ! calc final stats on cmfd eigenfunction if no accumulation
-    if (master .and. .not. cmfd_accum) call calc_cmfd_stats(cmfd)
+    if (master .and. (cmfd_multiset .or. .not. cmfd_accum)) &
+        call calc_cmfd_stats(cmfd)
     
     ! write out cmfd eigenfunction
     if (master) call write_cmfd_eigenfunction(cmfd)
@@ -37,7 +39,7 @@ contains
     if(use_functs) call deallocate_funct(cmfd)
     
     ! If not accumulating tallies, deallocate tallies
-    if(.not. cmfd_accum) call deallocate_no_accum(cmfd)
+    if(cmfd_multiset .or. .not. cmfd_accum) call deallocate_no_accum(cmfd)
     
     ! deallocate cmfd object
     call deallocate_cmfd(cmfd)
@@ -71,8 +73,8 @@ contains
   
 !===============================================================================
 ! CALC_CMFD_STATS calculates the mean and std dev of the CMFD eigenfunction
-! if tallies are not accumulated during the run.  It is called ONLY if
-! cmfd % accum is false.
+! if tallies are not accumulated during the run, OR if the multiset method is
+!  used.  It is called if cmfd % accum is false, or if cmfd % multiset is true
 !===============================================================================
   subroutine calc_cmfd_stats(this)
     
@@ -107,7 +109,7 @@ contains
     use cmfd_header,  only: cmfd_type
     use constants,    only: CMFD_EIG, CMFD_NOACCEL, MAX_FILE_LEN
     use global,       only: path_output, seed, cmfd, use_functs, &
-                            cmfd_coremap, cmfd_accum
+                            cmfd_coremap, cmfd_accum, cmfd_multiset
     use string,       only: to_str
     
     integer :: i        ! x-index
@@ -138,7 +140,7 @@ contains
     open(UNIT=CMFD_EIG, FILE=filename, ACTION='write')
 
     ! write out the tally
-    if(cmfd_accum) then
+    if(cmfd_accum .and. .not. cmfd_multiset) then
       write(CMFD_EIG,'(A)') "#Location (i,j,k), Group, Eigenfunction"
     else
       write(CMFD_EIG,'(A)') "#Location (i,j,k), Group, Eigenfunction, Std. Dev."    
@@ -166,8 +168,9 @@ contains
                 end if
               end if
               
-              ! write out info to file (add S.D. if we aren't accumulating)
-              if(cmfd_accum) then
+              ! write out info to file (add S.D. if we aren't accumulating, 
+              ! or if we're using multiset accumulation)
+              if(cmfd_accum .and. .not. cmfd_multiset) then
                 write(CMFD_EIG,'(1X,I0,1X,I0,1X,I0,1X,I0,1X,E20.7)') &
                       i,j,k,g,this % phi_final(matidx)
               else
@@ -179,7 +182,7 @@ contains
               matidx = g + ng*(i - 1) + ng*nx*(j - 1) + ng*nx*ny*(k - 1)
               
               ! write out info to file
-              if(cmfd_accum) then
+              if(cmfd_accum .and. .not. cmfd_multiset) then
                 write(CMFD_EIG,'(1X,I0,1X,I0,1X,I0,1X,I0,1X,E20.7)') &
                             i,j,k,g,this % phi_final(matidx)
               else

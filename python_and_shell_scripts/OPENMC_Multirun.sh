@@ -25,8 +25,9 @@ done
 echo "                              ...Finished!"
 #Now that you've written EVERYTHING to a CRAP TON OF FILES,
 #Let the python thinger handle all the RSD calc'ing
-echo "Running Python RSD calculation..."
-python OPENMC_RSD_calc.py $1
+echo "Running Python RSD calculations..."
+python OPENMC_MC_RSD_calc.py $1
+python OPENMC_CMFD_RSD_calc.py $1
 echo "                              ...Finished!"
 
 

@@ -6,7 +6,7 @@ import math
 nfiles = int(sys.argv[1]) #Number of files to look for-- passed from bash script
 
 file_string1 = "MC_Real_RSD.out"
-file_string2 = "CMFD_Real_RSD.out"
+file_string2 = "Tally2_Real_RSD.out"
 
 dest_file1 = open(file_string1, 'w')
 dest_file2 = open(file_string2, 'w')
