@@ -160,7 +160,7 @@ contains
               
               if (this % coremap(i,j,k) == CMFD_NOACCEL) then
                 ! (chose a non-zero value so the rsd calc wouldn't get f-ed up)
-                if(cmfd_accum) then
+                if(cmfd_accum .and. .not. cmfd_multiset) then
                   this % phi_final(matidx) = 1.00
                 else
                   this % phi_sum(matidx) = 1.00
