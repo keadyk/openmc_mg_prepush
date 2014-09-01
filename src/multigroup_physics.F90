@@ -106,12 +106,8 @@ contains
       
       ! Advance particle
       coord => p % coord0
-      
       do while (associated(coord))
-!        write(*,'(A20,3E20.7)') "moved from ", coord % xyz(1), coord % xyz(2), coord % xyz(3)
         coord % xyz = coord % xyz + distance * coord % uvw
-!        write(*,'(A4,3E20.7)') " to ", coord % xyz(1), coord % xyz(2), coord % xyz(3)
-!        write(*,'(A10,3E20.7)') "along dir ", coord % uvw(1), coord % uvw(2), coord % uvw(3)
         ! Update last cell id so it's guaranteed to be lowest-level
         last_cell = coord % cell
         coord => coord % next
@@ -130,7 +126,6 @@ contains
       if (d_collision > d_boundary) then
         ! ====================================================================
         ! PARTICLE CROSSES SURFACE
-
         p % coord % cell = NONE
         if (lattice_crossed /= NONE) then
           ! Particle crosses lattice boundary
@@ -396,12 +391,6 @@ contains
     ! WEIGHT CUTOFF (SURVIVAL BIASING ONLY)
 
     if (survival_biasing) then
-      if(active_batches) then
-        !message = "cell id " // trim(to_str(cells(p % coord % cell) % id)) // " wt cutoff " &
-        !          // trim(to_str(weight_cutoffs(p % coord % cell))) // " last cell " // trim(to_str(cells(last_cell) % id)) // &
-        !          " wt cutoff " // trim(to_str(weight_cutoffs(last_cell)))
-        !call write_message(5)
-      end if
       if (p % wgt < weight_cutoffs(last_cell)) then
         if (prn() < p % wgt / weight_survives(last_cell)) then
           p % wgt = weight_survives(last_cell)

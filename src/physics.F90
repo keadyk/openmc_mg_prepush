@@ -116,6 +116,7 @@ contains
       coord => p % coord0
       do while (associated(coord))
         coord % xyz = coord % xyz + distance * coord % uvw
+        ! Update last cell id so it's guaranteed to be lowest-level
         last_cell = coord % cell
         coord => coord % next
       end do
@@ -153,7 +154,6 @@ contains
       else
         ! ====================================================================
         ! PARTICLE HAS COLLISION
-        
         ! Score collision estimate of keff
         global_tallies(K_COLLISION) % value = &
              global_tallies(K_COLLISION) % value + p % wgt * &
@@ -449,9 +449,9 @@ contains
     ! WEIGHT CUTOFF (SURVIVAL BIASING ONLY)
 
     if (survival_biasing) then
-      if (p % wgt < weight_cutoff) then
-        if (prn() < p % wgt / weight_survive) then
-          p % wgt = weight_survive
+      if (p % wgt < weight_cutoffs(last_cell)) then
+        if (prn() < p % wgt / weight_survives(last_cell)) then
+          p % wgt = weight_survives(last_cell)
           p % last_wgt = p % wgt
         else
           p % wgt = ZERO
