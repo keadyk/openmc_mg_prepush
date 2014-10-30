@@ -1,7 +1,7 @@
 M = 32
 sigT = 1.0
-h_j = 5.0
-h_k = 0.1
+h_j = 1.25
 fperc = 50
-s_rat = 0.9
+h_k = h_j/float(fperc)
+s_rat = 0.99
 alfa = 0.0
