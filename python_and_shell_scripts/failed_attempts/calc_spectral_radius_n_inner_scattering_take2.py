@@ -14,13 +14,13 @@ else:
 
 #print out relevant data:
 print "----------Relevant data:----------"
-print "     Slab size: " + str(X)
 print "  Total x-sect: " + str(sigT) 
 print "   Scat. ratio: " + str(s_rat)
 print "    Ang. order: " + str(M)
 print "Fine grid size: " + str(h_k)
 print "Crs. grid size: " + str(h_j)
 print "  Fine per crs: " + str(fperc)
+print "   # inner its: " + str(n_in)
 print "-----------------------------------"
 
 print "---------Mus and weights:----------"
@@ -48,7 +48,7 @@ max_eig = 0.0
 #SET A RANGE OF LAMBDA VALUES:
 #Try stopping just a ways past 2 pi...
 #print "ONLY SEARCHING FROM 6 to 6.5! BE CAREFUL!"
-lambda_range = npy.arange((2*math.pi)/X, (X/h_j - 1)*(2*math.pi)/X, (2*math.pi)/X)
+lambda_range = npy.arange(0.01, 7.01, 0.01)
 for this_lambda in lambda_range:
     print "\r ****Running lambda =  {0:5.3f}; current max = {1:7.5f} @ {2:7.5f}****".format(this_lambda, max_eig, max_lambda),
     sys.stdout.flush()
@@ -110,21 +110,21 @@ for this_lambda in lambda_range:
         
         #These are the coefficients of b (summed over all m for this n)
         for p in range(M):
-            A[M*fperc+m][M*fperc + (this_f-1) + p*fperc] += -0.5*s_rat*wts.item(math.floor(p/2))
+            A[M*fperc+m][M*fperc + (this_f-1) + p*fperc] += -0.5*s_rat*((pow(s_rat, n_in-1) + 1)/(pow(s_rat, n_in) + 1))*wts.item(math.floor(p/2))
         #line_string = ""
         #for c in range(2*M*fperc):
             #line_string += str(A.item(M*fperc+m, c)).format('5.2f') + "\t"
-        #    line_string += '{0:7.5f}\t'.format(A.item(M*fperc+m, c))      
+            #line_string += '{0:7.5f}\t'.format(A.item(M*fperc+m, c))      
         #print line_string
         
     #fill matrix B:
     #print " ...Matrix B... "
 
     #for j in range(M*fperc):
-    #    line_string = ""
-    #    for c in range(fperc):
-    #        line_string += '{0:7.5f}\t'.format(B.item(j, c)) 
-    #    print line_string
+        #line_string = ""
+        #for c in range(fperc):
+        #    line_string += '{0:7.5f}\t'.format(B.item(j, c)) 
+        #print line_string
     #First M*fperc equations have no D_(n) coefficients    
     for k in range(M*fperc):        
         this_m = math.ceil(float(k+1)/fperc)
@@ -146,7 +146,7 @@ for this_lambda in lambda_range:
     big_const_real = constant
 
     #Need a case here to prevent python from getting mad:
-    if (math.cos(sigT*this_lambda*fperc*h_k) - 1) != 0: 
+    if this_lambda != 0: 
         big_const_imag = constant * ((math.sin(sigT*this_lambda*fperc*h_k))/(math.cos(sigT*this_lambda*fperc*h_k) - 1))
     else:
         big_const_imag = 0.0

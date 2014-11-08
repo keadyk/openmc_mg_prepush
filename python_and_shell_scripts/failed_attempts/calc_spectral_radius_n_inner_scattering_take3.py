@@ -14,13 +14,13 @@ else:
 
 #print out relevant data:
 print "----------Relevant data:----------"
-print "     Slab size: " + str(X)
 print "  Total x-sect: " + str(sigT) 
 print "   Scat. ratio: " + str(s_rat)
 print "    Ang. order: " + str(M)
 print "Fine grid size: " + str(h_k)
 print "Crs. grid size: " + str(h_j)
 print "  Fine per crs: " + str(fperc)
+print "   # inner its: " + str(n_in)
 print "-----------------------------------"
 
 print "---------Mus and weights:----------"
@@ -48,7 +48,7 @@ max_eig = 0.0
 #SET A RANGE OF LAMBDA VALUES:
 #Try stopping just a ways past 2 pi...
 #print "ONLY SEARCHING FROM 6 to 6.5! BE CAREFUL!"
-lambda_range = npy.arange((2*math.pi)/X, (X/h_j - 1)*(2*math.pi)/X, (2*math.pi)/X)
+lambda_range = npy.arange(0.01, 7.01, 0.01)
 for this_lambda in lambda_range:
     print "\r ****Running lambda =  {0:5.3f}; current max = {1:7.5f} @ {2:7.5f}****".format(this_lambda, max_eig, max_lambda),
     sys.stdout.flush()
@@ -110,7 +110,7 @@ for this_lambda in lambda_range:
         
         #These are the coefficients of b (summed over all m for this n)
         for p in range(M):
-            A[M*fperc+m][M*fperc + (this_f-1) + p*fperc] += -0.5*s_rat*wts.item(math.floor(p/2))
+            A[M*fperc+m][M*fperc + (this_f-1) + p*fperc] += -0.5*s_rat*((1-math.pow(s_rat, n_in-1))/(1-math.pow(s_rat, n_in)))*wts.item(math.floor(p/2))
         #line_string = ""
         #for c in range(2*M*fperc):
             #line_string += str(A.item(M*fperc+m, c)).format('5.2f') + "\t"
@@ -130,7 +130,9 @@ for this_lambda in lambda_range:
         this_m = math.ceil(float(k+1)/fperc)
         this_f = (k+1) - ((this_m-1)*fperc)
         
-        B[M*fperc+k][this_f-1] += -(0.5*(1-s_rat))
+        #print "value is: " + str((math.pow(s_rat, n_in-1) - math.pow(s_rat, n_in)*((1-math.pow(s_rat, n_in-1))/(1-math.pow(s_rat, n_in)))))
+        
+        B[M*fperc+k][this_f-1] += -(0.5*(1-s_rat) + 0.5*s_rat*(math.pow(s_rat, n_in-1) - math.pow(s_rat, n_in)*((1-math.pow(s_rat, n_in-1))/(1-math.pow(s_rat, n_in)))))
         
         #line_string = ""
         #for c in range(fperc):
@@ -146,7 +148,7 @@ for this_lambda in lambda_range:
     big_const_real = constant
 
     #Need a case here to prevent python from getting mad:
-    if (math.cos(sigT*this_lambda*fperc*h_k) - 1) != 0: 
+    if this_lambda != 0: 
         big_const_imag = constant * ((math.sin(sigT*this_lambda*fperc*h_k))/(math.cos(sigT*this_lambda*fperc*h_k) - 1))
     else:
         big_const_imag = 0.0
