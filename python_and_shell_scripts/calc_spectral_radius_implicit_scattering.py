@@ -48,7 +48,7 @@ max_eig = 0.0
 #SET A RANGE OF LAMBDA VALUES:
 #Try stopping just a ways past 2 pi...
 #print "ONLY SEARCHING FROM 6 to 6.5! BE CAREFUL!"
-lambda_range = npy.arange((2*math.pi)/X, (X/h_j - 1)*(2*math.pi)/X, (2*math.pi)/X)
+lambda_range = npy.arange((2*math.pi)/(sigT*X), (X/h_j - 1)*(2*math.pi)/(sigT*X), (2*math.pi)/(sigT*X))
 for this_lambda in lambda_range:
     print "\r ****Running lambda =  {0:5.3f}; current max = {1:7.5f} @ {2:7.5f}****".format(this_lambda, max_eig, max_lambda),
     sys.stdout.flush()

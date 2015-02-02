@@ -1,11 +1,11 @@
-X = 50.0
-M = 8
+X = 200.0
+M = 4
 sigT = 1.0
-h_j = 12.5
-fperc = 5
-h_k = h_j/float(fperc)
-s_rat = 0.999
+h_j = 3.0
+h_k = 3.0
+fperc = int(math.ceil(h_j/h_k))
+s_rat = 0.1
 alfa = 0.0
-n_in = 10
+n_in = 5
 
 

@@ -1,0 +1,11 @@
+X = 1000.0
+M = 8
+sigT = 1.0
+h_j = 2.0
+fperc = 5
+h_k = h_j/float(fperc)
+s_rat = 0.2
+alfa = 0.0
+n_in = 10
+
+
