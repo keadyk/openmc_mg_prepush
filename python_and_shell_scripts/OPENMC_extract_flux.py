@@ -4,13 +4,13 @@ import os.path
 import math
 
 if(len(sys.argv) < 3):
-    print "Usage: python OPENMC_extract_flux.py <TALLY> <OUTPUT NAME>"
+    print( "Usage: python OPENMC_extract_flux.py <TALLY> <OUTPUT NAME>")
     sys.exit()
 
 tallyid = int(sys.argv[1]) #Tally id to look for-- passed from terminal
 file_string1 = sys.argv[2] #Name of output to be written to
 
-print "Writing data from tally " + sys.argv[1] + " to file " + sys.argv[2] + ". " 
+print( "Writing data from tally " + sys.argv[1] + " to file " + sys.argv[2] + ". ")
 
 
 index = 0
@@ -27,7 +27,7 @@ flag = 0
 
 i = 0
 if os.path.isfile("tallies.out") is True:
-    print "Found file tallies.out!"
+    print( "Found file tallies.out!")
     this_file = open("tallies.out", 'r')
     for line in this_file:
         #split into values by whitespace
@@ -51,7 +51,6 @@ if os.path.isfile("tallies.out") is True:
         elif(values[0].startswith("Mesh")):
             #strip all commas, parens. Grab indices!
             if(flag == 1):
-                #print "Getting indices " + values[2].strip('(,)') + " " + values[3].strip('(,)') + " " + values[4].strip('(,)')
                 j = int(values[2].strip('(,)'))
                 k = int(values[3].strip('(,)'))
                 if(len(values) > 4):
@@ -68,7 +67,7 @@ if os.path.isfile("tallies.out") is True:
             #bingo! We want the flux values
             if(flag == 1):
                 if(printflag==1):
-                    print "It's a flux tally!"
+                    print( "It's a flux tally!")
                     printflag = 0
                 Fval.append(float(values[1]))
                 Ferror.append(float(values[3]))
@@ -76,7 +75,7 @@ if os.path.isfile("tallies.out") is True:
         elif(values[0].startswith("Fission")):
             if(flag == 1):
                 if(printflag==1):
-                    print "It's a fission tally!"
+                    print( "It's a fission tally!")
                     printflag = 0
                 Fval.append(float(values[2]))
                 Ferror.append(float(values[4]))
@@ -88,7 +87,7 @@ n_grp = int(len(Gindices)/float(Fcells))
 if(n_grp == 0):
     #Energy-integrated, just set to 1
     n_grp = 1
-print "Total number of groups: " + str(n_grp)
+print( "Total number of groups: " + str(n_grp))
 
 if(Fcells > 0):
     dest_file1 = open(file_string1, 'w')
@@ -96,7 +95,7 @@ if(Fcells > 0):
     for a in range(n_grp):
         title_string += "G" + str(a+1) + " flux \t+/- Std. Dev.\t\t" 
     dest_file1.write(title_string)
-    print "Created output file " + file_string1
+    print( "Created output file " + file_string1)
     
     #All the error lines should be the same length
     for i in range(Fcells):
@@ -108,9 +107,9 @@ if(Fcells > 0):
     dest_file1.close()
 
 if(Fcells > 0):
-    print "Done printing tally " + sys.argv[1] + "!  See " + file_string1 + " for output." 
+    print( "Done printing tally " + sys.argv[1] + "!  See " + file_string1 + " for output." )
 else:
-    print "Tally " + sys.argv[1] + " not found in tallies.out!"
+    print( "Tally " + sys.argv[1] + " not found in tallies.out!")
      
 
 
