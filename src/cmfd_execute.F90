@@ -116,7 +116,7 @@ contains
       ! VARIATION IN LOW-ORDER EIGENFUNCTIONS
       ! open output file for this cycle
       !filename = trim(path_output) // trim(to_str(current_batch)) //&
-                 '_cyc_flux.out'
+      !           '_cyc_flux.out'
       !open(UNIT=CMFD_EIG, FILE=filename, ACTION='write')
       ! extract spatial and energy indices from object
       !nx = cmfd % indices(1)
