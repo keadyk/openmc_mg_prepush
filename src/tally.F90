@@ -283,19 +283,15 @@ contains
               if (p % event /= EVENT_FISSION) cycle SCORE_LOOP
 
               if (t % find_filter(FILTER_ENERGYOUT) > 0) then
-#ifdef MULTIGROUP
-                message = "Energy filter not valid for multigroup simulation!"
-                call fatal_error()
-#else
                 ! Normally, we only need to make contributions to one scoring
                 ! bin. However, in the case of fission, since multiple fission
                 ! neutrons were emitted with different energies, multiple
                 ! outgoing energy bins may have been scored to. The following
                 ! logic treats this special case and results to multiple bins
-
+#ifndef MULTIGROUP
                 call score_fission_eout(t, score_index)
-                cycle SCORE_LOOP
 #endif
+                cycle SCORE_LOOP
               else
                 ! If there is no outgoing energy filter, than we only need to
                 ! score to one bin. For the score to be 'analog', we need to
@@ -1155,10 +1151,6 @@ contains
              p % surface, i_tally)
 
       case (FILTER_ENERGYIN)
-#ifdef MULTIGROUP
-        message = "Energy filters not allowed on multigroup tallies."
-        call fatal_error()
-#else
         ! determine incoming energy bin
         k = t % filters(i) % n_bins
 
@@ -1171,7 +1163,6 @@ contains
           t % matching_bins(i) = binary_search(t % filters(i) % real_bins, &
                k + 1, p % E)
         end if
-#endif
         
       end select
 
@@ -1495,7 +1486,7 @@ contains
 
       case (FILTER_ENERGYOUT)
 #ifdef MULTIGROUP
-        message = "Energy filters not valid for multigroup tallies."
+        message = "Outgoing energy filters not valid for multigroup tallies."
         call fatal_error()
 #else
         ! determine outgoing energy bin
@@ -1611,8 +1602,7 @@ contains
       !    & // " end indices " // trim(to_str(ijk1(1))) // " " // trim(to_str(ijk1(2)))
       !    call warning()
       !end if 
-     
-      
+ 
       if (n_cross == 0) then
         cycle
       end if
@@ -1624,7 +1614,7 @@ contains
       j = t % find_filter(FILTER_ENERGYIN)
       if (j > 0) then
 #ifdef MULTIGROUP
-          message = "Energy filters not allowed for multigroup tallies."
+          message = "Outgoing energy filters not allowed for multigroup tallies."
           call fatal_error()
 #else
         n = t % filters(j) % n_bins
@@ -2010,6 +2000,8 @@ contains
     integer :: filter_index         ! index of scoring bin
     integer :: i_filter_mesh        ! index of mesh filter in filters array
     integer :: i_filter_surf        ! index of surface filter in filters
+    integer :: i_filter_ein         ! index of energy-in filter in filters
+    integer :: i_filter_eout        ! index of energy-out filter in filters
     integer :: score_index          ! scoring bin index
     real(8) :: xyz0(3)              ! starting/intermediate coordinates
     real(8) :: xyz1(3)              ! ending coordinates of particle
@@ -2036,8 +2028,8 @@ contains
 
     i_filter_mesh = t % find_filter(FILTER_MESH)
     i_filter_surf = t % find_filter(FILTER_SURFACE)
-#ifndef MULTIGROUP
     i_filter_ein  = t % find_filter(FILTER_ENERGYIN)
+#ifndef MULTIGROUP
     i_filter_eout = t % find_filter(FILTER_ENERGYOUT)
 #endif
      
@@ -2085,21 +2077,16 @@ contains
     ! determine incoming energy bin
     j = t % find_filter(FILTER_ENERGYIN)
     if (j > 0) then
-#ifdef MULTIGROUP
-      message = "Energy filters not allowed for multigroup tallies."
-      call fatal_error()
-#else
       n = t % filters(j) % n_bins
       ! check if energy of the particle is within energy bins
-      if (p % E < t % filters(j) % real_bins(1) .or. &
-           p % E > t % filters(j) % real_bins(n + 1)) then
-        cycle
-      end if
+      !if (p % E < t % filters(j) % real_bins(1) .or. &
+      !     p % E > t % filters(j) % real_bins(n + 1)) then
+        !cycle
+      !end if
 
       ! search to find incoming energy bin
       t % matching_bins(j) = binary_search(t % filters(j) % real_bins, &
            n + 1, p % E)
-#endif
     end if
     
     ! Particle only could have reflected off of one surface

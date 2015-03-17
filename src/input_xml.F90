@@ -1788,18 +1788,26 @@ contains
           case ('energy')
             ! Set type of filter
             t % filters(j) % type = FILTER_ENERGYIN
-
-            ! Set number of bins
+            
+            ! Set number of bins (if multigroup, bins are energy groups)    
             t % filters(j) % n_bins = n_words - 1
 
             ! Allocate and store bins
             allocate(t % filters(j) % real_bins(n_words))
             do k = 1, n_words
+
               t % filters(j) % real_bins(k) = str_to_real(&
-                   tally_(i) % filter(j) % bins(k))
+                   tally_(i) % filter(j) % bins(k))   
+
             end do
+            !call fatal_error()
 
           case ('energyout')
+            ! Throw error if multigroup
+#ifdef MULTIGROUP
+              message = "Energy out filter not valid for multigroup."
+              call fatal_error()              
+#endif
             ! Set type of filter
             t % filters(j) % type = FILTER_ENERGYOUT
 
