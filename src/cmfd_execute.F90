@@ -115,28 +115,28 @@ contains
       ! BEGIN SECTION ADDED BY K.KEADY ON 12/10/2013 TO LOOK AT CYCLE-TO-CYCLE
       ! VARIATION IN LOW-ORDER EIGENFUNCTIONS
       ! open output file for this cycle
-      filename = trim(path_output) // trim(to_str(current_batch)) //&
+      !filename = trim(path_output) // trim(to_str(current_batch)) //&
                  '_cyc_flux.out'
-      open(UNIT=CMFD_EIG, FILE=filename, ACTION='write')
+      !open(UNIT=CMFD_EIG, FILE=filename, ACTION='write')
       ! extract spatial and energy indices from object
-      nx = cmfd % indices(1)
-      ny = cmfd % indices(2)
-      nz = cmfd % indices(3)
-      ng = cmfd % indices(4)
+      !nx = cmfd % indices(1)
+      !ny = cmfd % indices(2)
+      !nz = cmfd % indices(3)
+      !ng = cmfd % indices(4)
       ! begin loop around space and energy groups
-      ZLOOP: do k = 1, nz
-        XLOOP: do i = 1, nx
-          YLOOP: do j = 1, ny
-            GROUPG: do g = 1, ng
-              write(CMFD_EIG,'(1X,I0,1X,I0,1X,I0,1X,I0,1X,E20.7)') &
-                    i,j,k,g,cmfd % phi(g + ng*(i-1) + ng*nx*(j-1) &
-                    + ng*nx*ny*(k-1))
-          end do GROUPG
-        end do YLOOP
-      end do XLOOP
-    end do ZLOOP
+      !ZLOOP: do k = 1, nz
+      !  XLOOP: do i = 1, nx
+      !    YLOOP: do j = 1, ny
+      !      GROUPG: do g = 1, ng
+      !        write(CMFD_EIG,'(1X,I0,1X,I0,1X,I0,1X,I0,1X,E20.7)') &
+      !              i,j,k,g,cmfd % phi(g + ng*(i-1) + ng*nx*(j-1) &
+      !              + ng*nx*ny*(k-1))
+      !    end do GROUPG
+      !  end do YLOOP
+      !end do XLOOP
+    !end do ZLOOP
     ! close file
-    close(CMFD_EIG)
+    !close(CMFD_EIG)
     ! END SECTION ADDED BY K.KEADY
     
     end if
