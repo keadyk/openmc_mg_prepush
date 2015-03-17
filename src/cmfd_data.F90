@@ -159,12 +159,7 @@ contains
 
                 ! apply energy in filter
                 if (i_filter_ein > 0) then
-#ifdef MULTIGROUP
-                  message = "Energy filters not valid for multigroup simulations!"
-                  call fatal_error()
-#else
                   t % matching_bins(i_filter_ein) = ng - h + 1
-#endif
                 end if
 
                 ! calculate score index from bins
@@ -216,16 +211,11 @@ contains
                   t % matching_bins(i_filter_mesh) = mesh_indices_to_bin(m,ijk)
 
                   if (i_filter_ein > 0) then
-#ifdef MULTIGROUP
-                    message = "Energy filters not valid for multigroup simulations!"
-                    call fatal_error()
-#else
                     ! apply energy in filter
                     t % matching_bins(i_filter_ein) = ng - h + 1
 
                     ! set energy out bin
                     t % matching_bins(i_filter_eout) = ng - g + 1
-#endif
                   end if
 
                   ! calculate score index from bins

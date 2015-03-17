@@ -396,7 +396,7 @@ contains
     integer :: i ! iteration counter
     integer :: ijk(3) ! spatial bin location
     integer :: e_bin ! energy bin of source particle
-    integer :: n_groups ! number of energy groups
+    integer :: n_grps ! number of energy groups
     logical :: in_mesh ! source site is inside mesh
     logical :: new_weights ! calcualte new weights
     logical :: outside ! any source sites outside mesh
@@ -473,21 +473,21 @@ contains
       e_bin = 1
 #else
       ! determine energy bin
-      n_groups = size(cmfd%egrid) - 1
+      n_grps = size(cmfd%egrid) - 1
       if (source_bank(i) % E < cmfd%egrid(1)) then
         e_bin = 1
         message = 'source pt below energy grid'
         call warning()
-      elseif (source_bank(i) % E > cmfd%egrid(n_groups+1)) then
-        e_bin = n_groups
+      elseif (source_bank(i) % E > cmfd%egrid(n_grps+1)) then
+        e_bin = n_grps
         message = 'source pt above energy grid'
         call warning()
       else
-        e_bin = binary_search(cmfd%egrid, n_groups + 1, source_bank(i) % E)
+        e_bin = binary_search(cmfd%egrid, n_grps + 1, source_bank(i) % E)
       end if
 
       ! reverese energy bin (lowest grp is highest energy bin)
-      e_bin = n_groups - e_bin + 1
+      e_bin = n_grps - e_bin + 1
 #endif
       
       ! check for outside of mesh
