@@ -144,8 +144,8 @@ for this_lambda in lambda_range:
     #   print line_string
        
     #Now, calculate H and Q (sans E_r):
-    H = M2_M1i_sum * 0.5*s_rat
-    Q = M2_M1i_sum * 0.5*(1-s_rat)
+    H = npy.matrix(M2_M1i_sum) * 0.5*s_rat
+    Q = npy.matrix(M2_M1i_sum) * 0.5*(1-s_rat)
 
     #print "\n...Matrix H..."
     #for i in range(fperc): 
@@ -160,7 +160,7 @@ for this_lambda in lambda_range:
         #reset H_k
         H_k = npy.zeros((fperc, fperc), dtype=complex)       
         #calculate h^k
-        H_k = H * H_k1
+        H_k = H * npy.matrix(H_k1)
         
         #Store "old" H_k, unless it's the last time through
         if(k < (n_in-1)):
@@ -258,7 +258,7 @@ for this_lambda in lambda_range:
             max_eig = math.fabs(eigs.item(h).real)
             max_lambda = this_lambda 
             max_f = h+1
-        print '{0:7.5f}: {1:7.5f}'.format(this_lambda, eigs.item(h))
+        #print '{0:7.5f}: {1:7.5f}'.format(this_lambda, eigs.item(h))
 
 
 print "\n"        
