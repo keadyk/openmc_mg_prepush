@@ -170,105 +170,139 @@ for this_lambda in lambda_range:
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(M2_M1i_sum.item(i,c).real, M2_M1i_sum.item(i,c).imag)     
        print line_string
-       
-
-    exit(1)
+    print "\n...Matrix mu_wt_M1 inverse, summed over m..."
+    for i in range(2*fperc): 
+       line_string = ""        
+       for c in range(2*fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(mu_wt_M1i_sum.item(i,c).real, mu_wt_M1i_sum.item(i,c).imag)     
+       print line_string
     #Calculate S matrix
     for r in range(fperc):
         #Group 1 eqns for this r:
         #1->1 coupling
-        S[r][r] += 
+        S[r][r] += sigS[0][0]/sigT[0]
         #1->2 coupling
-        S[r][fperc+r] +=
+        S[r][fperc+r] += ((sigT[0]-sigS[0][0])*(sigT[1]-sigS[1][1]))/(sigS[0][1]*sigT[0])
 
         #Group 2 eqns for this r:
         #2->1 coupling
-        S[fperc+r][r] += 
+        S[fperc+r][r] += sigS[0][1]/sigT[1]
         #2->2 coupling
-        S[fperc+r][fperc+r] += 
+        S[fperc+r][fperc+r] += sigS[1][1]/sigT[1]
+
+    print "\n...Matrix S..."
+    for i in range(2*fperc): 
+       line_string = ""        
+       for c in range(2*fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(S.item(i,c).real, S.item(i,c).imag)     
+       print line_string
 
     #Now, calculate H and Q (sans E_r):
     #DOUBLE CHECK THIS!!!
     H = npy.matrix(M2_M1i_sum) * 0.5 * npy.matrix(S)
 
-    #print "\n...Matrix H..."
-    #for i in range(fperc): 
-    #   line_string = ""        
-    #   for c in range(fperc):
-    #        line_string += '{0:7.5f}\t'.format(H.item(i,c))     
-    #   print line_string
+    print "\n...Matrix H..."
+    for i in range(2*fperc): 
+       line_string = ""        
+       for c in range(2*fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(H.item(i,c).real, H.item(i,c).imag)     
+       print line_string
 
-    H_k1 = npy.identity(fperc, dtype=complex)
+    H_k1 = npy.identity(2*fperc, dtype=complex)
     
     for k in range(n_in):
         #reset H_k
         H_k = npy.zeros((fperc, fperc), dtype=complex)       
         #calculate h^k
-        H_k = npy.matrix(H) * npy.matrix(H_k1)
+        H_k = npy.matrix(H) * H_k1
         
         #Store "old" H_k, unless it's the last time through
         if(k < (n_in-1)):
-            H_k1 = H_k                 
+            H_k1 = npy.matrix(H_k)                 
                
     #Finally, calculate coefficients
     Final_coeffs = npy.matrix(H_k)
-    Final_J_coeffs = npy.matrix(mu_wt_M1i_sum)*0.5*npy.matrix(H_k1)
-    
-    #Also calc the "p+1" error coefficient, since we'll need that
-    for c in range(fperc):
-        Final_J_coeffs_pp1[c] = Final_J_coeffs.item(0, c)*complex(math.cos(sigT*this_lambda*h_j), math.sin(sigT*this_lambda*h_j))
+    Final_J_coeffs = npy.matrix(mu_wt_M1i_sum)*0.5*npy.matrix(S)*npy.matrix(H_k1)
+
+    print "...H_k1..."
+    for i in range(2*fperc): 
+       line_string = ""        
+       for c in range(2*fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(H_k1.item(i,c).real, H_k1.item(i,c).imag)    
+       print line_string 
      
-    #print "...Final scalar flux error matrix..."
-    #for i in range(fperc): 
-    #   line_string = ""        
-    #   for c in range(fperc):
-    #        line_string += '{0:7.5f}\t'.format(Final_coeffs.item(i,c))    
-    #   print line_string          
-    #print "...Final scalar flux error matrix..."
-    #for i in range(fperc): 
-    #   line_string = ""        
-    #   for c in range(fperc):
-    #        line_string += '{0:7.5f}\t'.format(Final_coeffs.item(i,c))    
-    #   print line_string  
-    
-    #print "\n...Final scalar flux error ratios for " + str(this_lambda) + "..."
-    #line_string = "" 
-    #for i in range(fperc): 
-    #   sum = 0       
-    #   for c in range(fperc):
-    #        sum += (Final_coeffs.item(i,c))    
-    #   line_string += '{0:7.5f}\t'.format(sum)
-    #print line_string
-      
-    #print "...Final current error matrix..."
-    #for i in range(fperc): 
-    #   line_string = ""        
-    #   for c in range(fperc):
-    #        line_string += '{0:7.5f}\t'.format(Final_J_coeffs.item(i,c))    
-    #   print line_string 
-    #line_string = ""        
-    #for c in range(fperc):
-    #    line_string += '{0:7.5f}\t'.format(Final_J_coeffs_pp1.item(c))    
-    #print line_string      
+    print "...Final scalar flux error matrix..."
+    for i in range(2*fperc): 
+       line_string = ""        
+       for c in range(2*fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(Final_coeffs.item(i,c).real, Final_coeffs.item(i,c).imag)    
+       print line_string          
+    print "...Final current error matrix..."
+    for i in range(2*fperc): 
+       line_string = ""        
+       for c in range(2*fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(Final_J_coeffs.item(i,c).real, Final_J_coeffs.item(i,c).imag)    
+       print line_string          
     
     #NOW! We have the error matrices that relate the current and scalar flux error to the fission source error.
     
     #calculate the big constant, G:
-    const = 1.5*sigT*h_j
-    if((math.cos(sigT*this_lambda*h_j) - 1) == 0):
-        #Warn the user of what we're up to:
-        #print "cosine term 0.0 -- setting imaginary part of constant to zero"
-        G = complex(const, 0.0)
-    else:
-        G = complex(const, const*math.sin(sigT*this_lambda*h_j)/(math.cos(sigT*this_lambda*h_j) - 1))
-    #print "...Constant...\n" + '{0:7.5f}'.format(G) 
-    #Allocate the K-matrix
-    K = npy.zeros((fperc, fperc), dtype=complex)
-    
+    const0 = 1.5*sigT[0]*h_j
+    const1 = 1.5*sigT[1]*h_j
+
+    Z = [complex(const0/(math.cos(this_lambda*h_j)-1), 0.0), complex(const1/(math.cos(this_lambda*h_j)-1), 0.0)]
+    G = [Z[0]*(complex(math.cos(this_lambda*h_j), math.sin(this_lambda*h_j))-1), Z[1]*(complex(math.cos(this_lambda*h_j), math.sin(this_lambda*h_j))-1)]
+    print "...Constants...\n" + '{0:7.5f} + {1:7.5f}i, {2:7.5f} + {3:7.5f}i, {4:7.5f} + {5:7.5f}i, {6:7.5f} + {7:7.5f}i'.format(Z[0].real, Z[0].imag, Z[1].real, Z[1].imag, G[0].real, G[0].imag, G[1].real, G[1].imag) 
+
+    #Allocate and fill the L-matrix (coefficients of I_g from low-order equations)
+    L = npy.zeros((2, 2), dtype=complex)
+    L[0][0] += (1.0-Z[0]*(sigT[0] - sigS[0][0])*h_j)
+    L[0][1] += (Z[0]*(sigT[0] - sigS[0][0])*(sigT[1] - sigS[1][1])*h_j)/sigS[0][1]
+    L[1][0] += Z[1]*sigS[0][1]*h_j
+    L[1][1] += (1.0-Z[1]*(sigT[1] - sigS[1][1])*h_j)
+
+    #Allocate and fill the T-matrix (coefficients of E_r,g from low-order equations)
+    T = npy.zeros((2, 2*fperc), dtype=complex)
+    for s in range(2*fperc):    
+        #Every coefficient gets a potential contribution from 'r=1' J coeff:
+        T[0][s] += G[0]*Final_J_coeffs.item(0,s)
+        T[1][s] += G[1]*Final_J_coeffs.item(fperc,s)
     for a in range(fperc):
-        for b in range(fperc):
-            K[a][b] += G*Final_J_coeffs.item(0, b) + Final_coeffs.item(a, b) 
+        for b in range(2*fperc):
+            T[0][b] += 1.0/fperc * Final_coeffs.item(a,b)
+            T[1][b] += 1.0/fperc * Final_coeffs.item(fperc+a,b)
+
+    print "...L matrix..."
+    for i in range(2): 
+       line_string = ""        
+       for c in range(2):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(L.item(i,c).real, L.item(i,c).imag)    
+       print line_string  
+    print "...T matrix..."
+    for i in range(2): 
+       line_string = ""        
+       for c in range(2*fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(T.item(i,c).real, T.item(i,c).imag)    
+       print line_string  
+
+    L_inv_T = npy.matrix(L).I * npy.matrix(T)
+
+    print "...L_inv * T matrix..."
+    for i in range(2): 
+       line_string = ""        
+       for c in range(2*fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(L_inv_T.item(i,c).real, L_inv_T.item(i,c).imag)    
+       print line_string     
+
+    exit(1)
+    #Allocate the K-matrix
+    K = npy.zeros((2*fperc, 2*fperc), dtype=complex)
     
+    for c in range(fperc):    
+        for a in range(fperc):
+            for b in range(2*fperc):
+                K[c][b] += -1.0/fperc * Final_coeffs.item(a,b)
+                K[fperc+c][b] += -1.0/fperc * Final_coeffs.item(a,b)
     #print "...K matrix..."
     #for i in range(fperc): 
     #   line_string = ""        
