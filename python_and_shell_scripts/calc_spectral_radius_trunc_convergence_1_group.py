@@ -102,18 +102,18 @@ for this_lambda in lambda_range:
     #        line_string += '{0:7.5f}\t'.format(M_1_inv.item(i,c))     
     #   print line_string 
        
-    #print "...Matrix M_1..."
-    #for i in range(M*fperc): 
-    #   line_string = ""        
-    #   for c in range(M*fperc):
-    #        line_string += '{0:7.5f}\t'.format(M_1.item(i,c))     
-    #   print line_string 
-    #print "...Matrix M_2..."
-    #for i in range(M*fperc): 
-    #   line_string = ""        
-    #   for c in range(M*fperc):
-    #        line_string += '{0:7.5f}\t'.format(M_2.item(i,c))     
-    #   print line_string    
+    print "...Matrix M_1..."
+    for i in range(M*fperc): 
+       line_string = ""        
+       for c in range(M*fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(M_1.item(i,c).real, M_1.item(i,c).imag)     
+       print line_string 
+    print "...Matrix M_2..."
+    for i in range(M*fperc): 
+       line_string = ""        
+       for c in range(M*fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(M_2.item(i,c).real, M_2.item(i,c).imag)     
+       print line_string    
     M2_M1i = npy.matrix(M_2)*M_1_inv
 
     #SUMS OVER M::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::   
@@ -136,22 +136,22 @@ for this_lambda in lambda_range:
                 mu_wt_M1i_sum[j][r] += this_mu * this_wt *  mu_wt_M3.item((j+m*fperc, r))
     #SUMS OVER M:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
 
-    #print "\n...Matrix M2*M1 inverse, summed over m..."
-    #for i in range(fperc): 
-    #   line_string = ""        
-    #   for c in range(fperc):
-    #        line_string += '{0:7.5f}\t'.format(M2_M1i_sum.item(i,c))     
-    #   print line_string
+    print "\n...Matrix M2*M1 inverse, summed over m..."
+    for i in range(fperc): 
+       line_string = ""        
+       for c in range(fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(M2_M1i_sum.item(i,c).real, M2_M1i_sum.item(i,c).imag)     
+       print line_string
        
     #Now, calculate H and Q (sans E_r):
     H = npy.matrix(M2_M1i_sum) * 0.5
 
-    #print "\n...Matrix H..."
-    #for i in range(fperc): 
-    #   line_string = ""        
-    #   for c in range(fperc):
-    #        line_string += '{0:7.5f}\t'.format(H.item(i,c))     
-    #   print line_string
+    print "\n...Matrix H..."
+    for i in range(fperc): 
+       line_string = ""        
+       for c in range(fperc):
+            line_string += '{0:7.5f} + {1:7.5f}i\t'.format(H.item(i,c).real, H.item(i,c).imag)     
+       print line_string
 
     H_k1 = npy.identity(fperc, dtype=complex)
     
@@ -216,7 +216,7 @@ for this_lambda in lambda_range:
         G = complex(const, 0.0)
     else:
         G = complex(const, const*math.sin(sigT*this_lambda*h_j)/(math.cos(sigT*this_lambda*h_j) - 1))
-    #print "...Constant...\n" + '{0:7.5f}'.format(G) 
+    print "...Constant...\n" + '{0:7.5f} + {1:7.5f}i'.format(G.real, G.imag) 
     #Allocate the K-matrix
     K = npy.zeros((fperc, fperc), dtype=complex)
     
@@ -232,7 +232,7 @@ for this_lambda in lambda_range:
     #   print line_string     
     
     #Now, FINALLY, calculate the eigenvalues!
-    eigs = npy.linalg.eigvals(K)
+    eigs = npy.linalg.eigvals(npy.matrix(K))
     
     #print '\n'
     for h in range(fperc):
@@ -240,8 +240,8 @@ for this_lambda in lambda_range:
             max_eig = math.fabs(eigs.item(h).real)
             max_lambda = this_lambda 
             max_f = h+1
-        #print '{0:7.5f}: {1:7.5f}'.format(this_lambda, eigs.item(h))
-
+        print '{0:7.5f}: {1:7.5f}'.format(this_lambda, eigs.item(h).real)
+    exit(1)
 
 print "\n"        
 print "Spectral radius = " + str(max_eig)

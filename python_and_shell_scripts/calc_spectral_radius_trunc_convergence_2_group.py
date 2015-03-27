@@ -125,18 +125,18 @@ for this_lambda in lambda_range:
     #        line_string += '{0:7.5f}\t'.format(M_1_inv.item(i,c))     
     #   print line_string 
        
-    print "...Matrix M_1..."
+    #print "...Matrix M_1..."
     for i in range(2*M*fperc): 
        line_string = ""        
        for c in range(2*M*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(M_1.item(i,c).real, M_1.item(i,c).imag)     
-       print line_string 
-    print "...Matrix M_2..."
+    #   print line_string 
+    #print "...Matrix M_2..."
     for i in range(2*M*fperc): 
        line_string = ""        
        for c in range(2*M*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(M_2.item(i,c).real, M_2.item(i,c).imag)    
-       print line_string    
+    #   print line_string    
     M2_M1i = npy.matrix(M_2)*M_1_inv
 
     #SUMS OVER M::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::   
@@ -165,12 +165,12 @@ for this_lambda in lambda_range:
                 mu_wt_M1i_sum[fperc+j][fperc+r] += this_mu * this_wt *  mu_wt_M3.item((M*fperc+j+m*fperc, fperc+r))
     #SUMS OVER M:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
 
-    print "\n...Matrix M2*M1 inverse, summed over m..."
+    #print "\n...Matrix M2*M1 inverse, summed over m..."
     for i in range(2*fperc): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(M2_M1i_sum.item(i,c).real, M2_M1i_sum.item(i,c).imag)     
-       print line_string
+    #   print line_string
     #print "\n...Matrix mu_wt_M1 inverse, summed over m..."
     for i in range(2*fperc): 
        line_string = ""        
@@ -191,12 +191,12 @@ for this_lambda in lambda_range:
         #2->2 coupling
         S[fperc+r][fperc+r] += sigS[1][1]/sigT[1]
 
-    print "\n...Matrix S..."
+    #print "\n...Matrix S..."
     for i in range(2*fperc): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(S.item(i,c).real, S.item(i,c).imag)     
-       print line_string
+    #   print line_string
 
     #Now, calculate H and Q (sans E_r):
     #DOUBLE CHECK THIS!!!
@@ -271,12 +271,12 @@ for this_lambda in lambda_range:
             T[0][b] += 1.0/fperc * Final_coeffs.item(a,b)
             T[1][b] += 1.0/fperc * Final_coeffs.item(fperc+a,b)
 
-    print "...L matrix..."
+    #print "...L matrix..."
     for i in range(2): 
        line_string = ""        
        for c in range(2):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(L.item(i,c).real, L.item(i,c).imag)    
-       print line_string  
+    #   print line_string  
     #print "...T matrix..."
     for i in range(2): 
        line_string = ""        
@@ -298,7 +298,7 @@ for this_lambda in lambda_range:
     
     for c in range(fperc): 
         for d in range(2*fperc):
-            #Coefficients relating F_r,g to E_r,g 
+            #Coefficients relating F_r,g to E_r,g
             K[c][d] += Final_coeffs.item(c,d)
             K[fperc+c][d] += Final_coeffs.item(fperc+c,d) 
             #Coeffs relating I_g to E_r,g
@@ -327,7 +327,7 @@ for this_lambda in lambda_range:
             max_lambda = this_lambda 
             max_f = h+1
         #print '{0:7.5f}: {1:7.5f} + {2:7.5f}i'.format(this_lambda, eigs.item(h).real, eigs.item(h).imag)
-    exit(1)  
+    #exit(1)  
 
 print "\n"        
 print "Spectral radius = " + str(max_eig)
