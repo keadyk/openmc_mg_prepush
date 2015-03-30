@@ -29,6 +29,7 @@ print "    Ang. order: " + str(M)
 print "Fine grid size: " + str(h_k)
 print "Crs. grid size: " + str(h_j)
 print "  Fine per crs: " + str(fperc)
+print "  Relax factor: " + str(rel_fact)
 print "-----------------------------------"
 
 if(sigS[1][0] != 0.0):
@@ -247,7 +248,7 @@ for this_lambda in lambda_range:
     #First fperc are coeffs of I & A from 3k, group 1
     for l in range(fperc):
         #Coefficient of Ig:
-        C[l][2*M*fperc] += 1.0 
+        C[l][2*M*fperc] += rel_fact
         #ALL A entries are summed over all M
         for o in range(M):
             this_wt = wts.item(math.floor(o/2)) 
@@ -257,15 +258,15 @@ for this_lambda in lambda_range:
             else:
                 C[l][l+1 + o*fperc] += this_wt*0.5*(1+alfa)
             C[l][l + o*fperc] += this_wt*0.5*(1-alfa)
-            C[l][o*fperc] += -1.0/fperc*this_wt*(complex(math.cos(this_lambda*h_j), math.sin(this_lambda*h_j)) + 1)  
+            C[l][o*fperc] += -1.0*rel_fact/fperc*this_wt*(complex(math.cos(this_lambda*h_j), math.sin(this_lambda*h_j)) + 1)  
             
             for r in range(fperc-1):
-                C[l][o*fperc + r+1] += -2.0/fperc * this_wt   
+                C[l][o*fperc + r+1] += -2.0*rel_fact/fperc * this_wt   
             
     #Second fperc are coeffs of I & A from 3k, group 2 
     for k in range(fperc):
         #Coefficient of Ig:
-        C[fperc + k][2*M*fperc + 1] += 1.0 
+        C[fperc + k][2*M*fperc + 1] += rel_fact
         #ALL A entries are summed over all M
         for o in range(M):
             this_wt = wts.item(math.floor(o/2)) 
@@ -275,10 +276,10 @@ for this_lambda in lambda_range:
             else:
                 C[fperc + k][M*fperc + k+1 + o*fperc] += this_wt*0.5*(1+alfa)
             C[fperc + k][M*fperc + k + o*fperc] += this_wt*0.5*(1-alfa)
-            C[fperc + k][M*fperc + o*fperc] += -1.0/fperc*this_wt*(complex(math.cos(this_lambda*h_j), math.sin(this_lambda*h_j)) + 1)  
+            C[fperc + k][M*fperc + o*fperc] += -1.0*rel_fact/fperc*this_wt*(complex(math.cos(this_lambda*h_j), math.sin(this_lambda*h_j)) + 1)  
             
             for r in range(fperc-1):
-                C[fperc + k][M*fperc + o*fperc + r+1] += -2.0/fperc * this_wt  
+                C[fperc + k][M*fperc + o*fperc + r+1] += -2.0*rel_fact/fperc * this_wt  
            
     #for n in range(2*fperc):        
     #    line_string = ""
