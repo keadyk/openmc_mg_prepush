@@ -1,0 +1,14 @@
+#Spectral radius results, implicit scattering 100cm with fixed h=0.2, delta=10, S16, 3D GA tech xs
+#Rel f | 2 grp xs | 1 grp xs (g1) | 1 grp xs (g2) | 1 grp xs (collapsed)
+0.0         0.907                                   0.910
+0.1         0.821                                   0.823
+0.2         0.742                                   0.744
+0.3         0.672                                   0.675
+0.4         0.613                                   0.616
+0.5         0.563                                   0.568
+0.6         0.522                                   0.528    
+0.7         0.489                                   0.497    
+0.8         0.463                                   0.471
+0.9         0.553                                   0.546
+1.0         0.656                                   0.650
+
