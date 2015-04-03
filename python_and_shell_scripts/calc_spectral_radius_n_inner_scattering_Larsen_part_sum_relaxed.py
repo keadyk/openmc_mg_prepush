@@ -54,7 +54,7 @@ lambda_range = npy.arange((2*math.pi)/(sigT*X), (X/h_j - 1)*(2*math.pi)/(sigT*X)
 #lambda_range = npy.arange(0.01, 2*math.pi, 0.005)
 
 for this_lambda in lambda_range:
-    #print "\r ****Running lambda =  {0:5.3f}; current max = {1:7.5f} @ {2:7.5f}****".format(this_lambda, max_eig, max_lambda),
+    print "\r ****Running lambda =  {0:5.3f}; current max = {1:7.5f} @ {2:7.5f}****".format(this_lambda, max_eig, max_lambda),
     sys.stdout.flush()
     
     #allocate arrays:
