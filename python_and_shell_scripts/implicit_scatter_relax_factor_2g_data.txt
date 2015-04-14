@@ -1,4 +1,6 @@
 #Spectral radius results, implicit scattering 100cm 1 group problem with fixed h=0.2, S16, sigT = 1.0 
+#              c1t = 0.9  c2t = 0.2    c1t = 0.9 c2t = 0.2    c1t = 0.2  c2t =0.9         c1t = 0.2  c2t=0.9
+#               s12/s2 = 0.05               s12/s2 = 4.45         s12/s2 = 0.00555         s12/s2 = 0.2166
 #Rel f | 3mfp> c1=.89 c12=.01 c2=.2 | c1=.01 c12=.89 c2=.2 | c1=.195 c12=.005 c2=.9 | c1=.005 c12=.195 c2=.9
 #Flux ratio (phi2/1):   0.0125               1.1125                   0.05                     1.95
 0.0             0.987                       0.997                    0.985                    0.986

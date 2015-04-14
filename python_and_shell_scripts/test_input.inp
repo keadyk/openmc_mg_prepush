@@ -1,11 +1,12 @@
-X = 200.0
-M = 4
+X = 100.0
+M = 16
 sigT = 1.0
-h_j = 3.0
-h_k = 3.0
+h_j = 5.0
+h_k = 0.2
 fperc = int(math.ceil(h_j/h_k))
-s_rat = 0.1
+s_rat = 0.9
 alfa = 0.0
-n_in = 5
+n_in = 20
+rel_fact = 0.0
 
 
