@@ -14,6 +14,8 @@ edit_file = open('2g_test_input.inp', 'r')
 temp_file = open('temp', 'w')
 try:
     execfile("parameters.inp")
+    #python 3-friendly version
+    exec(open("parameters.inp").read(), globals())
 except:
     print( "Uh-oh. Where is parameters.inp?")
 

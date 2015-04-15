@@ -4,19 +4,19 @@ echo "Running SO MANY spectral radius calculations..."
 
 
 #grids
-for seed1 in $(seq 1 3)
+for seed1 in $(seq 1 4)
 do
 
 FNAME=$(python make_grid_file.py $seed1)
 
 #rel fact
-for seed2 in $(seq 1 5)
+for seed2 in $(seq 1 9)
 do
 
 #Calculate this relax factor, and write to file
-RELF=$((5+$seed2)) 
+RELF=$((60+5*($seed2-1))) 
 #If it's 10 (maps to 1.0), we don't want the leading zero
-if [ $RELF -eq 10 ] 
+if [ $RELF -eq 100 ] 
 then
     printf "1.0 " >> "$FNAME" 
 else
@@ -24,19 +24,19 @@ else
 fi
 
 #sigT1
-for seed3 in $(seq 1 2)
+for seed3 in $(seq 1 4)
 do
 #sigT2
-for seed4 in $(seq 1 2)
+for seed4 in $(seq 1 4)
 do
 #sigS11
-for seed5 in $(seq 1 2)
+for seed5 in $(seq 1 3)
 do
 #sigS12
-for seed6 in $(seq 1 2)
+for seed6 in $(seq 1 3)
 do
 #sigS22
-for seed7 in $(seq 1 2)
+for seed7 in $(seq 1 3)
 do
 
 #Print all zillion indices for the run

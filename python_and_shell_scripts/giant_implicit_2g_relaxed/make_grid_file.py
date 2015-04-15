@@ -1,21 +1,29 @@
 import sys
 import os
 import math
-
+#from parameters import *
+#from weights_mus import *
 
 def make_grid_file(arg):
     #this_cg_index = int(sys.argv[1])-1 #coarse grid index-- passed from bash script
     this_cg_index = int(arg)-1 #coarse grid index-- passed from bash script
 
     try:
-        execfile("parameters.inp", globals())
+        #execfile("parameters.inp", globals())
+        #python 3-friendly version
+        exec(open("parameters.inp").read(), globals())
     except:
-        print "Uh-oh. Where is parameters.inp?"
+        print( "Uh-oh. Where is parameters.inp?" )
+        exit(1)
 
     try:
-        execfile("2g_test_input.inp", globals())
+        #execfile("2g_test_input.inp", globals())
+        #python 3-friendly version
+        exec(open("2g_test_input.inp").read(), globals())
+        #print( globals())
     except:
-        print "Uh-oh. Where is 2g_test_input.inp?"
+        print( "Uh-oh. Where is 2g_test_input.inp?" )
+        exit(1)
 
     file_name = "Implicit_2g_delta_" + str(cg_set[this_cg_index]) + ".out"
 
@@ -39,4 +47,4 @@ def make_grid_file(arg):
     return file_name
 
 #'main'-- calls make grid file function, prints returned value so shell can get it 
-print make_grid_file(sys.argv[1])
+print( make_grid_file(sys.argv[1]) )

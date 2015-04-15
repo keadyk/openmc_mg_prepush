@@ -11,18 +11,22 @@ def calc_spectral_radius_implicit():
     #Let's just go ahead and hard-code the input file name
     try:
         #Load into the global namespace
-        execfile("2g_test_input.inp", globals())
+        #execfile("2g_test_input.inp", globals())
+        #python 3-friendly version
+        exec(open("2g_test_input.inp").read(), globals())
     except:
-        print "Boo!"
+        print( "Boo!" )
     #fill weights and mus
     if M > 0:
-        execfile("weights_mus.inp", globals())
+        #execfile("weights_mus.inp", globals())
+        #python 3-friendly version
+        exec(open("weights_mus.inp").read(), globals())
     else:
-        print "Uh-oh, we didn't get a valid value for M from " + sys.argv[1] + "!"
+        print( "Uh-oh, we didn't get a valid value for M from " + sys.argv[1] + "!" )
         sys.exit(1)
 
     if(sigS[1][0] != 0.0):
-        print "We assume no upscattering. SigS 2 -> 1 must = 0.0!"
+        print( "We assume no upscattering. SigS 2 -> 1 must = 0.0!" )
         exit(1)
 
 
@@ -319,6 +323,6 @@ def calc_spectral_radius_implicit():
     return max_eig
 
 #This is the "main-like" section-- it just calls the defined function and PRINTS the result so the shell can grab it
-print calc_spectral_radius_implicit()
+print( calc_spectral_radius_implicit() )
 
 
