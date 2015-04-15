@@ -5,7 +5,7 @@ import sys
 import math
 
 #Make this whole shit a FUNCTION so we can put the result into a shell variable:
-def calc_spectral_radius_implicit_scattering_2_group_relaxed_noprint():
+def calc_spectral_radius_implicit():
     #first things first: get relevant data (M, sigT, h_j & h_k, etc) from the file
     #execfile(sys.argv[1])
     #Let's just go ahead and hard-code the input file name
@@ -318,6 +318,7 @@ def calc_spectral_radius_implicit_scattering_2_group_relaxed_noprint():
             #print '{0:7.5f}: {1:7.5f}'.format(this_lambda, eigs.item(h))    
     return max_eig
 
-calc_spectral_radius_implicit_scattering_2_group_relaxed_noprint()
+#This is the "main-like" section-- it just calls the defined function and PRINTS the result so the shell can grab it
+print calc_spectral_radius_implicit()
 
 
