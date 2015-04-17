@@ -13,7 +13,7 @@ c2_index = int(sys.argv[7])-1 #sigmaS22 index-- passed from bash script
 edit_file = open('2g_test_input.inp', 'r')
 temp_file = open('temp', 'w')
 try:
-    execfile("parameters.inp")
+    #execfile("parameters.inp")
     #python 3-friendly version
     exec(open("parameters.inp").read(), globals())
 except:
