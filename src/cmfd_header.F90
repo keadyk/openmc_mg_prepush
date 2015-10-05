@@ -48,6 +48,18 @@ module cmfd_header
     real(8), allocatable :: dtilde(:,:,:,:,:)
     real(8), allocatable :: dhat(:,:,:,:,:)
 
+    ! LAST CYCLE data-- (K. Keady, 10/5)---------------------------------------
+    ! cross sections
+    real(8), allocatable :: flux_old(:,:,:,:)
+    real(8), allocatable :: totalxs_old(:,:,:,:)
+    real(8), allocatable :: p1scattxs_old(:,:,:,:)
+    real(8), allocatable :: scattxs_old(:,:,:,:,:)
+    real(8), allocatable :: nfissxs_old(:,:,:,:,:)
+
+    ! coupling coefficients and equivalence parameters
+    real(8), allocatable :: diffcof_old(:,:,:,:)
+    ! END LAST CYCLE data------------------------------------------------------
+        
     ! dimensions of mesh cells ([hu,hv,hw],xloc,yloc,zloc)
     real(8), allocatable :: hxyz(:,:,:,:)
 
@@ -124,6 +136,13 @@ contains
     if (.not. allocated(this % dtilde))     allocate(this % dtilde(6,ng,nx,ny,nz))
     if (.not. allocated(this % dhat))       allocate(this % dhat(6,ng,nx,ny,nz))
 
+    ! allocate "last cycle" values
+    if (.not. allocated(this % totalxs_old))    allocate(this % totalxs_old(ng,nx,ny,nz))
+    if (.not. allocated(this % p1scattxs_old))  allocate(this % p1scattxs_old(ng,nx,ny,nz))
+    if (.not. allocated(this % scattxs_old))    allocate(this % scattxs_old(ng,ng,nx,ny,nz))
+    if (.not. allocated(this % nfissxs_old))    allocate(this % nfissxs_old(ng,ng,nx,ny,nz))  
+    if (.not. allocated(this % diffcof_old))    allocate(this % diffcof_old(ng,nx,ny,nz))
+    
     ! allocate dimensions for each box (here for general case)
     if (.not. allocated(this % hxyz))       allocate(this % hxyz(3,nx,ny,nz))
 

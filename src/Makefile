@@ -13,7 +13,7 @@ xml_fort = xml-fortran/xmlparse.o \
 COMPILER   = gnu
 DEBUG      = no
 PROFILE    = no
-OPTIMIZE   = no
+OPTIMIZE   = yes
 # Multigroup only tested for gnu compiler!!
 MULTIGROUP = yes
 MPI        = yes
@@ -39,9 +39,9 @@ endif
 #MPI_DIR   = /opt/mpich/3.0.2-$(COMPILER)
 #HDF5_DIR  = /opt/hdf5/1.8.10-$(COMPILER)
 #PETSC_DIR = /opt/petsc/3.3-p6-$(COMPILER)
-MPI_DIR   = /home/keadyk/PETSC_src/petsc-3.4.0/arch-linux2-c-debug/
+MPI_DIR   = /home/keadyk/petsc-3.4.5/arch-linux2-c-debug
 #Note to self: install HDF5
-PETSC_DIR = /home/keadyk/PETSC_src/petsc-3.4.0
+PETSC_DIR = /home/keadyk/petsc-3.4.5
 
 #===============================================================================
 # Add git SHA-1 hash
@@ -73,7 +73,8 @@ ifeq ($(COMPILER),gnu)
 
   # Optimization
   ifeq ($(OPTIMIZE),yes)
-    F90FLAGS += -O3
+    #F90FLAGS += -O3
+    F90FLAGS += -O1
   endif
 
   # Multigroup simulation

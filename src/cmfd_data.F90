@@ -81,7 +81,8 @@ contains
     integer :: j             ! iteration counter for y
     integer :: k             ! iteration counter for z
     integer :: g             ! iteration counter for g
-    integer :: h             ! iteration counter for outgoing groups
+    integer :: h             ! iteration counter for outgoing group
+    integer :: flag         ! zero-flux flag (fill in with old data)
     integer :: ital          ! tally object index
     integer :: ijk(3)        ! indices for mesh cell
     integer :: score_index   ! index to pull from tally object
@@ -134,7 +135,7 @@ contains
        YLOOP: do j = 1,ny
 
           XLOOP: do i = 1,nx
- 
+            
             ! check for active mesh cell
             if (allocated(cmfd%coremap)) then
               if (cmfd%coremap(i,j,k) == CMFD_NOACCEL) then
@@ -145,6 +146,9 @@ contains
             ! loop around energy groups
             OUTGROUP: do h = 1,ng
 
+              ! set zero-flux flag to zero
+              flag = 0
+              
               ! start tally 1
               TALLY: if (ital == 1) then
 
@@ -181,21 +185,36 @@ contains
                 if ((flux - 0.0D0) < 1.0E-10_8) then
                   print *,h,i,j,k,flux
                   message = 'Detected zero flux without coremap overlay'
-                  call fatal_error()
+                  ! call fatal_error()
+                  call warning()
+                  flag = 1
+                  ! set flux to "old" value
+                  flux = cmfd % flux_old(h,i,j,k)
+                  cmfd % flux = flux
                 end if
 
-                ! get total rr and convert to total xs
-                cmfd % totalxs(h,i,j,k) = t % results(2,score_index) % sum / flux
+                if(flag == 1) then
+                  ! use old value for totalxs
+                  cmfd % totalxs(h,i,j,k) = cmfd % totalxs_old(h,i,j,k)
+                  
+                  ! use old value for P1 xs
+                  cmfd % p1scattxs(h,i,j,k) = ZERO
+                  
+                else
+                  ! get total rr and convert to total xs
+                  cmfd % totalxs(h,i,j,k) = t % results(2,score_index) % sum / flux
 
-                ! get p1 scatter rr and convert to p1 scatter xs
-                ! cmfd % p1scattxs(h,i,j,k) = t % results(3,score_index) % sum / flux
-                !SET THIS TO ZERO TEMPORARILY
-                cmfd % p1scattxs = ZERO
+                  ! get p1 scatter rr and convert to p1 scatter xs
+                  ! cmfd % p1scattxs(h,i,j,k) = t % results(3,score_index) % sum / flux
+                  !SET THIS TO ZERO TEMPORARILY
+                  cmfd % p1scattxs(h,i,j,k) = ZERO
 
+                end if
+                
                 ! calculate diffusion coefficient
                 cmfd % diffcof(h,i,j,k) = ONE/(3.0_8*(cmfd % totalxs(h,i,j,k) - &
                      cmfd % p1scattxs(h,i,j,k)))
-               
+                
               else if (ital == 2) then
 
                 ! begin loop to get energy out tallies
