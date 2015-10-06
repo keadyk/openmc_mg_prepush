@@ -1,4 +1,4 @@
-program = openmc_warn
+program = openmc_2GDEBUG
 prefix = /home/keadyk/NetBeansProjects/OPENMC_builds
 
 templates = $(wildcard templates/*.o)
