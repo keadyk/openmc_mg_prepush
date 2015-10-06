@@ -143,6 +143,9 @@ contains
     if (.not. allocated(this % scattxs_old))    allocate(this % scattxs_old(ng,ng,nx,ny,nz))
     if (.not. allocated(this % nfissxs_old))    allocate(this % nfissxs_old(ng,ng,nx,ny,nz))  
     
+    ! allocate energy grid
+    if(.not. allocated(this % egrid))    allocate(this % cmfd_g1(ng+1))    
+    
     ! allocate dimensions for each box (here for general case)
     if (.not. allocated(this % hxyz))       allocate(this % hxyz(3,nx,ny,nz))
 

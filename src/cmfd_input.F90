@@ -71,11 +71,14 @@ contains
     if (associated(mesh_ % energy)) then
       ng = size(mesh_ % energy)
       if(.not.allocated(cmfd%egrid)) allocate(cmfd%egrid(ng))
-      cmfd%egrid = mesh_ % energy 
+      cmfd % egrid = mesh_ % energy 
       cmfd % indices(4) = ng - 1 ! sets energy group dimension
+      print cmfd % egrid(1), cmfd % egrid(2), cmfd % egrid(3)
+      message = "BOOM goes the dynamite"
+      call fatal_error()
     else
       if(.not.allocated(cmfd%egrid)) allocate(cmfd%egrid(2))
-      cmfd%egrid = (/0.0_8,20.0_8/)
+      cmfd % egrid = (/0.0_8,20.0_8/)
       cmfd % indices(4) = 1 ! one energy group
     end if
     
@@ -123,7 +126,7 @@ contains
     ! set 2 group fix
     call lower_case(run_2grp_)
     if (run_2grp_ == 'true' .or. run_2grp_ == '1') cmfd_run_2grp = .true.
-
+    
     ! set the solver type
     cmfd_solver_type = solver_(1:10)
     
