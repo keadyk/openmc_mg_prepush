@@ -1,4 +1,4 @@
-program = openmc_MEGAPRINT
+program = openmc_warn
 prefix = /home/keadyk/NetBeansProjects/OPENMC_builds
 
 templates = $(wildcard templates/*.o)
@@ -73,8 +73,8 @@ ifeq ($(COMPILER),gnu)
 
   # Optimization
   ifeq ($(OPTIMIZE),yes)
-    #F90FLAGS += -O3
-    F90FLAGS += -O1
+    F90FLAGS += -O2
+    # F90FLAGS += -O1
   endif
 
   # Multigroup simulation

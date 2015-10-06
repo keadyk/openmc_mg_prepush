@@ -476,6 +476,9 @@ contains
     type(Material),    pointer :: mat => null()
     type(Reaction),    pointer :: rxn => null()
 
+    ! Initialize score
+    score = ZERO
+    
     ! Determine track-length estimate of flux
     flux = p % wgt * distance
 
@@ -819,6 +822,9 @@ contains
     type(Material),    pointer :: mat => null()
     type(Reaction),    pointer :: rxn => null()
 
+    ! initialize score for safety
+    score = ZERO
+    
     ! Get pointer to tally
     t => tallies(i_tally)
 
@@ -1083,6 +1089,9 @@ contains
     t => tallies(i_tally)
     t % matching_bins = 1
 
+    ! Initialize score
+    score = ZERO
+    
     ! ==========================================================================
     ! CHECK IF THIS TRACK INTERSECTS THE MESH
 

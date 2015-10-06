@@ -240,14 +240,21 @@ contains
                   ! calculate score index from bins
                   score_index = sum((t % matching_bins - 1) * t%stride) + 1
 
-                  ! get scattering
-                  cmfd % scattxs(h,g,i,j,k) = t % results(1,score_index) % sum /&
-                       cmfd % flux(h,i,j,k)
-                       !write(*,'(A,E20.7)') "scatt... xs? ", cmfd % scattxs(h,g,i,j,k)
+                  if (flag == 1) then
+                    ! use last-cycle values
+                    cmfd % scattxs(h,g,i,j,k) = cmfd % scattxs_old(h,g,i,j,k)
+                    cmfd % nfissxs(h,g,i,j,k) = cmfd % nfissxs_old(h,g,i,j,k)
+                    
+                  else
+                    ! get scattering
+                    cmfd % scattxs(h,g,i,j,k) = t % results(1,score_index) % sum /&
+                         cmfd % flux(h,i,j,k)
+                         !write(*,'(A,E20.7)') "scatt... xs? ", cmfd % scattxs(h,g,i,j,k)
 
-                  ! get nu-fission
-                  cmfd % nfissxs(h,g,i,j,k) = t % results(2,score_index) % sum /&
-                       cmfd % flux(h,i,j,k)
+                    ! get nu-fission
+                    cmfd % nfissxs(h,g,i,j,k) = t % results(2,score_index) % sum /&
+                         cmfd % flux(h,i,j,k)
+                  end if
 
                   ! bank source
                   cmfd % openmc_src(g,i,j,k) = cmfd % openmc_src(g,i,j,k) + &
@@ -458,6 +465,14 @@ contains
     ! nullify all pointers
     if (associated(t)) nullify(t)
     if (associated(m)) nullify(m)
+    
+    ! save xs for next cycle
+    cmfd % flux_old          = cmfd % flux
+    cmfd % totalxs_old       = cmfd % totalxs
+    cmfd % p1scattxs_old     = cmfd % p1scattxs
+    cmfd % scattxs_old       = cmfd % scattxs
+    cmfd % nfissxs_old       = cmfd % nfissxs
+    
 
   end subroutine compute_xs
 
@@ -827,6 +842,11 @@ contains
     ny = cmfd%indices(2)
     nz = cmfd%indices(3)
     ng = cmfd%indices(4)
+    
+    ! Let's initialize neighbor values just to be safe
+    neig_sigtr = ZERO
+    neig_curr = ZERO
+    cell_sigtr = ZERO
 
     ! create single vector of these indices for boundary calculation
     nxyz(1,:) = (/1,nx/)

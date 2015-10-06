@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="80">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="src" root=".">
+      <df name="templates">
+        <in>cmfd_t.f90</in>
+        <in>cross_sections_t.f90</in>
+        <in>geometry_t.f90</in>
+        <in>materials_t.f90</in>
+        <in>plots_t.f90</in>
+        <in>settings_t.f90</in>
+        <in>tallies_t.f90</in>
+        <in>xml_data_cmfd_t.mod</in>
+        <in>xml_data_cross_sections_t.mod</in>
+        <in>xml_data_geometry_t.mod</in>
+        <in>xml_data_materials_t.mod</in>
+        <in>xml_data_plots_t.mod</in>
+        <in>xml_data_settings_t.mod</in>
+        <in>xml_data_tallies_t.mod</in>
+      </df>
+      <df name="utils">
+      </df>
+      <df name="xml-fortran">
+        <in>read_xml_primitives.f90</in>
+        <in>read_xml_primitives.mod</in>
+        <in>write_xml_primitives.f90</in>
+        <in>write_xml_primitives.mod</in>
+        <in>xmlparse.f90</in>
+        <in>xmlparse.mod</in>
+        <in>xmlreader.f90</in>
+      </df>
+      <in>ace.F90</in>
+      <in>ace_header.F90</in>
+      <in>ace_header.mod</in>
+      <in>bank_header.F90</in>
+      <in>bank_header.mod</in>
+      <in>cmfd_data.F90</in>
+      <in>cmfd_data.mod</in>
+      <in>cmfd_execute.F90</in>
+      <in>cmfd_execute.mod</in>
+      <in>cmfd_header.F90</in>
+      <in>cmfd_header.mod</in>
+      <in>cmfd_input.F90</in>
+      <in>cmfd_input.mod</in>
+      <in>cmfd_jacobian_operator.F90</in>
+      <in>cmfd_jacobian_operator.mod</in>
+      <in>cmfd_loss_operator.F90</in>
+      <in>cmfd_loss_operator.mod</in>
+      <in>cmfd_message_passing.F90</in>
+      <in>cmfd_message_passing.mod</in>
+      <in>cmfd_output.F90</in>
+      <in>cmfd_output.mod</in>
+      <in>cmfd_power_solver.F90</in>
+      <in>cmfd_power_solver.mod</in>
+      <in>cmfd_prod_operator.F90</in>
+      <in>cmfd_prod_operator.mod</in>
+      <in>cmfd_slepc_solver.F90</in>
+      <in>cmfd_snes_solver.F90</in>
+      <in>cmfd_snes_solver.mod</in>
+      <in>constants.F90</in>
+      <in>constants.mod</in>
+      <in>cross_section.F90</in>
+      <in>dict_header.F90</in>
+      <in>dict_header.mod</in>
+      <in>doppler.F90</in>
+      <in>doppler.mod</in>
+      <in>eigenvalue.F90</in>
+      <in>eigenvalue.mod</in>
+      <in>endf.F90</in>
+      <in>endf.mod</in>
+      <in>endf_header.F90</in>
+      <in>endf_header.mod</in>
+      <in>energy_grid.F90</in>
+      <in>error.F90</in>
+      <in>error.mod</in>
+      <in>finalize.F90</in>
+      <in>finalize.mod</in>
+      <in>fission.F90</in>
+      <in>fission.mod</in>
+      <in>fixed_source.F90</in>
+      <in>fixed_source.mod</in>
+      <in>geometry.F90</in>
+      <in>geometry.mod</in>
+      <in>geometry_header.F90</in>
+      <in>geometry_header.mod</in>
+      <in>global.F90</in>
+      <in>global.mod</in>
+      <in>hdf5_interface.F90</in>
+      <in>hdf5_interface.mod</in>
+      <in>hdf5_summary.F90</in>
+      <in>hdf5_summary.mod</in>
+      <in>initialize.F90</in>
+      <in>initialize.mod</in>
+      <in>input_xml.F90</in>
+      <in>input_xml.mod</in>
+      <in>interpolation.F90</in>
+      <in>interpolation.mod</in>
+      <in>list_header.F90</in>
+      <in>list_header.mod</in>
+      <in>main.F90</in>
+      <in>material_header.F90</in>
+      <in>material_header.mod</in>
+      <in>math.F90</in>
+      <in>math.mod</in>
+      <in>mesh.F90</in>
+      <in>mesh.mod</in>
+      <in>mesh_header.F90</in>
+      <in>mesh_header.mod</in>
+      <in>mpiio_interface.F90</in>
+      <in>mpiio_interface.mod</in>
+      <in>multigroup.F90</in>
+      <in>multigroup.mod</in>
+      <in>multigroup_cross_section.F90</in>
+      <in>multigroup_cross_section.mod</in>
+      <in>multigroup_header.F90</in>
+      <in>multigroup_header.mod</in>
+      <in>multigroup_physics.F90</in>
+      <in>multigroup_physics.mod</in>
+      <in>output.F90</in>
+      <in>output.mod</in>
+      <in>output_interface.F90</in>
+      <in>output_interface.mod</in>
+      <in>particle_header.F90</in>
+      <in>particle_header.mod</in>
+      <in>particle_restart.F90</in>
+      <in>particle_restart.mod</in>
+      <in>particle_restart_write.F90</in>
+      <in>particle_restart_write.mod</in>
+      <in>physics.F90</in>
+      <in>plot.F90</in>
+      <in>plot.mod</in>
+      <in>plot_header.F90</in>
+      <in>plot_header.mod</in>
+      <in>ppmlib.F90</in>
+      <in>ppmlib.mod</in>
+      <in>random_lcg.F90</in>
+      <in>random_lcg.mod</in>
+      <in>roi.F90</in>
+      <in>roi.mod</in>
+      <in>search.F90</in>
+      <in>search.mod</in>
+      <in>set_header.F90</in>
+      <in>set_header.mod</in>
+      <in>source.F90</in>
+      <in>source.mod</in>
+      <in>source_header.F90</in>
+      <in>source_header.mod</in>
+      <in>state_point.F90</in>
+      <in>state_point.mod</in>
+      <in>string.F90</in>
+      <in>string.mod</in>
+      <in>tally.F90</in>
+      <in>tally.mod</in>
+      <in>tally_header.F90</in>
+      <in>tally_header.mod</in>
+      <in>tally_initialize.F90</in>
+      <in>tally_initialize.mod</in>
+      <in>timer_header.F90</in>
+      <in>timer_header.mod</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+        </makeTool>
+      </makefileType>
+      <item path="ace.F90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="ace_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="bank_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_data.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_execute.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_input.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_jacobian_operator.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_loss_operator.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_message_passing.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_output.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_power_solver.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_prod_operator.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_slepc_solver.F90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cmfd_snes_solver.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="constants.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="cross_section.F90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="dict_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="doppler.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="eigenvalue.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="endf.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="endf_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="energy_grid.F90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="error.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="finalize.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="fission.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="fixed_source.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="geometry.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="geometry_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="global.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="hdf5_interface.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="hdf5_summary.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="initialize.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="input_xml.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="interpolation.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="list_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="material_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="math.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="mesh.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="mesh_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="mpiio_interface.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="multigroup.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="multigroup_cross_section.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="multigroup_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="multigroup_physics.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="output.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="output_interface.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="particle_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="particle_restart.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="particle_restart_write.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="physics.F90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="plot.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="plot_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="ppmlib.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="random_lcg.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="roi.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="search.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="set_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="source.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="source_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="state_point.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="string.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="tally.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="tally_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="tally_initialize.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/cmfd_t.f90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/cross_sections_t.f90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/geometry_t.f90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/materials_t.f90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/plots_t.f90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/settings_t.f90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/tallies_t.f90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/xml_data_cmfd_t.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/xml_data_cross_sections_t.mod"
+            ex="true"
+            tool="2"
+            flavor="0">
+      </item>
+      <item path="templates/xml_data_geometry_t.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/xml_data_materials_t.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/xml_data_plots_t.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/xml_data_settings_t.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="templates/xml_data_tallies_t.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="timer_header.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="xml-fortran/read_xml_primitives.f90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="xml-fortran/read_xml_primitives.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="xml-fortran/write_xml_primitives.f90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="xml-fortran/write_xml_primitives.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="xml-fortran/xmlparse.f90" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="xml-fortran/xmlparse.mod" ex="true" tool="2" flavor="0">
+      </item>
+      <item path="xml-fortran/xmlreader.f90" ex="true" tool="2" flavor="0">
+      </item>
+    </conf>
+    <conf name="c5g7" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE}</buildCommand>
+          <cleanCommand>${MAKE} clean</cleanCommand>
+          <executablePath></executablePath>
+        </makeTool>
+      </makefileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

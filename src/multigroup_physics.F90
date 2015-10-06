@@ -463,6 +463,9 @@ contains
     logical :: in_mesh      ! source site in ufs mesh?
     type(Nuclide),    pointer :: nuc
 
+    ! Initialize mu
+    mu = ZERO
+    
     ! Get pointer to nuclide
     nuc => nuclides(i_nuclide)
     

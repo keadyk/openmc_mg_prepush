@@ -137,11 +137,11 @@ contains
     if (.not. allocated(this % dhat))       allocate(this % dhat(6,ng,nx,ny,nz))
 
     ! allocate "last cycle" values
+    if (.not. allocated(this % flux_old))       allocate(this % flux_old(ng,nx,ny,nz))
     if (.not. allocated(this % totalxs_old))    allocate(this % totalxs_old(ng,nx,ny,nz))
     if (.not. allocated(this % p1scattxs_old))  allocate(this % p1scattxs_old(ng,nx,ny,nz))
     if (.not. allocated(this % scattxs_old))    allocate(this % scattxs_old(ng,ng,nx,ny,nz))
     if (.not. allocated(this % nfissxs_old))    allocate(this % nfissxs_old(ng,ng,nx,ny,nz))  
-    if (.not. allocated(this % diffcof_old))    allocate(this % diffcof_old(ng,nx,ny,nz))
     
     ! allocate dimensions for each box (here for general case)
     if (.not. allocated(this % hxyz))       allocate(this % hxyz(3,nx,ny,nz))
@@ -166,6 +166,13 @@ contains
     this % p1scattxs     = ZERO
     this % scattxs       = ZERO
     this % nfissxs       = ZERO
+    ! Initialize old values (flux to one, everything else to zero)
+    this % flux_old          = ONE
+    this % totalxs_old       = ZERO
+    this % p1scattxs_old     = ZERO
+    this % scattxs_old       = ZERO
+    this % nfissxs_old       = ZERO
+    ! ----------------------------------------
     this % diffcof       = ZERO
     this % dtilde        = ZERO
     this % dhat          = ZERO

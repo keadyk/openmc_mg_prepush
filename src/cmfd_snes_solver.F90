@@ -392,6 +392,9 @@ contains
     real(8),allocatable  :: mybuf(:)  ! temp buffer
     PetscScalar, pointer :: xptr(:)   ! pointer to eigenvector info
 
+    ! init k_eff, just in case
+    keff = ZERO
+    
     ! get problem size
     n = ctx%loss%n
 
