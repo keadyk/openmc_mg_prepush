@@ -211,6 +211,8 @@ contains
 
                 end if
                 
+                !print *,h,i,j,k,cmfd % totalxs(h,i,j,k)
+                
                 ! calculate diffusion coefficient
                 cmfd % diffcof(h,i,j,k) = ONE/(3.0_8*(cmfd % totalxs(h,i,j,k) - &
                      cmfd % p1scattxs(h,i,j,k)))
@@ -249,11 +251,12 @@ contains
                     ! get scattering
                     cmfd % scattxs(h,g,i,j,k) = t % results(1,score_index) % sum /&
                          cmfd % flux(h,i,j,k)
-                         !write(*,'(A,E20.7)') "scatt... xs? ", cmfd % scattxs(h,g,i,j,k)
+                         ! print *,h,"-->",g,i,j,k,cmfd % scattxs(h,g,i,j,k)
 
                     ! get nu-fission
                     cmfd % nfissxs(h,g,i,j,k) = t % results(2,score_index) % sum /&
                          cmfd % flux(h,i,j,k)
+                          print *,h,g,i,j,k,cmfd % nfissxs(h,g,i,j,k)
                   end if
 
                   ! bank source
@@ -267,12 +270,7 @@ contains
                 ! initialize and filter for energy
                 t % matching_bins = 1
                 if (i_filter_ein > 0) then
-#ifdef MULTIGROUP
-                  message = "Energy filters not valid for multigroup simulations!"
-                  call fatal_error()
-#else
                   t % matching_bins(i_filter_ein) = ng - h + 1
-#endif
                 end if
 
                 ! left surface
@@ -459,6 +457,8 @@ contains
 
     end do TAL
 
+    message = "STAAAAHP"
+    call fatal_error()
     ! normalize openmc source distribution
     cmfd % openmc_src = cmfd % openmc_src/sum(cmfd % openmc_src)*cmfd%norm
 

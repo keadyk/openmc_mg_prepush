@@ -73,9 +73,7 @@ contains
       if(.not.allocated(cmfd%egrid)) allocate(cmfd%egrid(ng))
       cmfd % egrid = mesh_ % energy 
       cmfd % indices(4) = ng - 1 ! sets energy group dimension
-      print cmfd % egrid(1), cmfd % egrid(2), cmfd % egrid(3)
-      message = "BOOM goes the dynamite"
-      call fatal_error()
+      print *, cmfd % egrid(1), cmfd % egrid(2), cmfd % egrid(3)
     else
       if(.not.allocated(cmfd%egrid)) allocate(cmfd%egrid(2))
       cmfd % egrid = (/0.0_8,20.0_8/)
@@ -375,20 +373,18 @@ contains
       allocate(filters(n_filters) % int_bins(1))
       filters(n_filters) % int_bins(1) = n_user_meshes + 1
       t % find_filter(FILTER_MESH) = n_filters
-
-! (No energy filters allowed for multigroup)      
-#ifndef MULTIGROUP      
+        
       ! read and set incoming energy mesh filter
       if (associated(mesh_ % energy)) then
         n_filters = n_filters + 1
         filters(n_filters) % type = FILTER_ENERGYIN
         ng = size(mesh_ % energy)
         filters(n_filters) % n_bins = ng - 1
-        allocate(filters(n_filters) % real_bins(ng))
+        !allocate(filters(n_filters) % real_bins(ng))
         filters(n_filters) % real_bins = mesh_ % energy
+        print *,filters(n_filters) % real_bins
         t % find_filter(FILTER_ENERGYIN) = n_filters
       end if
-#endif
       
       ! set number of nuclide bins
       allocate(t % nuclide_bins(1))
@@ -474,8 +470,8 @@ contains
 #ifdef MULTIGROUP
         ! set tally estimator to tracklength
         t % estimator = ESTIMATOR_TRACKLENGTH
-        ! t % estimator = ESTIMATOR_ANALOG
-        ! wARNING-- WON'T WORK FOR ANISO SCATTERING
+         !t % estimator = ESTIMATOR_ANALOG
+        ! WARNING-- TRACKLENGTH WON'T WORK FOR ANISO SCATTERING OR MG
 #else 
         ! set tally estimator to analog
         t % estimator = ESTIMATOR_ANALOG
@@ -484,8 +480,7 @@ contains
         ! set tally type to volume
         t % type = TALLY_VOLUME
 
-! (No energy filters allowed for multigroup)      
-#ifndef MULTIGROUP          
+! (No energy filters allowed for multigroup)           
         ! read and set outgoing energy mesh filter
         if (associated(mesh_ % energy)) then
           n_filters = n_filters + 1
@@ -496,19 +491,16 @@ contains
           filters(n_filters) % real_bins = mesh_ % energy
           t % find_filter(FILTER_ENERGYOUT) = n_filters
         end if
-#endif
 
         ! allocate and set filters
         t % n_filters = n_filters
         allocate(t % filters(n_filters))
         t % filters = filters(1:n_filters)
-
-! (No energy filters allowed for multigroup)      
-#ifndef MULTIGROUP          
+             
         ! deallocate filters bins array
         if (associated(mesh_ % energy)) &
              deallocate(filters(n_filters) % real_bins)
-#endif
+
              
         ! allocate macro reactions
         allocate(t % score_bins(2))
@@ -600,9 +592,9 @@ contains
       ! deallocate filter bins
       deallocate(filters(1) % int_bins)
 ! (No energy filters allowed for multigroup)      
-#ifndef MULTIGROUP  
+!#ifndef MULTIGROUP  
       if (associated(mesh_ % energy)) deallocate(filters(2) % real_bins)
-#endif
+!#endif
       
     end do
 
