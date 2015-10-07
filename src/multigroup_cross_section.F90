@@ -79,8 +79,8 @@ contains
  
     end do
 
-!    write(*,'(A11,I3,5E20.7)') "xsect for: ", mat % id, material_xs % total, material_xs % scattering, &
-!                                        material_xs % absorption, material_xs % fission, material_xs % nu_fission
+    write(*,'(A11,2I3,5E20.7)') "xsect for: ", mat % id,p % E,material_xs % total, material_xs % scattering, &
+                                        material_xs % absorption, material_xs % fission, material_xs % nu_fission
     
   end subroutine calculate_xs
   
@@ -108,8 +108,8 @@ contains
     ! Calculate microscopic nuclide total cross section
     micro_xs(i_nuclide) % total = nuc % total(p % E) 
 
-    ! Calculate microscopic nuclide total cross section
-    micro_xs(i_nuclide) % scattering = nuc % scattering(p % E) 
+    ! Calculate microscopic nuclide scattering cross section
+    micro_xs(i_nuclide) % scattering = nuc % total_scatter(p % E) 
 
     ! Calculate microscopic nuclide absorption cross section
     micro_xs(i_nuclide) % absorption = nuc % absorption( &

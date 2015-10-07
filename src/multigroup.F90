@@ -206,7 +206,7 @@ contains
   subroutine read_erg(nuc)
 
     type(Nuclide), pointer :: nuc
-!    integer :: i   ! iterator for debug statements
+    !integer :: i   ! iterator for debug statements
     integer :: NG ! number of energy groups
 
     ! determine number of energy groups
@@ -238,9 +238,9 @@ contains
     ! Read energy group masses
     nuc % group_mass = get_real(NG)
     
-!    message = "group energy, width, mass: "
-!    call warning()
-!    write(*,FMT=200) (nuc % group_energy(i), nuc % group_width(i), nuc % group_mass(i), i=1,7)
+    !message = "group energy, width, mass: "
+    !call warning()
+    !write(*,FMT=200) (nuc % group_energy(i), nuc % group_width(i), nuc % group_mass(i), i=1,2)
 !200 format(3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7/3E14.7)
 
   end subroutine read_erg
@@ -255,7 +255,7 @@ contains
 
     type(Nuclide), pointer :: nuc
 
-!    integer :: i      ! iterator for debug writes
+    integer :: i      ! iterator for debug writes
     integer :: JXS3   ! location of fission cross sections (0 if not fissionable)
     integer :: JXS4   ! location for fission nu data
     integer :: NXS10  ! number of nu types (i.e. total, prompt) present
@@ -284,10 +284,10 @@ contains
       XSS_index = JXS4
       ! Read total nu data
       nuc % nu_t_data = get_real(length)
-!      message = "nu total data: "
-!      call warning()
-!      write(*,FMT=201) (nuc % nu_t_data(i), i=1,7)
-!201 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+      message = "nu total data: "
+      call warning()
+      write(*,FMT=201) (nuc % nu_t_data(i), i=1,2)
+201 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
       
     else if (JXS3 /= 0 .and. NXS10 == 2) then
       ! =======================================================================
@@ -325,7 +325,7 @@ contains
 
     integer :: JXS3   ! location of fission cross sections (0 if not fissionable)
     integer :: JXS5   ! location for fission nu data
-!    integer :: i      ! iterator for debug write statement
+    integer :: i      ! iterator for debug write statement
     integer :: length ! length of data to allocate
     
     JXS3 = JXS(3) ! nuclide has fission xsect?
@@ -347,11 +347,11 @@ contains
       XSS_index = JXS5
       ! read chi data
       nuc % chi_data = get_real(length)
-!      message = "chi data: "
-!      call warning()
-!      write(*,'(E14.7)') nuc % chi_data(1)
-!      write(*,FMT=202) (nuc % chi_data(i), i=1,7)
-!202 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+      message = "chi data: "
+      call warning()
+      !write(*,'(E14.7)') nuc % chi_data(1)
+     write(*,FMT=202) (nuc % chi_data(i), i=1,2)
+202 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
     end if  
   end subroutine read_chi_data
   
@@ -364,7 +364,7 @@ contains
       
       type(Nuclide), pointer :: nuc
       
-!      integer :: i       ! iterator for debug writes
+      integer :: i       ! iterator for debug writes
       integer :: JXS2    ! location of total cross sections
       integer :: JXS3    ! location of fission cross sections
       integer :: JXS6    ! location of absorption cross section data
@@ -395,11 +395,11 @@ contains
         ! read total x section data (space already allocated)
         nuc % total = get_real(length)
         
-!        message = "sigma total data: "
-!        call warning()
-!        write(*,'(E14.7)') nuc % total(1)
-!        write(*,FMT=203) (nuc % total(i), i=1,7)
-!203     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+        message = "sigma total data: "
+        call warning()
+       !write(*,'(E14.7)') nuc % total(1)
+       write(*,FMT=203) (nuc % total(i), i=1,2)
+203     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
                 
       endif
       
@@ -429,11 +429,11 @@ contains
         rxn % sigma = get_real(length)
         nuc % fission = rxn % sigma
         
-!        message = "sigma fission data: "
-!        call warning()
-!        write(*,'(E14.7)') nuc % fission(1)
-!        write(*,FMT=204) (nuc % fission(i), i=1,7)
-!204     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+       message = "sigma fission data: "
+        call warning()
+        !write(*,'(E14.7)') nuc % fission(1)
+        write(*,FMT=204) (nuc % fission(i), i=1,2)
+204     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
         
       endif
       
@@ -455,11 +455,11 @@ contains
         rxn % sigma = get_real(length)
         nuc % absorption = rxn % sigma
 
-!        message = "sigma gamma data: "
-!        call warning()
-!        write(*,'(E14.7)') nuc % absorption(1)
-!        write(*,FMT=205) (nuc % absorption(i), i=1,7)
-!205     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+        message = "sigma gamma data: "
+        call warning()
+        !write(*,'(E14.7)') nuc % absorption(1)
+        write(*,FMT=205) (nuc % absorption(i), i=1,2)
+205     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
         
       endif
       
@@ -531,11 +531,22 @@ contains
       allocate(rxn % min_scatter(nuc % n_group))
       allocate(rxn % max_scatter(nuc % n_group))
       
+      ! allocate storage for indices too!
+      allocate(nuc % group_index(nuc % n_group))
+      allocate(nuc % total_scatter(nuc % n_group))
+      allocate(nuc % min_scatter(nuc % n_group))
+      allocate(nuc % max_scatter(nuc % n_group))
+      
       ! initialize to zeros
       rxn % group_index = 0
       rxn % total_scatter = ZERO
       rxn % min_scatter = 0
       rxn % max_scatter = 0
+      
+      nuc % group_index = 0
+      nuc % total_scatter = ZERO
+      nuc % min_scatter = 0
+      nuc % max_scatter = 0
       
       ! set length of table -- see LANL report LA-12704, pg 119
       length = int(NXS5 * (1 + NXS7 + NXS6) - 0.5 * (NXS7 * (NXS7 + 1) + NXS6 &
@@ -554,6 +565,8 @@ contains
       rxn % sigma = get_real(length) 
       nuc % scattering = rxn % sigma
       
+      print *, nuc%scattering
+      
       ! sum up total P0 values (total scattering for each group)
       ! also store array index where each group's outscatter xs start
       this_index = 1
@@ -561,21 +574,26 @@ contains
       do k=1,nuc % n_group
         ! store starting index for group
         rxn % group_index(k) = this_index
+        nuc % group_index(k) = this_index
         
         ! determine min, max groups for outscatter
         rxn % max_scatter(k) = max(1, k - NXS6)
         rxn % min_scatter(k) = min(NXS5, k + NXS7)
+        nuc % max_scatter(k) = max(1, k - NXS6)
+        nuc % min_scatter(k) = min(NXS5, k + NXS7)
      
         ! sum up outscatter sigmas for this energy group 
         do i=this_index,(this_index + rxn % min_scatter(k) - rxn % max_scatter(k))
-!          message = "group " // trim(to_str(k)) // " can scatter into groups " // trim(to_str(rxn % max_scatter(k))) &
-!                     // " thru " // trim(to_str(rxn % min_scatter(k))) // "."
-!                     call warning()
+          message = "group " // trim(to_str(k)) // " can scatter into groups " // trim(to_str(rxn % max_scatter(k))) &
+                     // " thru " // trim(to_str(rxn % min_scatter(k))) // "."
+                     call warning()
           if (rxn % sigma(i) < 0.0) then
             rxn % sigma(i) = 0.0
             nuc % scattering(i) = 0.0
           end if
           rxn % total_scatter(k) = rxn % total_scatter(k) + rxn % sigma(i)
+          nuc % total_scatter(k) = nuc % total_scatter(k) + rxn % sigma(i)          
+          print *,rxn % sigma(i)
         end do
         ! update starting index for next group
         this_index = this_index + (rxn % min_scatter(k) - rxn % max_scatter(k) + 1)
@@ -644,11 +662,11 @@ contains
           XSS_index = LPN + LPND(j) - 1
           rxn % adist % data((j - 1) * NLEG + 1:j * NLEG) = get_real(NLEG)
           
-!          message = "Dist type and data: "
-!          call warning()
-!          write(*, '(I2)') rxn % adist % type(j)
-!          write(*, '(4E14.7)') rxn % adist % data((j-1)*4+1), rxn % adist % data((j-1)*4+2), rxn % adist % data((j-1)*4+3), &
-!                               rxn % adist % data(j*4)
+          !message = "Dist type and data: "
+          !call warning()
+          !write(*, '(I2)') rxn % adist % type(j)
+          !write(*, '(4E14.7)') rxn % adist % data((j-1)*4+1), rxn % adist % data((j-1)*4+2), rxn % adist % data((j-1)*4+3), &
+          !                     rxn % adist % data(j*4)
           
         end do
       else
@@ -659,11 +677,11 @@ contains
     end if
     
     !    Do a quick check to see if things make sense:
-!      message = "sum of scatt, abs, fission vs. TOTAL! "
-!      call warning()
-!      do i=1,nuc % n_group
-!        write(*,'(2E14.7)') (rxn % total_scatter(i) + nuc % absorption(i) + nuc % fission(i)), nuc % total(i)  
-!      end do
+      message = "sum of scatt, abs, fission vs. TOTAL! "
+      call warning()
+      do i=1,nuc % n_group
+        write(*,'(2E14.7)') (nuc % total_scatter(i)+ nuc % absorption(i)+ nuc % fission(i)), nuc % total(i)  
+      end do
       
   end subroutine read_scattering
   

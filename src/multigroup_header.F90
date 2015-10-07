@@ -67,6 +67,11 @@ module multigroup_header
     ! Microscopic cross sections
     real(8), allocatable :: total(:)      ! total cross section
     real(8), allocatable :: scattering(:) ! P0 scattering
+    real(8), allocatable :: total_scatter(:) ! if scatter rxn, total for each grp 
+    integer, allocatable :: group_index(:)   ! Location in P0 xs where group data begin
+    integer, allocatable :: max_scatter(:)   ! max outscatter group
+    integer, allocatable :: min_scatter(:)   ! min outscatter group
+    
     real(8), allocatable :: fission(:)    ! fission
     real(8), allocatable :: nu_fission(:) ! neutron production
     real(8), allocatable :: absorption(:) ! absorption (MT > 100)
