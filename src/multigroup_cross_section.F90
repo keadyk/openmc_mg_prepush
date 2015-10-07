@@ -79,8 +79,8 @@ contains
  
     end do
 
-    write(*,'(A11,2I3,5E20.7)') "xsect for: ", mat % id,p % E,material_xs % total, material_xs % scattering, &
-                                        material_xs % absorption, material_xs % fission, material_xs % nu_fission
+    !write(*,'(A11,2I3,5E20.7)') "xsect for: ", mat % id,p % E,material_xs % total, material_xs % scattering, &
+    !                                    material_xs % absorption, material_xs % fission, material_xs % nu_fission
     
   end subroutine calculate_xs
   

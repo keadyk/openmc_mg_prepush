@@ -211,7 +211,7 @@ contains
 
                 end if
                 
-                !print *,h,i,j,k,cmfd % totalxs(h,i,j,k)
+                !print *,"total xs: ",h,i,j,k,cmfd % totalxs(h,i,j,k)
                 
                 ! calculate diffusion coefficient
                 cmfd % diffcof(h,i,j,k) = ONE/(3.0_8*(cmfd % totalxs(h,i,j,k) - &
@@ -234,9 +234,11 @@ contains
                   if (i_filter_ein > 0) then
                     ! apply energy in filter
                     t % matching_bins(i_filter_ein) = ng - h + 1
-
+                    !t % matching_bins(i_filter_ein) = ng - g + 1
+                    
                     ! set energy out bin
                     t % matching_bins(i_filter_eout) = ng - g + 1
+                    !t % matching_bins(i_filter_eout) = ng - h + 1                    
                   end if
 
                   ! calculate score index from bins
@@ -251,12 +253,12 @@ contains
                     ! get scattering
                     cmfd % scattxs(h,g,i,j,k) = t % results(1,score_index) % sum /&
                          cmfd % flux(h,i,j,k)
-                         ! print *,h,"-->",g,i,j,k,cmfd % scattxs(h,g,i,j,k)
+                         !print *,"scattxs ",g,"-->",h,i,j,k,cmfd % scattxs(h,g,i,j,k)
 
                     ! get nu-fission
                     cmfd % nfissxs(h,g,i,j,k) = t % results(2,score_index) % sum /&
                          cmfd % flux(h,i,j,k)
-                          print *,h,g,i,j,k,cmfd % nfissxs(h,g,i,j,k)
+                          !print *,"nfissxs ",g,h,i,j,k,cmfd % nfissxs(h,g,i,j,k)
                   end if
 
                   ! bank source
@@ -457,8 +459,8 @@ contains
 
     end do TAL
 
-    message = "STAAAAHP"
-    call fatal_error()
+    !message = "STAAAAHP"
+    !call fatal_error()
     ! normalize openmc source distribution
     cmfd % openmc_src = cmfd % openmc_src/sum(cmfd % openmc_src)*cmfd%norm
 
