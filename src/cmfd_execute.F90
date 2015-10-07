@@ -402,7 +402,7 @@ contains
     logical :: outside ! any source sites outside mesh
     type(StructuredMesh), pointer :: m ! point to mesh
     real(8), allocatable :: egrid(:)
-    
+    real(8), allocatable :: temp_cmfd_src(:,:,:,:)    
     
     ! associate pointer
     m => meshes(n_user_meshes + 1)
@@ -437,6 +437,20 @@ contains
       call count_bank_sites(m, source_bank, cmfd%sourcecounts, egrid, &
            sites_outside=outside, size_bank=work)
 
+           !print *,cmfd%sourcecounts
+           
+           
+      !let's try flipping this around:
+
+           allocate(temp_cmfd_src(ng,nx,ny,nz))
+           temp_cmfd_src(1,:,:,:) = cmfd%cmfd_src(2,:,:,:)
+           temp_cmfd_src(2,:,:,:) = cmfd%cmfd_src(1,:,:,:)
+           cmfd%cmfd_src = temp_cmfd_src
+           !temp_cmfd_src(1,:,:,:) = cmfd%sourcecounts(2,:,:,:)
+           !temp_cmfd_src(2,:,:,:) = cmfd%sourcecounts(1,:,:,:)
+           !cmfd%sourcecounts = temp_cmfd_src
+           
+           !print *,cmfd%cmfd_src           
       ! check for sites outside of the mesh
       if (master .and. outside) then
         message = "Source sites outside of the CMFD mesh!"
@@ -450,7 +464,8 @@ contains
                                sum(cmfd%sourcecounts) / cmfd%sourcecounts
         end where
       end if
-      !write(*,'("wt factor:",E20.7)'), cmfd%weightfactors(1,2,1,1)
+
+      !print *,"WEIGHT FACTORS:    ",cmfd%weightfactors 
 
       ! broadcast weight factors to all procs
       call MPI_BCAST(cmfd%weightfactors, ng*nx*ny*nz, MPI_REAL8, 0, &
@@ -466,11 +481,11 @@ contains
 
 #ifdef MULTIGROUP
       ! determine energy group
-      ! e_bin = source_bank(i) % E
+      e_bin = source_bank(i) % E
       ! fix this at one group for now :)
       ! WARNING: THIS WILL ONLY WORK FOR ONE-GROUP CMFD...
       ! WHICH IS FINE FOR NOW CAUSE THAT'S ALL WE'RE USING :)
-      e_bin = 1
+      !e_bin = 1
 #else
       ! determine energy bin
       n_grps = size(cmfd%egrid) - 1
@@ -485,8 +500,7 @@ contains
       else
         e_bin = binary_search(cmfd%egrid, n_grps + 1, source_bank(i) % E)
       end if
-
-      ! reverese energy bin (lowest grp is highest energy bin)
+      
       e_bin = n_grps - e_bin + 1
 #endif
       
@@ -499,7 +513,7 @@ contains
       ! reweight particle
       source_bank(i)%wgt = source_bank(i)%wgt * &
            cmfd%weightfactors(e_bin,ijk(1),ijk(2),ijk(3))
-
+           !print *,source_bank(i)%wgt ,cmfd%weightfactors(e_bin,ijk(1),ijk(2),ijk(3))
     end do
 
     ! deallocate
