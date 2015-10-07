@@ -288,9 +288,9 @@ contains
                 ! neutrons were emitted with different energies, multiple
                 ! outgoing energy bins may have been scored to. The following
                 ! logic treats this special case and results to multiple bins
-#ifndef MULTIGROUP
+!#ifndef MULTIGROUP
                 call score_fission_eout(t, score_index)
-#endif
+!#endif
                 cycle SCORE_LOOP
               else
                 ! If there is no outgoing energy filter, than we only need to
@@ -382,7 +382,7 @@ contains
   end subroutine score_analog_tally
 
 ! specific energy-out filters don't work in multigroup
-#ifndef MULTIGROUP
+! #ifndef MULTIGROUP
 !===============================================================================
 ! SCORE_FISSION_EOUT handles a special case where we need to store neutron
 ! production rate with an outgoing energy filter (think of a fission matrix). In
@@ -442,7 +442,7 @@ contains
     t % matching_bins(i) = bin_energyout
 
   end subroutine score_fission_eout
-#endif
+!#endif
   
 !===============================================================================
 ! SCORE_TRACKLENGTH_TALLY calculates fluxes and reaction rates based on the
@@ -1494,10 +1494,10 @@ contains
         end if
 
       case (FILTER_ENERGYOUT)
-#ifdef MULTIGROUP
-        message = "Outgoing energy filters not valid for multigroup tallies."
-        call fatal_error()
-#else
+!#ifdef MULTIGROUP
+!        message = "Outgoing energy filters not valid for multigroup tallies."
+!        call fatal_error()
+!#else
         ! determine outgoing energy bin
         n = t % filters(i) % n_bins
 
@@ -1510,7 +1510,7 @@ contains
           t % matching_bins(i) = binary_search(t % filters(i) % real_bins, &
                n + 1, p % E)
         end if
-#endif
+!#endif
       end select
 
       ! If the current filter didn't match, exit this subroutine
@@ -1622,10 +1622,10 @@ contains
       ! determine incoming energy bin
       j = t % find_filter(FILTER_ENERGYIN)
       if (j > 0) then
-#ifdef MULTIGROUP
-          message = "Outgoing energy filters not allowed for multigroup tallies."
-          call fatal_error()
-#else
+!#ifdef MULTIGROUP
+!          message = "Outgoing energy filters not allowed for multigroup tallies."
+!          call fatal_error()
+!#else
         n = t % filters(j) % n_bins
         ! check if energy of the particle is within energy bins
         if (p % E < t % filters(j) % real_bins(1) .or. &
@@ -1636,7 +1636,7 @@ contains
         ! search to find incoming energy bin
         t % matching_bins(j) = binary_search(t % filters(j) % real_bins, &
              n + 1, p % E)
-#endif
+!#endif
       end if
     
       ! =======================================================================
@@ -2038,9 +2038,9 @@ contains
     i_filter_mesh = t % find_filter(FILTER_MESH)
     i_filter_surf = t % find_filter(FILTER_SURFACE)
     i_filter_ein  = t % find_filter(FILTER_ENERGYIN)
-#ifndef MULTIGROUP
+!#ifndef MULTIGROUP
     i_filter_eout = t % find_filter(FILTER_ENERGYOUT)
-#endif
+!#endif
      
     ! This is a hokey way of doing things, but for now, let's just continue to
     ! 'bump' the particle forward artificially until we figure out which mesh/
