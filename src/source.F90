@@ -1,6 +1,6 @@
 module source
 
-  use bank_header,        only: Bank
+  use bank_header,        only: Bank, FCPI_bank
   use constants
   use error,              only: fatal_error
   use geometry_header,    only: BASE_UNIVERSE
@@ -208,11 +208,6 @@ contains
     ! set random number seed
     particle_seed = (overall_gen - 1)*n_particles + p % id
     call set_particle_seed(particle_seed)
-    
-    !message = "SPLIT particle seed: " // to_str(particle_seed)
-    !call write_message(5)
-    !message = "split stuff: " // to_str(p % wgt) // " " // to_str(p % coord % xyz(1)) // " " // to_str(p % coord % uvw(1))
-    !call write_message(5)
 
     ! set particle trace
     trace = .false.
@@ -221,6 +216,41 @@ contains
 
   end subroutine get_split_particle
 
+  !===============================================================================
+! GET_INTF_PARTICLE returns the next intermediate fission particle 
+!===============================================================================
+
+  subroutine get_intf_particle(index_source)
+
+    integer(8), intent(in) :: index_source
+
+    integer(8) :: particle_seed  ! unique index for particle
+    type(FCPI_Bank), pointer :: src => null()
+
+    ! set defaults
+    call initialize_particle()
+    
+    ! intf_particle = .true.
+
+    ! Copy attributes from source to particle
+    src => int_fbank(index_source)
+    call copy_source_attributes(src)
+
+    ! set identifier for particle (index starting from last original fission part.)
+    p % id = n_particles + index_source - 1
+
+    ! set random number seed
+    particle_seed = (overall_gen - 1)*n_particles + p % id
+    call set_particle_seed(particle_seed)
+
+    ! set particle trace
+    trace = .false.
+    if (current_batch == trace_batch .and. current_gen == trace_gen .and. &
+         p % id == trace_particle) trace = .true.
+
+  end subroutine get_intf_particle
+
+  
 !===============================================================================
 ! COPY_SOURCE_ATTRIBUTES
 !===============================================================================

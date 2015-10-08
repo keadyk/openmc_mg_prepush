@@ -7,7 +7,7 @@ module global
   use ace_header,        only: Nuclide, SAlphaBeta, xsListing, NuclideMicroXS, &
                               MaterialMacroXS
 #endif                              
-  use bank_header,       only: Bank
+  use bank_header,       only: Bank, FCPI_Bank
   use cmfd_header
   use constants
   use dict_header,      only: DictCharInt, DictIntInt
@@ -36,7 +36,7 @@ module global
   ! THE PARTICLE
 
   type(Particle), pointer :: p => null()
-
+  
   ! ============================================================================
   ! GEOMETRY-RELATED VARIABLES
 
@@ -254,17 +254,26 @@ module global
   real(8) :: weight_survive = 1.0            ! default survival weight
   
   ! ============================================================================
+  ! FCPI METHOD VARIABLES
+  type(FCPI_Bank), allocatable, target :: int_fbank(:) ! Intermediate bank
+  logical :: fcpi_on = .false.                                 ! Is FCPI enabled at all? 
+  integer(8) :: n_fbank                                         ! Particles in intermediate fission bank
+  integer(8) :: max_coll                                        ! Max # of permissible collisions
+  integer(8) :: act_mult                                        ! Active-cycle multiplier
+  
+  
+  ! ============================================================================
   ! ROI METHOD VARIABLES 
   
   type(Bank), allocatable, target :: split_bank(:) ! Split bank
-  real(8), allocatable            :: track_dist(:) ! Track distribution
-  logical    :: roi_on = .false.                   ! Is ROI enabled at all?
-  logical    :: split_particle = .false.           ! Flag for split daughter
-  integer(8) :: n_sbank                            ! Particles in split bank   
-  integer    :: n_split = 1                        ! Split factor in buffer/ROI
-  integer    :: roi_count = 0                      ! Total # roi regions    
-  integer(8) :: current_split                      ! index in spl bank, cur part
-  integer    :: last_cell                          ! Highest-level cell index
+  real(8), allocatable            :: track_dist(:)        ! Track distribution
+  logical    :: roi_on = .false.                              ! Is ROI enabled at all?
+  logical    :: split_particle = .false.                   ! Flag for split daughter
+  integer(8) :: n_sbank                                       ! Particles in split bank   
+  integer    :: n_split = 1                                    ! Split factor in buffer/ROI
+  integer    :: roi_count = 0                               ! Total # roi regions    
+  integer(8) :: current_split                               ! index in spl bank, cur part
+  integer    :: last_cell                                       ! Highest-level cell index
   
   ! ============================================================================
   ! HDF5 VARIABLES

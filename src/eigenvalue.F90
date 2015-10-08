@@ -21,7 +21,7 @@ module eigenvalue
   use random_lcg,         only: prn, set_particle_seed, prn_skip
   use roi,                only: adjust_weight_cutoffs
   use search,             only: binary_search
-  use source,             only: get_source_particle, get_split_particle
+  use source,             only: get_source_particle, get_split_particle, get_intf_particle
   use state_point,        only: write_state_point
   use string,             only: to_str
   use tally,              only: synchronize_tallies, setup_active_usertallies, &
@@ -92,37 +92,39 @@ contains
 
         end do PARTICLE_LOOP
         
-        !message = "Total weight after orig " // trim(to_str(total_weight))
-        !call write_message()
-        
         ! TODO: Make this work in parallel (?)
         if (roi_on .and. active_batches) then
-          ! ==================================================================
+          ! ===================================================================
           ! LOOP OVER SPLITS (added by K. Keady 7/2/14 :))
-          ! An interesting point: n_sbank can change as the split particles
-          ! run, because splits can split again :O
-          ! message = "Running split bank... " // trim(to_str(n_sbank))
-          ! call write_message(5)
+          ! An interesting point: n_sbank can change as the split particles run, because splits can split again :O
           current_split = 0
-          !SPLIT_LOOP: do current_split = 1, n_sbank
           SPLIT_LOOP: do
             current_split = current_split + 1
             if (current_split > n_sbank) exit
-          !message = "Current and bank size: " // trim(to_str(current_split)) // " " // trim(to_str(n_sbank))
-          !call write_message(5)
-          ! grab source particle from bank    
+            ! grab source particle from bank    
             call get_split_particle(current_split)
-            
-            !if (current_batch == 10 .or. current_batch == 11) then
-            !if(current_batch == 10) then
-            !message = "-------------------New split particle " // trim(to_str(p % wgt)) // " " // trim(to_str(p % coord0 % xyz(1)))
-            !call write_message(5)
-            !end if
             
             ! transport particle
             call transport()
 
           end do SPLIT_LOOP
+        end if 
+        
+        ! TODO: Make this work in parallel (?)
+        if (fcpi_on .and. active_batches) then
+          ! ===================================================================
+          ! LOOP OVER INTERMEDIATE FISSIONS (added by K. Keady 7/2/15 :))
+          current_fiss = 0
+          FISS_LOOP: do
+            current_fiss = current_split + 1
+            if (current_fiss > n_fbank) exit
+            ! grab source particle from bank    
+            call get_intf_particle(current_fiss)
+            
+            ! transport particle
+            call transport()
+
+          end do FISS_LOOP
         end if 
 
         ! Accumulate time for transport
@@ -168,8 +170,14 @@ contains
       active_batches = .true.
       tallies_on = .true.
       
+      ! ROI method-- adjust weight "floors" in ROI and buffer zones
       if(roi_on .and. survival_biasing) then
         call adjust_weight_cutoffs()
+      end if
+      
+      ! Enable FCPI method 
+      if(fcpi_on) then
+        ! Adjust source bank size
       end if
       
       ! Add user tallies to active tallies list
@@ -210,6 +218,13 @@ contains
 
   subroutine finalize_generation()
 
+    ! If this is the LAST gen before active cycles, and fcpi is enabled,
+    ! we need to bump up the source bank size!
+    if(fcpi_on .and. overall_gen == n_inactive*gen_per_batch) then
+      n_particles = n_particles * act_mult
+      print *,"Bumped up source size to ", n_particles
+    end if
+    
     ! Distribute fission bank across processors evenly
     call time_bank % start()
     call synchronize_bank()

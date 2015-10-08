@@ -84,7 +84,7 @@ module particle_header
     integer    :: n_collision   ! # of collisions
 
   end type Particle
-
+  
 contains
 
 !===============================================================================

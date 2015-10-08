@@ -204,7 +204,6 @@ contains
     p % last_wgt = p % wgt
     p % last_E   = p % E
     p % last_uvw = p % coord0 % uvw
-!    write(*,'(3E14.7)') p % last_uvw(1), p % last_uvw(2), p % last_uvw(3)
     
     ! Add to collision counter for particle
     p % n_collision = p % n_collision + 1
@@ -319,8 +318,6 @@ contains
       prob = ZERO
 
       ! Add disappearance cross-section to prob
-      !prob = prob + micro_xs(i_nuclide) % absorption - &
-      !     micro_xs(i_nuclide) % fission
       prob = prob + micro_xs(i_nuclide) % absorption 
            
 !          message = "abs: " // trim(to_str(micro_xs(i_nuclide) % absorption)) // " and fission: " //  &
@@ -412,13 +409,7 @@ contains
     end if
 
     ! ==========================================================================
-    ! SCATTERING REACTIONS
-
-    ! Shouldn't need these; if it ain't fission or absorp., it better be 
-    ! scattering!!
-    ! prob = prob + micro_xs(i_nuclide) % scattering
-    ! if (prob < cutoff) then
-      
+    ! SCATTERING REACTION
 
     ! get pointer to scattering reaction
     rxn => nuc % reactions(1)

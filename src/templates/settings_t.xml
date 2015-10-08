@@ -33,6 +33,12 @@
     <component name="enabled" type="word" length="5" default="'false'" />
     <component name="split_factor" type="integer" default="1" />
   </typedef>
+  
+  <typedef name="fcpi_method_xml">
+    <component name="enabled" type="word" length="5" default="'false'" />
+    <component name="collision_limit" type="integer" default="10000" />
+    <component name="active_multiplier" type="integer" default="1" />
+  </typedef>
 
   <typedef name="mesh_xml">
     <component name="dimension" type="integer-array" />
@@ -59,6 +65,7 @@
   <variable name="output_path_" tag="output_path" type="word" length="255" />
   <variable name="ptables_" tag="ptables" type="word" length="5" />
   <variable name="roi_method_" tag="roi_method" type="roi_method_xml" dimension="1"/>
+  <variable name="fcpi_method_" tag="fcpi_method" type="fcpi_method_xml" dimension="1"/>
   <variable name="run_cmfd_" tag="run_cmfd" type="word" length="5" />
   <variable name="seed_" tag="seed" type="integer" />
   <variable name="source_" tag="source" type="source_xml" />

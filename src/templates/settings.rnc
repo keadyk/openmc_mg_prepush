@@ -54,6 +54,15 @@ element settings {
       attribute split_factor { xsd:positiveInteger })?
   }? &
 
+  element fcpi_method {
+    (element enabled { xsd:boolean } | 
+      attribute enabled { xsd:boolean })? &
+    (element collision_limit { xsd:positiveInteger } | 
+      attribute collision_limit { xsd:positiveInteger })? &
+    (element active_multiplier { xsd:positiveInteger } | 
+      attribute active_multiplier { xsd:positiveInteger })?
+  }? &
+
   element run_cmfd { xsd:boolean }? &
 
   element seed { xsd:positiveInteger }? &

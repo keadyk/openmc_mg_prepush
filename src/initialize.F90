@@ -756,8 +756,12 @@ contains
   subroutine calculate_work()
 
     ! Determine maximum amount of particles to simulate on each processor
-    maxwork = ceiling(real(n_particles)/n_procs,8)
-
+    if(fcpi_on .and. act_mult > 1) then
+      maxwork = ceiling(real(n_particles*act_mult)/n_procs,8)
+    else
+      maxwork = ceiling(real(n_particles)/n_procs,8)
+    end if
+    
     ! ID's of first and last source particles
     bank_first = rank*maxwork + 1
     bank_last  = min((rank+1)*maxwork, n_particles)
@@ -805,6 +809,16 @@ contains
       allocate(track_dist(n_cells))
       ! Initialize to zero
       track_dist = ZERO
+    end if
+    
+    if(fcpi_on) then
+      ! Allocate intermediate fission bank
+      allocate(int_fbank(maxwork), STAT=alloc_err)
+      ! Check for allocation errors 
+      if (alloc_err /= 0) then
+        message = "Failed to allocate intermediate fission bank."
+        call fatal_error()
+      end if
     end if
     
   end subroutine allocate_banks

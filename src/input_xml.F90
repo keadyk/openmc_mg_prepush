@@ -377,6 +377,20 @@ contains
         call write_message(5)
       end if
     end if
+    
+    ! FCPI method (added by K. Keady 10/8/15)
+    if(size(fcpi_method_) > 0) then
+      call lower_case(fcpi_method_(1) % enabled)
+      if (fcpi_method_(1) % enabled == 'true' .or. fcpi_method_(1) % enabled == '1') then 
+        fcpi_on = .true.
+        max_coll = fcpi_method_(1) % collision_limit
+        act_mult = fcpi_method_(1) %  active_multiplier
+        message = "FCPI method enabled, with coll limit " // &
+             trim(to_str(max_coll)) // "!!"
+        call write_message(5)
+        print *, max_coll, act_mult
+      end if
+    end if
 
 #ifndef MULTIGROUP
     ! Probability tables
@@ -780,22 +794,11 @@ contains
       if(roi_on) then
         if (cell_(i) % roi == 'true' .or. cell_(i) % roi == '1') then
           c % n_split = n_split*n_split
-          !message = "Cell " // trim(to_str(c % id)) // &
-          !          " designated ROI, split factor " &
-          !          // trim(to_str(c % n_split))
           roi_count = roi_count + 1
-          !call write_message(5)
         elseif (cell_(i) % buffer == 'true' .or. cell_(i) % buffer == '1') then
           c % n_split = n_split
-          !message = "Cell " // trim(to_str(c % id)) // &
-          !          " designated buffer, split factor " // &
-          !          trim(to_str(c % n_split))
-          !call write_message(5)
         else
           c % n_split = 1
-          !message = "Cell " // trim(to_str(c % id)) // " split factor " &
-          !     // trim(to_str(c % n_split))
-          !call write_message(5)
         end if
       end if
 
