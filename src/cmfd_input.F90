@@ -73,7 +73,6 @@ contains
       if(.not.allocated(cmfd%egrid)) allocate(cmfd%egrid(ng))
       cmfd % egrid = mesh_ % energy 
       cmfd % indices(4) = ng - 1 ! sets energy group dimension
-      print *, cmfd % egrid(1), cmfd % egrid(2), cmfd % egrid(3)
     else
       if(.not.allocated(cmfd%egrid)) allocate(cmfd%egrid(2))
       cmfd % egrid = (/0.0_8,20.0_8/)
@@ -382,7 +381,6 @@ contains
         filters(n_filters) % n_bins = ng - 1
         !allocate(filters(n_filters) % real_bins(ng))
         filters(n_filters) % real_bins = mesh_ % energy
-        print *,filters(n_filters) % real_bins
         t % find_filter(FILTER_ENERGYIN) = n_filters
       end if
       
@@ -479,13 +477,16 @@ contains
         
         ! set tally type to volume
         t % type = TALLY_VOLUME
-
-! (No energy filters allowed for multigroup)           
+       
         ! read and set outgoing energy mesh filter
         if (associated(mesh_ % energy)) then
           n_filters = n_filters + 1
           filters(n_filters) % type = FILTER_ENERGYOUT
           ng = size(mesh_ % energy)
+          if(ng > 3) then
+            message = "MG CMFD only tested for 2-G case!"
+            call warning()
+          end if
           filters(n_filters) % n_bins = ng - 1
           allocate(filters(n_filters) % real_bins(ng))
           filters(n_filters) % real_bins = mesh_ % energy

@@ -382,13 +382,14 @@ contains
                            n_user_meshes, message, cmfd, master, mpi_err
     use mesh_header, only: StructuredMesh
     use mesh,        only: count_bank_sites, get_mesh_indices   
-#ifndef MULTIGROUP  
+!#ifndef MULTIGROUP  
     use search,      only: binary_search
-#endif
+!#endif
 
     ! local variables
     integer :: j
     integer :: k
+    integer :: s ! iterator to transpose cmfd src matrix
     integer :: nx ! maximum number of cells in x direction
     integer :: ny ! maximum number of cells in y direction
     integer :: nz ! maximum number of cells in z direction
@@ -412,6 +413,7 @@ contains
     ny = cmfd%indices(2)
     nz = cmfd%indices(3)
     ng = cmfd%indices(4)
+
 
     ! allocate arrays in cmfd object (can take out later extend to multigroup)
     if (.not.allocated(cmfd%sourcecounts)) then 
@@ -441,14 +443,13 @@ contains
            
            
       !let's try flipping this around:
-
-           allocate(temp_cmfd_src(ng,nx,ny,nz))
-           temp_cmfd_src(1,:,:,:) = cmfd%cmfd_src(2,:,:,:)
-           temp_cmfd_src(2,:,:,:) = cmfd%cmfd_src(1,:,:,:)
-           cmfd%cmfd_src = temp_cmfd_src
-           !temp_cmfd_src(1,:,:,:) = cmfd%sourcecounts(2,:,:,:)
-           !temp_cmfd_src(2,:,:,:) = cmfd%sourcecounts(1,:,:,:)
-           !cmfd%sourcecounts = temp_cmfd_src
+         if(ng > 1) then
+            allocate(temp_cmfd_src(ng,nx,ny,nz))
+            do s = 1, ng
+              temp_cmfd_src(s,:,:,:) = cmfd%cmfd_src(ng-s+1,:,:,:)
+          end do
+          cmfd%cmfd_src = temp_cmfd_src
+         end if
            
            !print *,cmfd%cmfd_src           
       ! check for sites outside of the mesh
@@ -479,14 +480,6 @@ contains
       ! determine spatial bin
       call get_mesh_indices(m, source_bank(i)%xyz, ijk, in_mesh)
 
-#ifdef MULTIGROUP
-      ! determine energy group
-      e_bin = source_bank(i) % E
-      ! fix this at one group for now :)
-      ! WARNING: THIS WILL ONLY WORK FOR ONE-GROUP CMFD...
-      ! WHICH IS FINE FOR NOW CAUSE THAT'S ALL WE'RE USING :)
-      !e_bin = 1
-#else
       ! determine energy bin
       n_grps = size(cmfd%egrid) - 1
       if (source_bank(i) % E < cmfd%egrid(1)) then
@@ -499,10 +492,15 @@ contains
         call warning()
       else
         e_bin = binary_search(cmfd%egrid, n_grps + 1, source_bank(i) % E)
+
       end if
-      
+
+#ifndef MULTIGROUP
+      ! reverse order (lowest energy GROUP is highest ENERGY,
+      ! for continuous energy MC case)
       e_bin = n_grps - e_bin + 1
 #endif
+
       
       ! check for outside of mesh
       if (.not. in_mesh) then
@@ -518,7 +516,6 @@ contains
 
     ! deallocate
     if (allocated(egrid)) deallocate(egrid)
-    !write(*, '("Reweighted particles")')
 
   end subroutine cmfd_reweight
 

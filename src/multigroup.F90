@@ -284,10 +284,10 @@ contains
       XSS_index = JXS4
       ! Read total nu data
       nuc % nu_t_data = get_real(length)
-      message = "nu total data: "
-      call warning()
-      write(*,FMT=201) (nuc % nu_t_data(i), i=1,2)
-201 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+      !message = "nu total data: "
+      !call warning()
+      !write(*,FMT=201) (nuc % nu_t_data(i), i=1,2)
+!201 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
       
     else if (JXS3 /= 0 .and. NXS10 == 2) then
       ! =======================================================================
@@ -347,11 +347,10 @@ contains
       XSS_index = JXS5
       ! read chi data
       nuc % chi_data = get_real(length)
-      message = "chi data: "
-      call warning()
-      !write(*,'(E14.7)') nuc % chi_data(1)
-     write(*,FMT=202) (nuc % chi_data(i), i=1,2)
-202 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+      !message = "chi data: "
+      !call warning()
+      !write(*,FMT=202) (nuc % chi_data(i), i=1,2)
+!202 format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
     end if  
   end subroutine read_chi_data
   
@@ -395,11 +394,11 @@ contains
         ! read total x section data (space already allocated)
         nuc % total = get_real(length)
         
-        message = "sigma total data: "
-        call warning()
-       !write(*,'(E14.7)') nuc % total(1)
-       write(*,FMT=203) (nuc % total(i), i=1,2)
-203     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+        !message = "sigma total data: "
+        !call warning()
+        !write(*,'(E14.7)') nuc % total(1)
+        !write(*,FMT=203) (nuc % total(i), i=1,2)
+!203     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
                 
       endif
       
@@ -429,11 +428,11 @@ contains
         rxn % sigma = get_real(length)
         nuc % fission = rxn % sigma
         
-       message = "sigma fission data: "
-        call warning()
+        !message = "sigma fission data: "
+        !call warning()
         !write(*,'(E14.7)') nuc % fission(1)
-        write(*,FMT=204) (nuc % fission(i), i=1,2)
-204     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+        !write(*,FMT=204) (nuc % fission(i), i=1,2)
+!204     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
         
       endif
       
@@ -455,11 +454,10 @@ contains
         rxn % sigma = get_real(length)
         nuc % absorption = rxn % sigma
 
-        message = "sigma gamma data: "
-        call warning()
-        !write(*,'(E14.7)') nuc % absorption(1)
-        write(*,FMT=205) (nuc % absorption(i), i=1,2)
-205     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
+        !message = "sigma gamma data: "
+        !call warning()
+        !write(*,FMT=205) (nuc % absorption(i), i=1,2)
+!205     format(E14.7/E14.7/E14.7/E14.7/E14.7/E14.7/E14.7)
         
       endif
       
@@ -565,7 +563,7 @@ contains
       rxn % sigma = get_real(length) 
       nuc % scattering = rxn % sigma
       
-      print *, nuc%scattering
+      !print *, nuc%scattering
       
       ! sum up total P0 values (total scattering for each group)
       ! also store array index where each group's outscatter xs start
@@ -584,16 +582,15 @@ contains
      
         ! sum up outscatter sigmas for this energy group 
         do i=this_index,(this_index + rxn % min_scatter(k) - rxn % max_scatter(k))
-          message = "group " // trim(to_str(k)) // " can scatter into groups " // trim(to_str(rxn % max_scatter(k))) &
-                     // " thru " // trim(to_str(rxn % min_scatter(k))) // "."
-                     call warning()
+          !message = "group " // trim(to_str(k)) // " can scatter into groups " // trim(to_str(rxn % max_scatter(k))) &
+          !           // " thru " // trim(to_str(rxn % min_scatter(k))) // "."
+          !           call warning()
           if (rxn % sigma(i) < 0.0) then
             rxn % sigma(i) = 0.0
             nuc % scattering(i) = 0.0
           end if
           rxn % total_scatter(k) = rxn % total_scatter(k) + rxn % sigma(i)
           nuc % total_scatter(k) = nuc % total_scatter(k) + rxn % sigma(i)          
-          print *,rxn % sigma(i)
         end do
         ! update starting index for next group
         this_index = this_index + (rxn % min_scatter(k) - rxn % max_scatter(k) + 1)
@@ -675,13 +672,6 @@ contains
         rxn % has_angle_dist = .false.
       end if
     end if
-    
-    !    Do a quick check to see if things make sense:
-      message = "sum of scatt, abs, fission vs. TOTAL! "
-      call warning()
-      do i=1,nuc % n_group
-        write(*,'(2E14.7)') (nuc % total_scatter(i)+ nuc % absorption(i)+ nuc % fission(i)), nuc % total(i)  
-      end do
       
   end subroutine read_scattering
   
