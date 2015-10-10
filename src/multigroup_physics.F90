@@ -22,7 +22,7 @@ module multigroup_physics
                                score_surface_current
 
   implicit none
-
+  
 contains
 
 !===============================================================================
@@ -500,36 +500,105 @@ contains
       nu = int(nu_t) + 1
     end if
 
+    ! Edited by K.Keady on 10/10-- I TRIED TO MAKE THIS ELEGANT
+    ! BUT NOTHING WORKS RIGHT WHEN EVERYTHING IS GLOBAL!!!!!
     ! Bank source neutrons
-    if (nu == 0 .or. n_bank == 3*work) return
-    do i = int(n_bank,4) + 1, int(min(n_bank + nu, 3*work),4)
+    ! If you're under max_coll and fcpi is activated, bank in intermed. bank
+    if(fcpi_active .and. p % n_collision < max_coll) then
+      if (nu == 0 .or. n_fbank == 3*work) return
+      do i = int(n_fbank,4) + 1, int(min(n_fbank + nu, 3*work),4)
+        ! Bank source neutrons by copying particle data
+        int_fbank(i) % xyz = p % coord0 % xyz
+        ! intermed. bank needs to know collision number
+        int_fbank(i) % n_collision = p % n_collision
+        ! Set weight of fission bank site
+        int_fbank(i) % wgt = ONE/weight
+
+        ! Sample cosine of angle -- fission neutrons are always emitted
+        ! isotropically. Sometimes in ACE data, fission reactions actually have
+        ! an angular distribution listed, but for those that do, it's simply just
+        ! a uniform distribution in mu
+        mu = TWO * prn() - ONE
+
+        ! sample from prompt neutron chi distribution for the 
+        ! fissioning nuclide
+        E_out = sample_energy(nuc)
+
+        ! Sample azimuthal angle uniformly in [0,2*pi)
+        phi = TWO*PI*prn()
+        int_fbank(i) % uvw(1) = mu
+        int_fbank(i) % uvw(2) = sqrt(ONE - mu*mu) * cos(phi)
+        int_fbank(i) % uvw(3) = sqrt(ONE - mu*mu) * sin(phi)
+
+        ! set energy of fission neutron
+        int_fbank(i) % E = E_out
+        print *, i
+      end do
+      n_fbank = min(n_fbank + nu, 3*work)
+      
+    ! else, bank in final "end-of-cycle" bank
+    else
+      if (fcpi_active) then
+        ! print *, "banking fiss with ncoll = ", p % n_collision
+      end if
+      if (nu == 0 .or. n_bank == 3*work) return
+      do i = int(n_bank,4) + 1, int(min(n_bank + nu, 3*work),4)
+        ! Bank source neutrons by copying particle data
+        fission_bank(i) % xyz = p % coord0 % xyz
+        ! Final bank needs to know particle type 
+        fission_bank(i) % type = FISS_P
+        ! Set weight of fission bank site
+        fission_bank(i) % wgt = ONE/weight
+
+        ! Sample cosine of angle -- fission neutrons are always emitted
+        ! isotropically. Sometimes in ACE data, fission reactions actually have
+        ! an angular distribution listed, but for those that do, it's simply just
+        ! a uniform distribution in mu
+        mu = TWO * prn() - ONE
+
+        ! sample from prompt neutron chi distribution for the 
+        ! fissioning nuclide
+        E_out = sample_energy(nuc)
+
+        ! Sample azimuthal angle uniformly in [0,2*pi)
+        phi = TWO*PI*prn()
+        fission_bank(i) % uvw(1) = mu
+        fission_bank(i) % uvw(2) = sqrt(ONE - mu*mu) * cos(phi)
+        fission_bank(i) % uvw(3) = sqrt(ONE - mu*mu) * sin(phi)
+
+        ! set energy of fission neutron
+        fission_bank(i) % E = E_out
+      end do
+      n_bank = min(n_bank + nu, 3*work)
+      
+    end if 
+    
+    !if (nu == 0 .or. n_bank == 3*work) return
+    !do i = int(n_bank,4) + 1, int(min(n_bank + nu, 3*work),4)
       ! Bank source neutrons by copying particle data
-      fission_bank(i) % xyz = p % coord0 % xyz
+     ! fission_bank(i) % xyz = p % coord0 % xyz
       ! Set weight of fission bank site
-      fission_bank(i) % wgt = ONE/weight
+     ! fission_bank(i) % wgt = ONE/weight
 
       ! Sample cosine of angle -- fission neutrons are always emitted
       ! isotropically. Sometimes in ACE data, fission reactions actually have
       ! an angular distribution listed, but for those that do, it's simply just
       ! a uniform distribution in mu
-      mu = TWO * prn() - ONE
+     ! mu = TWO * prn() - ONE
 
       ! sample from prompt neutron chi distribution for the 
       ! fissioning nuclide
-      E_out = sample_energy(nuc)
+     ! E_out = sample_energy(nuc)
 
       ! Sample azimuthal angle uniformly in [0,2*pi)
-      phi = TWO*PI*prn()
-      fission_bank(i) % uvw(1) = mu
-      fission_bank(i) % uvw(2) = sqrt(ONE - mu*mu) * cos(phi)
-      fission_bank(i) % uvw(3) = sqrt(ONE - mu*mu) * sin(phi)
+    !  phi = TWO*PI*prn()
+    !  fission_bank(i) % uvw(1) = mu
+    !  fission_bank(i) % uvw(2) = sqrt(ONE - mu*mu) * cos(phi)
+    !  fission_bank(i) % uvw(3) = sqrt(ONE - mu*mu) * sin(phi)
 
       ! set energy of fission neutron
-      fission_bank(i) % E = E_out
-    end do
-
-    ! increment number of bank sites
-    n_bank = min(n_bank + nu, 3*work)
+    !  fission_bank(i) % E = E_out
+    !end do
 
     ! Store total weight banked for analog fission tallies
     p % n_bank   = nu
@@ -574,9 +643,42 @@ contains
 
     ! Copy scattering cosine for tallies
     p % mu = mu
+    
+    if (fcpi_active .and. p % n_collision == max_coll) then
+      ! Store it, then kill it
+      call bank_fcpi_scatter()
+    end if
 
   end subroutine multigroup_scatter
 
+!===============================================================================
+! BANK_FCPI_SCATTER banks a collided particle, then kills it in the current cycle
+!===============================================================================
+  subroutine bank_fcpi_scatter()
+    integer :: i  ! index of this particle in bank
+    ! YES, I KNOW IT'S CALLED THE FISSION BANK AND WE'RE PUTTING SCATTERS IN IT
+    ! DEAL WITH IT
+    ! print *, "banking scatter with ncoll = ", p % id, p % n_collision, (int(n_bank,4) + 1)
+
+    i = int(n_bank,4) + 1
+    if(i <= 3*work) then
+      ! Bank scattered neutron by copying particle data
+      fission_bank(i) % xyz = p % coord0 % xyz
+      ! Final bank needs to know particle type for cmfd sorting
+      fission_bank(i) % type = SCAT_P
+      fission_bank(i) % uvw = p % coord0 % uvw 
+      fission_bank(i) % E = p % E 
+      fission_bank(i) % wgt = p % wgt
+    end if
+    
+    ! Update size of bank
+    n_bank = min(n_bank + 1, 3*work)
+    
+    p % alive = .false.
+    
+  end subroutine bank_fcpi_scatter
+  
+  
 !===============================================================================
 ! SAMPLE_GROUP samples the outgoing energy group, using the incident group and
 ! its associated scattering cross sections (stored in rxn).

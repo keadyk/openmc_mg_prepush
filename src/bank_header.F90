@@ -22,6 +22,8 @@ module bank_header
 #else
     real(8)    :: E      ! energy
 #endif
+    integer   :: type  ! bank site type (fission or collision)
+    integer :: n_collision ! number of collisions (for intermediate stored particles)
   end type Bank
 
 !===============================================================================

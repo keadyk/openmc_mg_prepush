@@ -386,9 +386,8 @@ contains
         max_coll = fcpi_method_(1) % collision_limit
         act_mult = fcpi_method_(1) %  active_multiplier
         message = "FCPI method enabled, with coll limit " // &
-             trim(to_str(max_coll)) // "!!"
+             trim(to_str(max_coll)) // " and multiplier " // trim(to_str(act_mult)) // "!!"
         call write_message(5)
-        print *, max_coll, act_mult
       end if
     end if
 

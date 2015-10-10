@@ -399,4 +399,10 @@ module constants
   ! constant for writing out no residual
   real(8), parameter :: CMFD_NORES = 99999.0_8
 
+  !=============================================================================
+  ! PARTICLE SOURCE TYPE CONSTANTS
+  ! For FCPI method
+  integer, parameter :: FISS_P = 0
+  integer, parameter :: SCAT_P = 1
+  
 end module constants

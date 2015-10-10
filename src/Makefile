@@ -61,8 +61,9 @@ ifeq ($(COMPILER),gnu)
   # Debugging
   ifeq ($(DEBUG),yes) #KENDRA ADDED THE NO CHARACTER TRUNCATION FLAG
   # took out -pedantic -std=f2008
-    F90FLAGS += -g -Wall -Wno-character-truncation  -fbounds-check \
+  #  F90FLAGS += -g -Wall -Wno-character-truncation  -fbounds-check \
                 -ffpe-trap=invalid,overflow,underflow
+    F90FLAGS += -g
     LDFLAGS  += -g
   endif
 

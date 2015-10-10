@@ -2267,6 +2267,8 @@ contains
           k_abs_tra = k_abs_tra + k_abs * k_tra
         end if
       end if
+      
+      print *, "Total weight this cycle: ", total_weight
 
       ! Accumulate results for global tallies
       call accumulate_result(global_tallies)

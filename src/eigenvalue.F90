@@ -8,6 +8,7 @@ module eigenvalue
   use constants,          only: ZERO
   use error,              only: fatal_error, warning
   use global
+  use initialize,         only: calculate_work
   use math,               only: t_percentile
   use mesh,               only: count_bank_sites
   use mesh_header,        only: StructuredMesh
@@ -80,19 +81,13 @@ contains
 
           ! grab source particle from bank
           call get_source_particle(current_work)
-
-          !if (current_batch == 10 .or. current_batch == 11) then
-            !if(current_batch == 10) then
-          !message = "--------New source particle: " // trim(to_str(p % wgt)) // " " // trim(to_str(p % coord0 % xyz(1)))
-          !call write_message(5)
-          !end if
           
           ! transport particle
           call transport()
 
+         ! print *, "NUMBER IN F BANK" ,n_fbank
         end do PARTICLE_LOOP
         
-        ! TODO: Make this work in parallel (?)
         if (roi_on .and. active_batches) then
           ! ===================================================================
           ! LOOP OVER SPLITS (added by K. Keady 7/2/14 :))
@@ -110,13 +105,14 @@ contains
           end do SPLIT_LOOP
         end if 
         
-        ! TODO: Make this work in parallel (?)
-        if (fcpi_on .and. active_batches) then
+        ! If the fcpi method is active, we'll have "intermediate" fissions to run
+        print *, "number in inter fiss bank: ", n_fbank
+        if (fcpi_active) then
           ! ===================================================================
           ! LOOP OVER INTERMEDIATE FISSIONS (added by K. Keady 7/2/15 :))
           current_fiss = 0
           FISS_LOOP: do
-            current_fiss = current_split + 1
+            current_fiss = current_fiss + 1
             if (current_fiss > n_fbank) exit
             ! grab source particle from bank    
             call get_intf_particle(current_fiss)
@@ -126,7 +122,7 @@ contains
 
           end do FISS_LOOP
         end if 
-
+        print *, "final number in inter fiss bank: ", n_fbank        
         ! Accumulate time for transport
         call time_transport % stop()
          
@@ -201,7 +197,8 @@ contains
     ! Reset number of fission bank sites
     n_bank = 0
     
-    ! If using roi, reset number of split bank sites
+    ! If using fcpi/roi, reset number of bank sites
+    if (fcpi_active) n_fbank = 0
     if (roi_on) n_sbank = 0
 
     ! Count source sites if using uniform fission source weighting
@@ -221,8 +218,17 @@ contains
     ! If this is the LAST gen before active cycles, and fcpi is enabled,
     ! we need to bump up the source bank size!
     if(fcpi_on .and. overall_gen == n_inactive*gen_per_batch) then
+      fcpi_active = .true.
       n_particles = n_particles * act_mult
-      print *,"Bumped up source size to ", n_particles
+      ! Recalculate the work per proc/max worked allowed:
+      call calculate_work()
+      message = "FCPI enabled: source weight increased to " // trim(to_str(n_particles)) // "!"
+      call warning()
+    end if
+    
+    if(overall_gen == n_inactive*gen_per_batch+1) then
+      !message = "stahp"
+      !call fatal_error()
     end if
     
     ! Distribute fission bank across processors evenly
@@ -378,7 +384,8 @@ contains
     ! and the probability for selecting a site.
 
     if (total < n_particles) then
-      sites_needed = mod(n_particles,total)
+      !sites_needed = mod(n_particles,total)
+      sites_needed = n_particles - total
     else
       sites_needed = n_particles
     end if
@@ -393,8 +400,8 @@ contains
     index_temp = 0_8
     if (.not. allocated(temp_sites)) allocate(temp_sites(3*work))
 
+    print *,int(n_particles/total), 3*work
     do i = 1, int(n_bank,4)
-
       ! If there are less than n_particles particles banked, automatically add
       ! int(n_particles/total) sites to temp_sites. For example, if you need
       ! 1000 and 300 were banked, this would add 3 source sites per banked site
@@ -444,7 +451,6 @@ contains
         ! If we have extra sites sampled, we will simply discard the extra
         ! ones on the last processor
         index_temp = n_particles - start
-
       elseif (finish < n_particles) then
         ! If we have too few sites, repeat sites from the very end of the
         ! fission bank
@@ -454,9 +460,8 @@ contains
           temp_sites(index_temp) = fission_bank(n_bank - sites_needed + i)
         end do
       end if
-
-      ! the last processor should not be sending sites to right
-      finish = bank_last
+      
+        finish = bank_last
     end if
 
     call time_bank_sample % stop()
@@ -469,6 +474,7 @@ contains
     index_local = 1
     n_request = 0
 
+    print *, "number in final bank", n_bank
     if (start < n_particles) then
       ! Determine the index of the processor which has the first part of the
       ! source_bank for the local processor
@@ -477,7 +483,7 @@ contains
       SEND_SITES: do while (start < finish)
         ! Determine the number of sites to send
         n = min((neighbor + 1)*maxwork, finish) - start
-
+        
         ! Initiate an asynchronous send of source sites to the neighboring
         ! process
         if (neighbor /= rank) then
@@ -557,7 +563,7 @@ contains
 #else
     source_bank = temp_sites(1:n_particles)
 #endif
-
+    
     call time_bank_sendrecv % stop()
 
     ! Deallocate space for the temporary source bank on the last generation
@@ -661,7 +667,8 @@ contains
 
     ! Normalize single batch estimate of k
     ! TODO: This should be normalized by total_weight, not by n_particles
-    k_generation(overall_gen) = k_generation(overall_gen) / n_particles
+    ! k_generation(overall_gen) = k_generation(overall_gen) / n_particles
+    k_generation(overall_gen) = k_generation(overall_gen) / total_weight
     
   end subroutine calculate_generation_keff
 

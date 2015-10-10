@@ -756,11 +756,7 @@ contains
   subroutine calculate_work()
 
     ! Determine maximum amount of particles to simulate on each processor
-    if(fcpi_on .and. act_mult > 1) then
-      maxwork = ceiling(real(n_particles*act_mult)/n_procs,8)
-    else
-      maxwork = ceiling(real(n_particles)/n_procs,8)
-    end if
+    maxwork = ceiling(real(n_particles)/n_procs,8)
     
     ! ID's of first and last source particles
     bank_first = rank*maxwork + 1
@@ -778,9 +774,16 @@ contains
   subroutine allocate_banks()
 
     integer    :: alloc_err  ! allocation error code
-
+    integer(8) :: adj_maxwork ! adjusted max work (for fcpi)
+    
+    if(fcpi_on .and. act_mult > 1) then
+      adj_maxwork = maxwork * act_mult
+    else
+      adj_maxwork = maxwork
+    end if
+    
     ! Allocate source bank
-    allocate(source_bank(maxwork), STAT=alloc_err)
+    allocate(source_bank(adj_maxwork), STAT=alloc_err)
 
     ! Check for allocation errors 
     if (alloc_err /= 0) then
@@ -789,7 +792,7 @@ contains
     end if
 
     ! Allocate fission bank
-    allocate(fission_bank(3*maxwork), STAT=alloc_err)
+    allocate(fission_bank(3*adj_maxwork), STAT=alloc_err)
 
     ! Check for allocation errors 
     if (alloc_err /= 0) then
@@ -799,7 +802,7 @@ contains
 
     if(roi_on) then
       ! Allocate split bank
-      allocate(split_bank(n_split*n_split*(maxwork/10)), STAT=alloc_err)
+      allocate(split_bank(n_split*n_split*(adj_maxwork/10)), STAT=alloc_err)
       ! Check for allocation errors 
       if (alloc_err /= 0) then
         message = "Failed to allocate split bank."
@@ -813,7 +816,7 @@ contains
     
     if(fcpi_on) then
       ! Allocate intermediate fission bank
-      allocate(int_fbank(maxwork), STAT=alloc_err)
+      allocate(int_fbank(adj_maxwork), STAT=alloc_err)
       ! Check for allocation errors 
       if (alloc_err /= 0) then
         message = "Failed to allocate intermediate fission bank."

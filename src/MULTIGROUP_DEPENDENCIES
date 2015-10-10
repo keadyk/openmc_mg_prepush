@@ -22,6 +22,7 @@ multigroup_cross_section.o: random_lcg.o
 multigroup_cross_section.o: search.o
 
 eigenvalue.o : multigroup_physics.o
+eigenvalue.o : initialize.o
 
 fission.o : multigroup_header.o
 

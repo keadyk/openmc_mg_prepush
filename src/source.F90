@@ -1,6 +1,6 @@
 module source
 
-  use bank_header,        only: Bank, FCPI_bank
+  use bank_header,        only: Bank
   use constants
   use error,              only: fatal_error
   use geometry_header,    only: BASE_UNIVERSE
@@ -18,7 +18,7 @@ module source
 #endif
 
   implicit none
-
+  
 contains
 
 !===============================================================================
@@ -225,7 +225,7 @@ contains
     integer(8), intent(in) :: index_source
 
     integer(8) :: particle_seed  ! unique index for particle
-    type(FCPI_Bank), pointer :: src => null()
+    type(Bank), pointer :: src => null()
 
     ! set defaults
     call initialize_particle()
@@ -234,7 +234,7 @@ contains
 
     ! Copy attributes from source to particle
     src => int_fbank(index_source)
-    call copy_source_attributes(src)
+    call copy_source_attributes_fcpi(src)
 
     ! set identifier for particle (index starting from last original fission part.)
     p % id = n_particles + index_source - 1
@@ -254,7 +254,6 @@ contains
 !===============================================================================
 ! COPY_SOURCE_ATTRIBUTES
 !===============================================================================
-
   subroutine copy_source_attributes(src)
 
     type(Bank), pointer :: src
@@ -269,6 +268,22 @@ contains
     p % last_E      = src % E
 
   end subroutine copy_source_attributes
+  
+  subroutine copy_source_attributes_fcpi(src)
+
+    type(Bank), pointer :: src
+
+    ! copy attributes from int bank site
+    p % wgt         = src % wgt
+    p % last_wgt    = src % wgt
+    p % coord % xyz = src % xyz
+    p % coord % uvw = src % uvw
+    p % last_xyz    = src % xyz
+    p % E           = src % E
+    p % last_E      = src % E
+    p % n_collision = src % n_collision
+
+  end subroutine copy_source_attributes_fcpi
 
 !===============================================================================
 ! INITIALIZE_PARTICLE sets default attributes for a particle from the source

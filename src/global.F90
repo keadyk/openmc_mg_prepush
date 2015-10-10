@@ -176,12 +176,15 @@ module global
   ! External source
   type(ExtSource), target :: external_source
 
-  ! Source and fission bank
+  ! Source and fission bank (and scatter, for FCPI method
   type(Bank), allocatable, target :: source_bank(:)
   type(Bank), allocatable, target :: fission_bank(:)
   integer(8) :: n_bank       ! # of sites in fission bank
   integer(8) :: bank_first   ! index of first particle in bank
+  integer(8) :: sbank_first !
   integer(8) :: bank_last    ! index of last particle in bank
+  integer(8) :: sbank_last  ! index of last particle in scatter bank
+  
   integer(8) :: work         ! number of particles per processor
   integer(8) :: maxwork      ! maximum number of particles per processor
   integer(8) :: current_work ! index in source bank of current history simulated
@@ -255,11 +258,13 @@ module global
   
   ! ============================================================================
   ! FCPI METHOD VARIABLES
-  type(FCPI_Bank), allocatable, target :: int_fbank(:) ! Intermediate bank
+  type(Bank), allocatable, target :: int_fbank(:) ! Intermediate bank
   logical :: fcpi_on = .false.                                 ! Is FCPI enabled at all? 
+  logical :: fcpi_active = .false.                            ! Is FCPI activated? (active batches)
   integer(8) :: n_fbank                                         ! Particles in intermediate fission bank
-  integer(8) :: max_coll                                        ! Max # of permissible collisions
+  integer(8) :: max_coll = 10000                         ! Max # of permissible collisions
   integer(8) :: act_mult                                        ! Active-cycle multiplier
+  integer(8) :: current_fiss                                   ! Index of current int. fiss part
   
   
   ! ============================================================================
@@ -485,6 +490,7 @@ contains
     ! Deallocate fission, source, split banks and entropy
     if (allocated(fission_bank)) deallocate(fission_bank)
     if (allocated(source_bank)) deallocate(source_bank)
+    if (allocated(int_fbank)) deallocate(int_fbank)
     if (allocated(split_bank)) deallocate(split_bank)
     if (allocated(entropy_p)) deallocate(entropy_p)
 
