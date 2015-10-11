@@ -2236,6 +2236,7 @@ contains
     real(8) :: k_col ! Copy of batch collision estimate of keff
     real(8) :: k_abs ! Copy of batch absorption estimate of keff
     real(8) :: k_tra ! Copy of batch tracklength estimate of keff
+    real(8) :: k_glo ! Copy of batch global estimate of keff
 
 #ifdef MPI
     ! Combine tally results onto master process
@@ -2262,13 +2263,14 @@ contains
           k_col = global_tallies(K_COLLISION) % value / total_weight
           k_abs = global_tallies(K_ABSORPTION) % value / total_weight
           k_tra = global_tallies(K_TRACKLENGTH) % value / total_weight
+          k_glo = global_tallies(K_GLOBAL_NUM) % value / global_tallies(K_GLOBAL_DENOM) % value
           k_col_abs = k_col_abs + k_col * k_abs
           k_col_tra = k_col_tra + k_col * k_tra
           k_abs_tra = k_abs_tra + k_abs * k_tra
         end if
       end if
       
-      print *, "Total weight this cycle: ", total_weight
+      !print *, "Total weight this cycle: ", total_weight
 
       ! Accumulate results for global tallies
       call accumulate_result(global_tallies)

@@ -332,6 +332,10 @@ contains
              global_tallies(K_ABSORPTION) % value + p % wgt * &
              material_xs % nu_fission / (material_xs % absorption + material_xs % fission)
 
+        global_tallies(K_GLOBAL_DENOM) % value = &
+             global_tallies(K_GLOBAL_DENOM) % value + p % wgt            
+             
+             !print *,p%id, " is DEEEEAAAAD"
         p % alive = .false.
         p % event = EVENT_ABSORB
         p % event_MT = N_DISAPPEAR
@@ -372,7 +376,10 @@ contains
             global_tallies(K_ABSORPTION) % value = &
                  global_tallies(K_ABSORPTION) % value + p % wgt * &
                  material_xs % nu_fission / (material_xs % absorption + material_xs % fission)
-
+            ! Score denom of global keff. Note that this appears in
+            ! two places -- absorption reactions and fission reactions
+            global_tallies(K_GLOBAL_DENOM) % value = &
+                 global_tallies(K_GLOBAL_DENOM) % value + p % wgt 
             ! With no survival biasing, the particle is absorbed and so
             ! its life is over :( poor little fella
             p % alive = .false.
@@ -451,6 +458,7 @@ contains
     real(8) :: xi           ! random number
     real(8) :: prob         ! cumulative probability
     real(8) :: weight       ! weight adjustment for ufs method
+    real(8) :: this_keff    ! set track, or global keff if fcpi
     logical :: in_mesh      ! source site in ufs mesh?
     type(Nuclide),    pointer :: nuc
 
@@ -486,13 +494,21 @@ contains
       weight = ONE
     end if
 
+    ! If fcpi is enabled, use the global keff estimate
+    ! otherwise, use the standard (track-length)
+    if(fcpi_active) then
+      this_keff = keff_g
+    else
+      this_keff = keff
+    end if
+    
     ! Sample number of neutrons produced
     if (survival_biasing) then
       ! Need to use the weight before survival biasing
       nu_t = (p % wgt + p % absorb_wgt) * micro_xs(i_nuclide) % fission / &
-           (keff * micro_xs(i_nuclide) % total) * nu_t * weight
+           (this_keff * micro_xs(i_nuclide) % total) * nu_t * weight
     else 
-      nu_t = p % wgt / keff * nu_t * weight
+      nu_t = p % wgt / this_keff * nu_t * weight
     end if
     if (prn() > nu_t - int(nu_t)) then
       nu = int(nu_t)
@@ -500,6 +516,10 @@ contains
       nu = int(nu_t) + 1
     end if
 
+    ! tally global k numerator (neutron production)
+    global_tallies(K_GLOBAL_NUM) % value = &
+         global_tallies(K_GLOBAL_NUM) % value + nu * this_keff     
+    
     ! Edited by K.Keady on 10/10-- I TRIED TO MAKE THIS ELEGANT
     ! BUT NOTHING WORKS RIGHT WHEN EVERYTHING IS GLOBAL!!!!!
     ! Bank source neutrons
@@ -507,6 +527,7 @@ contains
     if(fcpi_active .and. p % n_collision < max_coll) then
       if (nu == 0 .or. n_fbank == 3*work) return
       do i = int(n_fbank,4) + 1, int(min(n_fbank + nu, 3*work),4)
+        !print *, p%id, " going into fiss bank w mult ", nu, " and coll ", p%n_collision 
         ! Bank source neutrons by copying particle data
         int_fbank(i) % xyz = p % coord0 % xyz
         ! intermed. bank needs to know collision number
@@ -532,7 +553,6 @@ contains
 
         ! set energy of fission neutron
         int_fbank(i) % E = E_out
-        print *, i
       end do
       n_fbank = min(n_fbank + nu, 3*work)
       
@@ -572,33 +592,6 @@ contains
       n_bank = min(n_bank + nu, 3*work)
       
     end if 
-    
-    !if (nu == 0 .or. n_bank == 3*work) return
-    !do i = int(n_bank,4) + 1, int(min(n_bank + nu, 3*work),4)
-      ! Bank source neutrons by copying particle data
-     ! fission_bank(i) % xyz = p % coord0 % xyz
-      ! Set weight of fission bank site
-     ! fission_bank(i) % wgt = ONE/weight
-
-      ! Sample cosine of angle -- fission neutrons are always emitted
-      ! isotropically. Sometimes in ACE data, fission reactions actually have
-      ! an angular distribution listed, but for those that do, it's simply just
-      ! a uniform distribution in mu
-     ! mu = TWO * prn() - ONE
-
-      ! sample from prompt neutron chi distribution for the 
-      ! fissioning nuclide
-     ! E_out = sample_energy(nuc)
-
-      ! Sample azimuthal angle uniformly in [0,2*pi)
-    !  phi = TWO*PI*prn()
-    !  fission_bank(i) % uvw(1) = mu
-    !  fission_bank(i) % uvw(2) = sqrt(ONE - mu*mu) * cos(phi)
-    !  fission_bank(i) % uvw(3) = sqrt(ONE - mu*mu) * sin(phi)
-
-      ! set energy of fission neutron
-    !  fission_bank(i) % E = E_out
-    !end do
 
     ! Store total weight banked for analog fission tallies
     p % n_bank   = nu
@@ -659,7 +652,7 @@ contains
     ! YES, I KNOW IT'S CALLED THE FISSION BANK AND WE'RE PUTTING SCATTERS IN IT
     ! DEAL WITH IT
     ! print *, "banking scatter with ncoll = ", p % id, p % n_collision, (int(n_bank,4) + 1)
-
+    !print *, p%id, " going into scatter bank"
     i = int(n_bank,4) + 1
     if(i <= 3*work) then
       ! Bank scattered neutron by copying particle data

@@ -1362,6 +1362,9 @@ contains
     ! write out cmfd keff if it is active
     if (cmfd_on) write(UNIT=OUTPUT_UNIT, FMT='(3X, F8.5)', ADVANCE='NO') &
          cmfd % keff 
+    ! write out global keff if it is active
+    if (fcpi_on) write(UNIT=OUTPUT_UNIT, FMT='(3X, F8.5)', ADVANCE='NO') &
+         keff_g 
 
     ! write out cmfd entropy
     if (cmfd_on .and. entropy_on) write(UNIT=OUTPUT_UNIT, &
@@ -1549,6 +1552,8 @@ contains
       if (n_realizations > 3) write(ou,102) "Combined k-effective", k_combined
       if(cmfd_run) write(ou,102) "k-effective (CMFD)", cmfd % keff_sum, &
            cmfd % keff_std
+      if(fcpi_on) write(ou, 102) "k-effective (Global)", global_tallies(K_GLOBAL) &
+          % sum, global_tallies(K_GLOBAL) % sum_sq
       
       write(ou,102) "Leakage Fraction", global_tallies(LEAKAGE) % sum, &
            global_tallies(LEAKAGE) % sum_sq

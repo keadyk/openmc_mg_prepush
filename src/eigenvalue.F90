@@ -106,7 +106,7 @@ contains
         end if 
         
         ! If the fcpi method is active, we'll have "intermediate" fissions to run
-        print *, "number in inter fiss bank: ", n_fbank
+        !print *, "number in inter fiss bank: ", n_fbank
         if (fcpi_active) then
           ! ===================================================================
           ! LOOP OVER INTERMEDIATE FISSIONS (added by K. Keady 7/2/15 :))
@@ -122,7 +122,7 @@ contains
 
           end do FISS_LOOP
         end if 
-        print *, "final number in inter fiss bank: ", n_fbank        
+        !print *, "final number in inter fiss bank: ", n_fbank , "in real bank: ", n_bank      
         ! Accumulate time for transport
         call time_transport % stop()
          
@@ -171,11 +171,6 @@ contains
         call adjust_weight_cutoffs()
       end if
       
-      ! Enable FCPI method 
-      if(fcpi_on) then
-        ! Adjust source bank size
-      end if
-      
       ! Add user tallies to active tallies list
       call setup_active_usertallies()
     end if
@@ -215,14 +210,20 @@ contains
 
   subroutine finalize_generation()
 
+    ! If we have ONE gen before active cycles and fcpi is enabled,
+    ! we need to enable fcpi transport
+    if (fcpi_on .and. overall_gen == n_inactive*gen_per_batch-int(n_inactive/2)) then
+      fcpi_active = .true.
+      message = "FCPI enabled: Max_coll set to " // trim(to_str(max_coll)) // "!"
+      call warning()
+    end if
     ! If this is the LAST gen before active cycles, and fcpi is enabled,
     ! we need to bump up the source bank size!
     if(fcpi_on .and. overall_gen == n_inactive*gen_per_batch) then
-      fcpi_active = .true.
       n_particles = n_particles * act_mult
       ! Recalculate the work per proc/max worked allowed:
       call calculate_work()
-      message = "FCPI enabled: source weight increased to " // trim(to_str(n_particles)) // "!"
+      message = "FCPI enabled: Source weight increased to " // trim(to_str(n_particles)) // "!"
       call warning()
     end if
     
@@ -399,8 +400,14 @@ contains
     ! Allocate temporary source bank
     index_temp = 0_8
     if (.not. allocated(temp_sites)) allocate(temp_sites(3*work))
-
-    print *,int(n_particles/total), 3*work
+    
+    if(fcpi_on .and. overall_gen == n_inactive*gen_per_batch) then
+      ! We need to deallocate/reallocate temp sites array!!
+      deallocate(temp_sites)
+      allocate(temp_sites(3*work))
+    end if
+    
+    ! print *,"n wanted, n banked, mult each by, max size: ", n_particles, total,int(n_particles/total), 3*work,size(temp_sites)
     do i = 1, int(n_bank,4)
       ! If there are less than n_particles particles banked, automatically add
       ! int(n_particles/total) sites to temp_sites. For example, if you need
@@ -409,6 +416,7 @@ contains
       if (total < n_particles) then
         do j = 1, int(n_particles/total)
           index_temp = index_temp + 1
+          !print *, "INTERESTING STUFF", i,n_bank,index_temp
           temp_sites(index_temp) = fission_bank(i)
         end do
       end if
@@ -474,7 +482,7 @@ contains
     index_local = 1
     n_request = 0
 
-    print *, "number in final bank", n_bank
+    !print *, "number in final bank", n_bank
     if (start < n_particles) then
       ! Determine the index of the processor which has the first part of the
       ! source_bank for the local processor
@@ -569,7 +577,8 @@ contains
     ! Deallocate space for the temporary source bank on the last generation
     if (current_batch == n_batches .and. current_gen == gen_per_batch) &
          deallocate(temp_sites)
-
+    
+    
   end subroutine synchronize_bank
 
 !===============================================================================
@@ -656,7 +665,17 @@ contains
 
     ! Get keff for this generation by subtracting off the starting value
     keff_generation = global_tallies(K_TRACKLENGTH) % value - keff_generation
+    ! Accumulate this cycle estimate of global k....
 
+    ! Get global keff for this generation
+    keff_g = (global_tallies(K_GLOBAL_NUM) % value)/(global_tallies(K_GLOBAL_DENOM) % value)
+    
+    ! Accumulate global k_estimate-- WE NEED TO WEIGHT BY TOTAL WEIGHT, because the 
+    ! tallies get scaled by this later :O
+    global_tallies(K_GLOBAL) % value = global_tallies(K_GLOBAL) % value + keff_g*total_weight
+
+    !print *,"global keff estimate ",keff_g,global_tallies(K_GLOBAL) % value
+    
 #ifdef MPI
     ! Combine values across all processors
     call MPI_ALLREDUCE(keff_generation, k_generation(overall_gen), 1, &
@@ -713,7 +732,6 @@ contains
         keff_std = t_value * sqrt((k_sum(2)/n - keff**2) / (n - 1))
       end if
     end if
-    
 
   end subroutine calculate_average_keff
   

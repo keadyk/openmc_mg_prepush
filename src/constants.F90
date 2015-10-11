@@ -321,11 +321,15 @@ module constants
        OUT_TOP   = 6
 
   ! Global tally parameters
-  integer, parameter :: N_GLOBAL_TALLIES = 4
+  integer, parameter :: N_GLOBAL_TALLIES = 7
   integer, parameter :: &
        K_COLLISION   = 1, &
        K_ABSORPTION  = 2, &
        K_TRACKLENGTH = 3, &
+  ! K_global added for fcpi method (K.Keady)
+       K_GLOBAL_NUM = 5, &
+       K_GLOBAL_DENOM = 6, &
+       K_GLOBAL = 7, &
        LEAKAGE       = 4
 
   ! ============================================================================
