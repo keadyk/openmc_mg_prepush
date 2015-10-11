@@ -7,7 +7,7 @@ module global
   use ace_header,        only: Nuclide, SAlphaBeta, xsListing, NuclideMicroXS, &
                               MaterialMacroXS
 #endif                              
-  use bank_header,       only: Bank, FCPI_Bank
+  use bank_header,       only: Bank
   use cmfd_header
   use constants
   use dict_header,      only: DictCharInt, DictIntInt
@@ -135,7 +135,9 @@ module global
   ! Global tallies
   !   1) collision estimate of k-eff
   !   2) track-length estimate of k-eff
-  !   3) leakage fraction
+  !   3) absorption estimate of k-eff
+  !   4) leakage fraction
+  !   5) "global" estimate of k-eff (fcpi, K.Keady)
 
   type(TallyResult), target :: global_tallies(N_GLOBAL_TALLIES)
 
@@ -192,6 +194,7 @@ module global
   ! Temporary k-effective values
   real(8), allocatable :: k_generation(:) ! single-generation estimates of k
   real(8) :: keff = ONE       ! average k over active batches
+  real(8) :: keff_g = ONE   ! "global" keff value (for fcpi method)
   real(8) :: keff_std         ! standard deviation of average k
   real(8) :: k_col_abs = ZERO ! sum over batches of k_collision * k_absorption
   real(8) :: k_col_tra = ZERO ! sum over batches of k_collision * k_tracklength
