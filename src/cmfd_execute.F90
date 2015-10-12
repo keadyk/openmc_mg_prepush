@@ -379,7 +379,8 @@ contains
     use constants,   only: ZERO, ONE
     use error,       only: warning, fatal_error
     use global,      only: n_particles, meshes, source_bank, work,             &
-                           n_user_meshes, message, cmfd, master, mpi_err
+                           n_user_meshes, message, cmfd, master, mpi_err,       &
+                           fcpi_active
     use mesh_header, only: StructuredMesh
     use mesh,        only: count_bank_sites, get_mesh_indices   
 !#ifndef MULTIGROUP  
@@ -424,6 +425,18 @@ contains
       allocate(cmfd%weightfactors(ng,nx,ny,nz))
       cmfd % weightfactors = ONE
     end if
+    
+    if(fcpi_active) then
+      if(.not.allocated(cmfd%scat_sourcecounts)) then
+        allocate(cmfd%scat_sourcecounts(ng,nx,ny,nz))
+        cmfd % scat_sourcecounts = 0
+      end if
+      if (.not.allocated(cmfd%scat_weightfactors)) then 
+        allocate(cmfd%scat_weightfactors(ng,nx,ny,nz))
+        cmfd % scat_weightfactors = ONE
+      end if
+    end if
+    
     
     ! allocate energy grid and reverse cmfd energy grid
     if (.not. allocated(egrid)) allocate(egrid(ng+1))

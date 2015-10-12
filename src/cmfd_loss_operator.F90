@@ -407,7 +407,7 @@ contains
 
         ! record value in matrix (negate it)
         val = -scattxshg
-
+        
         ! check for adjoint and bank value
         if (adjoint_calc) then
           call MatSetValue(this%M, scatt_mat_idx-1, irow, val, &

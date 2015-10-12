@@ -663,18 +663,21 @@ contains
 
   subroutine calculate_generation_keff()
 
-    ! Get keff for this generation by subtracting off the starting value
-    keff_generation = global_tallies(K_TRACKLENGTH) % value - keff_generation
-    ! Accumulate this cycle estimate of global k....
-
     ! Get global keff for this generation
     keff_g = (global_tallies(K_GLOBAL_NUM) % value)/(global_tallies(K_GLOBAL_DENOM) % value)
     
-    ! Accumulate global k_estimate-- WE NEED TO WEIGHT BY TOTAL WEIGHT, because the 
-    ! tallies get scaled by this later :O
+    ! Accumulate global k_estimate-- WE NEED TO WEIGHT APPROPRIATELY :D
     global_tallies(K_GLOBAL) % value = global_tallies(K_GLOBAL) % value + keff_g*total_weight
 
     !print *,"global keff estimate ",keff_g,global_tallies(K_GLOBAL) % value
+    
+    ! Get keff for this generation by subtracting off the starting value
+    print *,keff_generation
+    if (fcpi_active) then
+      keff_generation = global_tallies(K_GLOBAL) % value - keff_generation
+    else
+      keff_generation = global_tallies(K_TRACKLENGTH) % value - keff_generation
+    end if
     
 #ifdef MPI
     ! Combine values across all processors
@@ -686,7 +689,6 @@ contains
 
     ! Normalize single batch estimate of k
     ! TODO: This should be normalized by total_weight, not by n_particles
-    ! k_generation(overall_gen) = k_generation(overall_gen) / n_particles
     k_generation(overall_gen) = k_generation(overall_gen) / total_weight
     
   end subroutine calculate_generation_keff

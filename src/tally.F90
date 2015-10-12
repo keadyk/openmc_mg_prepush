@@ -288,9 +288,8 @@ contains
                 ! neutrons were emitted with different energies, multiple
                 ! outgoing energy bins may have been scored to. The following
                 ! logic treats this special case and results to multiple bins
-!#ifndef MULTIGROUP
                 call score_fission_eout(t, score_index)
-!#endif
+                
                 cycle SCORE_LOOP
               else
                 ! If there is no outgoing energy filter, than we only need to
@@ -400,8 +399,9 @@ contains
     integer :: k             ! loop index for bank sites
     integer :: bin_energyout ! original outgoing energy bin
     integer :: i_filter      ! index for matching filter bin combination
-    real(8) :: score         ! actualy score
+    real(8) :: score         ! actual score
     real(8) :: E_out         ! energy of fission bank site
+    real(8) :: this_keff     ! use correct keff!!
 
     ! save original outgoing energy bin and score index
     i = t % find_filter(FILTER_ENERGYOUT)
@@ -410,18 +410,34 @@ contains
     ! Get number of energies on filter
     n = size(t % filters(i) % real_bins)
 
+    ! set correct keff
+    if (fcpi_active) then
+      this_keff = keff_g
+    else
+      this_keff = keff
+    end if
+    !print *, "storing w ", this_keff
+    
     ! Since the creation of fission sites is weighted such that it is
     ! expected to create n_particles sites, we need to multiply the
     ! score by keff to get the true nu-fission rate. Otherwise, the sum
     ! of all nu-fission rates would be ~1.0.
-
     ! loop over number of particles banked
     do k = 1, p % n_bank
-      ! determine score based on bank site weight and keff
-      score = keff * fission_bank(n_bank - p % n_bank + k) % wgt
-
-      ! determine outgoing energy from fission bank
-      E_out = fission_bank(n_bank - p % n_bank + k) % E
+      if (fcpi_active .and. p % n_collision < max_coll) then
+        !print *, p % n_bank
+        ! the sites will be in the intermediate bank
+        ! determine score based on bank site weight and keff
+        score = this_keff * int_fbank(n_fbank - p % n_bank + k) % wgt
+        ! determine outgoing energy from fission bank
+        E_out = int_fbank(n_fbank - p % n_bank + k) % E
+      else
+        ! the sites will be in the usual bank
+        ! determine score based on bank site weight and keff
+        score = this_keff * fission_bank(n_bank - p % n_bank + k) % wgt
+        ! determine outgoing energy from fission bank
+        E_out = fission_bank(n_bank - p % n_bank + k) % E
+      end if
 
       ! check if outgoing energy is within specified range on filter
       if (E_out < t % filters(i) % real_bins(1) .or. &
@@ -438,6 +454,7 @@ contains
            t % results(i_score, i_filter) % value + score
     end do
 
+    !print *,"-----------------------------------------------------------------------------------"
     ! reset outgoing energy bin and score index
     t % matching_bins(i) = bin_energyout
 
@@ -1494,10 +1511,7 @@ contains
         end if
 
       case (FILTER_ENERGYOUT)
-!#ifdef MULTIGROUP
-!        message = "Outgoing energy filters not valid for multigroup tallies."
-!        call fatal_error()
-!#else
+
         ! determine outgoing energy bin
         n = t % filters(i) % n_bins
 
@@ -1622,10 +1636,7 @@ contains
       ! determine incoming energy bin
       j = t % find_filter(FILTER_ENERGYIN)
       if (j > 0) then
-!#ifdef MULTIGROUP
-!          message = "Outgoing energy filters not allowed for multigroup tallies."
-!          call fatal_error()
-!#else
+
         n = t % filters(j) % n_bins
         ! check if energy of the particle is within energy bins
         if (p % E < t % filters(j) % real_bins(1) .or. &
@@ -2038,10 +2049,8 @@ contains
     i_filter_mesh = t % find_filter(FILTER_MESH)
     i_filter_surf = t % find_filter(FILTER_SURFACE)
     i_filter_ein  = t % find_filter(FILTER_ENERGYIN)
-!#ifndef MULTIGROUP
     i_filter_eout = t % find_filter(FILTER_ENERGYOUT)
-!#endif
-     
+
     ! This is a hokey way of doing things, but for now, let's just continue to
     ! 'bump' the particle forward artificially until we figure out which mesh/
     ! surface combo is coincident with the surface the particle reflected off
@@ -2260,6 +2269,7 @@ contains
       if (run_mode == MODE_EIGENVALUE) then
         if (active_batches) then
           ! Accumulate products of different estimators of k
+          ! For fcpi, we normalize by the total weight SAMPLED, not the total run!
           k_col = global_tallies(K_COLLISION) % value / total_weight
           k_abs = global_tallies(K_ABSORPTION) % value / total_weight
           k_tra = global_tallies(K_TRACKLENGTH) % value / total_weight
@@ -2269,8 +2279,6 @@ contains
           k_abs_tra = k_abs_tra + k_abs * k_tra
         end if
       end if
-      
-      !print *, "Total weight this cycle: ", total_weight
 
       ! Accumulate results for global tallies
       call accumulate_result(global_tallies)
@@ -2447,11 +2455,10 @@ contains
     type(TallyResult), intent(inout) :: this
 
     real(8) :: val
-
     ! Add the sum and square of the sum of contributions from a tally result to
     ! the variables sum and sum_sq. This will later allow us to calculate a
     ! variance on the tallies.
-
+    
     val = this % value/total_weight
     this % sum    = this % sum    + val 
     this % sum_sq = this % sum_sq + val*val

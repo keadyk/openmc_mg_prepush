@@ -110,6 +110,12 @@ contains
     real(8) :: out_pixel
     real(8) :: xyz(3)
     type(Image) :: img
+    
+    ! Initialize
+    in_pixel = 0
+    in_i = 0
+    out_pixel = 0
+    out_i = 0
 
     ! Initialize and allocate space for image
     call init_image(img)

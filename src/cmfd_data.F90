@@ -1059,6 +1059,7 @@ contains
                              (neig_flux - cell_flux))/(neig_flux + cell_flux)
                     !write(*, '(A,E20.7)') "dhat uncorrected ", dhat
                   end if
+                  !print *, "CURRENT: ", net_current
                 end if
 
               end if

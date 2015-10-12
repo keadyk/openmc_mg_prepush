@@ -69,9 +69,13 @@ module cmfd_header
 
     ! source sites in each mesh box
     real(8), allocatable :: sourcecounts(:,:,:,:)
+    ! for fcpi, scattering source sites in each mesh box
+    real(8), allocatable :: scat_sourcecounts(:,:,:,:)
 
     ! weight adjustment factors 
     real(8), allocatable :: weightfactors(:,:,:,:)
+    ! for fcpi, scattering source reweight
+    real(8), allocatable :: scat_weightfactors(:,:,:,:)
 
     ! eigenvector/eigenvalue(s) from cmfd run
     real(8), allocatable :: phi(:)

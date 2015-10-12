@@ -70,9 +70,9 @@ contains
     n_event = 0
 
     ! Add particle's starting weight to count for normalizing tallies later
-    ! ONLY IF IT IS NOT A SPLIT PARTICLE! The "parent" of a split particle
+    ! ONLY IF IT IS NOT A SPLIT OR FCPI PARTICLE! The "parent" of a split particle
     ! has already been counted, so we shouldn't count it again
-    if (.not. split_particle) then
+    if (.not. split_particle .and. .not. fcpi_particle) then
       total_weight = total_weight + p % wgt
       ! In the roi method, we also have to 'split' fission particles born
       ! in the active region...
@@ -501,6 +501,9 @@ contains
     else
       this_keff = keff
     end if
+    !print *,"-----------------------------------------------------------------------------------"
+    !print *, " sampling w keff ", this_keff
+    
     
     ! Sample number of neutrons produced
     if (survival_biasing) then
@@ -535,10 +538,7 @@ contains
         ! Set weight of fission bank site
         int_fbank(i) % wgt = ONE/weight
 
-        ! Sample cosine of angle -- fission neutrons are always emitted
-        ! isotropically. Sometimes in ACE data, fission reactions actually have
-        ! an angular distribution listed, but for those that do, it's simply just
-        ! a uniform distribution in mu
+        ! Sample cosine of angle 
         mu = TWO * prn() - ONE
 
         ! sample from prompt neutron chi distribution for the 

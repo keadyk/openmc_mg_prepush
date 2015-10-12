@@ -163,6 +163,7 @@ contains
     call initialize_particle()
 
     split_particle = .false.
+    fcpi_particle = .false.
     
     ! Copy attributes from source to particle
     src => source_bank(index_source)
@@ -230,7 +231,7 @@ contains
     ! set defaults
     call initialize_particle()
     
-    ! intf_particle = .true.
+    fcpi_particle = .true.
 
     ! Copy attributes from source to particle
     src => int_fbank(index_source)

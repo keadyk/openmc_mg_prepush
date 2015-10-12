@@ -151,8 +151,8 @@ module global
 
   ! Normalization for statistics
   integer :: n_realizations = 0 ! # of independent realizations
-  real(8) :: total_weight       ! total starting particle weight in realization
-
+  real(8) :: total_weight       ! total starting particle weight in realization (does NOT count fcpi particles)
+  
   ! Flag for turning tallies on
   logical :: tallies_on = .false.
   logical :: active_batches = .false.
@@ -196,6 +196,7 @@ module global
   real(8) :: keff = ONE       ! average k over active batches
   real(8) :: keff_g = ONE   ! "global" keff value (for fcpi method)
   real(8) :: keff_std         ! standard deviation of average k
+  real(8) :: keff_g_std         ! standard deviation of average global k (for fcpi method)
   real(8) :: k_col_abs = ZERO ! sum over batches of k_collision * k_absorption
   real(8) :: k_col_tra = ZERO ! sum over batches of k_collision * k_tracklength
   real(8) :: k_abs_tra = ZERO ! sum over batches of k_absorption * k_tracklength
@@ -264,6 +265,7 @@ module global
   type(Bank), allocatable, target :: int_fbank(:) ! Intermediate bank
   logical :: fcpi_on = .false.                                 ! Is FCPI enabled at all? 
   logical :: fcpi_active = .false.                            ! Is FCPI activated? (active batches)
+  logical :: fcpi_particle = .false.                         ! did this particle come from the fcpi bank?!
   integer(8) :: n_fbank                                         ! Particles in intermediate fission bank
   integer(8) :: max_coll = 10000                         ! Max # of permissible collisions
   integer(8) :: act_mult                                        ! Active-cycle multiplier

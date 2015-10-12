@@ -196,11 +196,7 @@ contains
 
     ! Determine number of energies in group structure
     if (present(energies)) then
-#ifdef MULTIGROUP
-      ! do nothing, for now
-#else
       n_groups = size(energies) - 1
-#endif
     else
       n_groups = 1
     end if
@@ -217,9 +213,6 @@ contains
       end if
 
       ! determine energy bin
-#ifdef MULTIGROUP
-      e_bin = 1
-#else
       if (present(energies)) then
         if (bank_array(i) % E < energies(1)) then
           e_bin = 1
@@ -231,7 +224,6 @@ contains
       else
         e_bin = 1
       end if
-#endif
 
       ! add to appropriate mesh box
       cnt(e_bin,ijk(1),ijk(2),ijk(3)) = cnt(e_bin,ijk(1),ijk(2),ijk(3)) + &
