@@ -506,6 +506,10 @@ contains
     if(use_functs) then
       call deallocate_funct(cmfd)
     end if
+    
+    if(fcpi_on) then
+      call deallocate_fcpi(cmfd)
+    end if
 
     ! Deallocate tally node lists
     call active_analog_tallies % clear()

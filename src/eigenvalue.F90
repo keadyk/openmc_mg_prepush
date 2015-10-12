@@ -85,7 +85,6 @@ contains
           ! transport particle
           call transport()
 
-         ! print *, "NUMBER IN F BANK" ,n_fbank
         end do PARTICLE_LOOP
         
         if (roi_on .and. active_batches) then
@@ -106,7 +105,6 @@ contains
         end if 
         
         ! If the fcpi method is active, we'll have "intermediate" fissions to run
-        !print *, "number in inter fiss bank: ", n_fbank
         if (fcpi_active) then
           ! ===================================================================
           ! LOOP OVER INTERMEDIATE FISSIONS (added by K. Keady 7/2/15 :))
@@ -121,8 +119,7 @@ contains
             call transport()
 
           end do FISS_LOOP
-        end if 
-        !print *, "final number in inter fiss bank: ", n_fbank , "in real bank: ", n_bank      
+        end if    
         ! Accumulate time for transport
         call time_transport % stop()
          
@@ -406,8 +403,7 @@ contains
       deallocate(temp_sites)
       allocate(temp_sites(3*work))
     end if
-    
-    ! print *,"n wanted, n banked, mult each by, max size: ", n_particles, total,int(n_particles/total), 3*work,size(temp_sites)
+
     do i = 1, int(n_bank,4)
       ! If there are less than n_particles particles banked, automatically add
       ! int(n_particles/total) sites to temp_sites. For example, if you need
@@ -416,7 +412,6 @@ contains
       if (total < n_particles) then
         do j = 1, int(n_particles/total)
           index_temp = index_temp + 1
-          !print *, "INTERESTING STUFF", i,n_bank,index_temp
           temp_sites(index_temp) = fission_bank(i)
         end do
       end if
@@ -482,7 +477,6 @@ contains
     index_local = 1
     n_request = 0
 
-    !print *, "number in final bank", n_bank
     if (start < n_particles) then
       ! Determine the index of the processor which has the first part of the
       ! source_bank for the local processor
@@ -668,11 +662,8 @@ contains
     
     ! Accumulate global k_estimate-- WE NEED TO WEIGHT APPROPRIATELY :D
     global_tallies(K_GLOBAL) % value = global_tallies(K_GLOBAL) % value + keff_g*total_weight
-
-    !print *,"global keff estimate ",keff_g,global_tallies(K_GLOBAL) % value
     
     ! Get keff for this generation by subtracting off the starting value
-    print *,keff_generation
     if (fcpi_active) then
       keff_generation = global_tallies(K_GLOBAL) % value - keff_generation
     else

@@ -161,7 +161,7 @@ contains
 !===============================================================================
 
   subroutine count_bank_sites(m, bank_array, cnt, energies, size_bank, &
-       sites_outside)
+       part_type, sites_outside)
 
     type(StructuredMesh), pointer :: m             ! mesh to count sites
     type(Bank), intent(in)        :: bank_array(:) ! fission or source bank
@@ -169,10 +169,12 @@ contains
     ! cell and energy group
     real(8),    optional          :: energies(:)   ! energy grid to search
     integer(8), optional          :: size_bank     ! # of bank sites (on each proc)
+    integer, optional             :: part_type     ! particle type to count (fiss or scatter, for fcpi!)
     logical,    optional          :: sites_outside ! were there sites outside mesh?
 
     integer :: i        ! loop index for local fission sites
     integer :: n_sites  ! size of bank array
+    integer :: p_type  ! size of bank array
     integer :: ijk(3)   ! indices on mesh
     integer :: n_groups ! number of groups in energies
     integer :: e_bin    ! energy_bin
@@ -194,6 +196,14 @@ contains
       n_sites = size(bank_array)
     end if
 
+    ! are we specifying a particle type?
+    if (present(part_type)) then
+      p_type = part_type
+    else
+      ! assume fission
+      p_type = FISS_P
+    end if
+    
     ! Determine number of energies in group structure
     if (present(energies)) then
       n_groups = size(energies) - 1
@@ -206,6 +216,11 @@ contains
       ! determine scoring bin for entropy mesh
       call get_mesh_indices(m, bank_array(i) % xyz, ijk, in_mesh)
 
+      ! if wrong particle type, skip particle
+      if (bank_array(i) % type /= p_type) then
+        cycle
+      end if
+      
       ! if outside mesh, skip particle
       if (.not. in_mesh) then
         outside = .true.

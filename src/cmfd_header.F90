@@ -4,8 +4,9 @@ module cmfd_header
   
   implicit none
   private
-  public :: allocate_cmfd, allocate_funct, allocate_no_accum, deallocate_cmfd,&
-            deallocate_funct, deallocate_no_accum
+  public :: allocate_cmfd, allocate_funct, allocate_no_accum, allocate_fcpi, &
+            deallocate_cmfd,deallocate_funct, deallocate_no_accum, &
+            deallocate_fcpi
 
   type, public :: cmfd_type
 
@@ -65,6 +66,7 @@ module cmfd_header
 
     ! source distributions
     real(8), allocatable :: cmfd_src(:,:,:,:)
+    real(8), allocatable :: cmfd_scatsrc(:,:,:,:)
     real(8), allocatable :: openmc_src(:,:,:,:)
 
     ! source sites in each mesh box
@@ -166,7 +168,7 @@ contains
     ! allocate source weight modification vars
     if (.not. allocated(this % sourcecounts)) allocate(this % sourcecounts(ng,nx,ny,nz))
     if (.not. allocated(this % weightfactors)) allocate(this % weightfactors(ng,nx,ny,nz))
-
+    
     ! set everything to 0 except weight multiply factors if feedback isnt on
     this % flux          = ZERO
     this % totalxs       = ZERO
@@ -223,7 +225,30 @@ contains
     this % mu_sq = ZERO
     
   end subroutine allocate_funct
+  
+!==============================================================================
+! ALLOCATE_FCPI allocates special variables used only for fcpi runs
+!==============================================================================
+  subroutine allocate_fcpi(this)
+    type(cmfd_type) :: this 
 
+    integer :: nx  ! number of mesh cells in x direction
+    integer :: ny  ! number of mesh cells in y direction
+    integer :: nz  ! number of mesh cells in z direction
+    integer :: ng  ! number of energy groups
+
+   ! extract spatial and energy indices from object
+    nx = this % indices(1)
+    ny = this % indices(2)
+    nz = this % indices(3)
+    ng = this % indices(4)
+    
+    if (.not. allocated(this % cmfd_scatsrc)) allocate(this % cmfd_scatsrc(ng,nx,ny,nz))
+    if (.not. allocated(this % scat_weightfactors)) allocate(this % scat_weightfactors(ng,nx,ny,nz))
+    
+  end subroutine allocate_fcpi
+  
+  
 !==============================================================================
 ! ALLOCATE_NO_ACCUM allocates arrays used only when tally accumulation is 
 ! turned OFF (these arrays are used to calc the CMFD RSDs)
@@ -282,12 +307,13 @@ contains
     if (allocated(this % sourcecounts))  deallocate(this % sourcecounts)
     if (allocated(this % weightfactors)) deallocate(this % weightfactors)
     if (allocated(this % cmfd_src))      deallocate(this % cmfd_src)
+    if (allocated(this % cmfd_scatsrc))      deallocate(this % cmfd_scatsrc)
     if (allocated(this % openmc_src))    deallocate(this % openmc_src)
     
   end subroutine deallocate_cmfd
 
 !===============================================================================
-! DEALLOCATE_CMFD 
+! DEALLOCATE_FUNCTS
 !===============================================================================
 
   subroutine deallocate_funct(this)
@@ -298,6 +324,20 @@ contains
     if (allocated(this % mu_sq))         deallocate(this % mu_sq) 
     
   end subroutine deallocate_funct
+  
+!===============================================================================
+! DEALLOCATE_FCPI
+!===============================================================================
+
+  subroutine deallocate_fcpi(this)
+
+    type(cmfd_type) :: this    
+    
+    if (allocated(this % cmfd_scatsrc))      deallocate(this % cmfd_scatsrc) 
+    if (allocated(this % scat_weightfactors)) deallocate(this % scat_weightfactors) 
+    
+  end subroutine deallocate_fcpi
+  
   
 !===============================================================================
 ! DEALLOCATE_NO_ACCUM 

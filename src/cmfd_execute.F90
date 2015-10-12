@@ -266,7 +266,8 @@ contains
   subroutine calc_fission_source()
 
     use constants,  only: CMFD_NOACCEL, ZERO, TWO
-    use global,     only: cmfd, cmfd_coremap, master, mpi_err, entropy_on
+    use global,     only: cmfd, cmfd_coremap, master, mpi_err, entropy_on, &
+                                  fcpi_active
 
     integer :: nx ! maximum number of cells in x direction
     integer :: ny ! maximum number of cells in y direction
@@ -291,6 +292,10 @@ contains
 
     ! allocate cmfd source if not already allocated and allocate buffer
     if (.not. allocated(cmfd%cmfd_src)) allocate(cmfd%cmfd_src(ng,nx,ny,nz))
+    ! allocate cmfd scattering src if fcpi run and not allocated
+    !if(fcpi_active) then
+      if (.not. allocated(cmfd%cmfd_scatsrc)) allocate(cmfd%cmfd_scatsrc(ng,nx,ny,nz))
+    !end if
 
     ! reset cmfd source to 0
     cmfd%cmfd_src = ZERO
@@ -324,7 +329,12 @@ contains
               idx = get_matrix_idx(1,i,j,k,ng,nx,ny)
 
               ! compute fission source
-              cmfd%cmfd_src(g,i,j,k) = sum(cmfd%nfissxs(:,g,i,j,k) * &
+              ! UPDATE K.Keady 10/12 -- we're flipping this around :D
+              !cmfd%cmfd_src(g,i,j,k) = sum(cmfd%nfissxs(:,g,i,j,k) * &
+              !     cmfd%phi(idx:idx+(ng-1)))*vol
+              cmfd%cmfd_src(ng-g+1,i,j,k) = sum(cmfd%nfissxs(:,g,i,j,k) * &
+                   cmfd%phi(idx:idx+(ng-1)))*vol
+              cmfd %cmfd_scatsrc(ng-g+1,i,j,k) = sum(cmfd%scattxs(:,g,i,j,k) * &
                    cmfd%phi(idx:idx+(ng-1)))*vol
 
             end do GROUP
@@ -337,6 +347,8 @@ contains
 
       ! normalize source such that it sums to 1.0
       cmfd%cmfd_src = cmfd%cmfd_src/sum(cmfd%cmfd_src)
+      ! same with scattering source
+      cmfd%cmfd_scatsrc = cmfd%cmfd_scatsrc/sum(cmfd%cmfd_scatsrc)      
 
       ! compute entropy
       if (entropy_on) then
@@ -362,7 +374,8 @@ contains
 
       ! normalize source so average is 1.0
       cmfd%cmfd_src = cmfd%cmfd_src/sum(cmfd%cmfd_src)*cmfd%norm
-
+      cmfd%cmfd_scatsrc = cmfd%cmfd_scatsrc/sum(cmfd%cmfd_scatsrc)*cmfd%norm
+      
     end if
 
     ! broadcast full source to all procs
@@ -376,11 +389,11 @@ contains
 
   subroutine cmfd_reweight(new_weights)
 
-    use constants,   only: ZERO, ONE
+    use constants,   only: ZERO, ONE, FISS_P, SCAT_P
     use error,       only: warning, fatal_error
     use global,      only: n_particles, meshes, source_bank, work,             &
                            n_user_meshes, message, cmfd, master, mpi_err,       &
-                           fcpi_active
+                           fcpi_active, current_batch
     use mesh_header, only: StructuredMesh
     use mesh,        only: count_bank_sites, get_mesh_indices   
 !#ifndef MULTIGROUP  
@@ -450,21 +463,33 @@ contains
 
       ! count bank sites in mesh
       call count_bank_sites(m, source_bank, cmfd%sourcecounts, egrid, &
-           sites_outside=outside, size_bank=work)
+           sites_outside=outside, part_type=FISS_P, size_bank=work)
 
-           !print *,cmfd%sourcecounts
            
+      ! if fcpi is active, count scattering source particles too
+      if(fcpi_active) then
+           call count_bank_sites(m, source_bank, cmfd%scat_sourcecounts, egrid, &
+           sites_outside=outside, part_type=SCAT_P, size_bank=work)
+           
+                 
+                ! print *, cmfd%scat_sourcecounts
+                ! if(current_batch == 26) then
+                !   message = "stahp"
+                !   call fatal_error()
+                ! end if
+      end if
            
       !let's try flipping this around:
-         if(ng > 1) then
-            allocate(temp_cmfd_src(ng,nx,ny,nz))
-            do s = 1, ng
-              temp_cmfd_src(s,:,:,:) = cmfd%cmfd_src(ng-s+1,:,:,:)
-          end do
-          cmfd%cmfd_src = temp_cmfd_src
-         end if
-           
-           !print *,cmfd%cmfd_src           
+      !   if(ng > 1) then
+      !      allocate(temp_cmfd_src(ng,nx,ny,nz))
+      !      do s = 1, ng
+      !        temp_cmfd_src(s,:,:,:) = cmfd%cmfd_src(ng-s+1,:,:,:)
+      !    end do
+      !    cmfd%cmfd_src = temp_cmfd_src
+      !   end if
+           !print *,cmfd%sourcecounts
+           print *,cmfd%cmfd_src    
+           print *,cmfd%cmfd_scatsrc
       ! check for sites outside of the mesh
       if (master .and. outside) then
         message = "Source sites outside of the CMFD mesh!"

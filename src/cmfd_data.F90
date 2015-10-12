@@ -20,16 +20,20 @@ contains
 
   subroutine set_up_cmfd() 
 
-    use cmfd_header,         only: allocate_cmfd, allocate_funct, allocate_no_accum
+    use cmfd_header,         only: allocate_cmfd, allocate_funct, allocate_no_accum, allocate_fcpi
     use constants,           only: CMFD_NOACCEL
     use global,              only: cmfd, cmfd_coremap, cmfd_run_2grp, use_functs,&
-                                   cmfd_accum, cmfd_multiset
+                                   cmfd_accum, cmfd_multiset, fcpi_on
 
     ! initialize cmfd object
     if (.not. allocated(cmfd%flux)) call allocate_cmfd(cmfd)
     ! initialize functionals if necessary
     if(use_functs) then
       if (.not. allocated(cmfd % vol_curr)) call allocate_funct(cmfd)
+    end if
+    
+    if(fcpi_on) then
+      if (.not. allocated(cmfd % cmfd_scatsrc)) call allocate_fcpi(cmfd)
     end if
     
     ! calc RSDs only if NOT accumulating, or using multiset method
