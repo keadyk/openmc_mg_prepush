@@ -293,9 +293,9 @@ contains
     ! allocate cmfd source if not already allocated and allocate buffer
     if (.not. allocated(cmfd%cmfd_src)) allocate(cmfd%cmfd_src(ng,nx,ny,nz))
     ! allocate cmfd scattering src if fcpi run and not allocated
-    !if(fcpi_active) then
+    if(fcpi_active) then
       if (.not. allocated(cmfd%cmfd_scatsrc)) allocate(cmfd%cmfd_scatsrc(ng,nx,ny,nz))
-    !end if
+    end if
 
     ! reset cmfd source to 0
     cmfd%cmfd_src = ZERO
@@ -334,9 +334,10 @@ contains
               !     cmfd%phi(idx:idx+(ng-1)))*vol
               cmfd%cmfd_src(ng-g+1,i,j,k) = sum(cmfd%nfissxs(:,g,i,j,k) * &
                    cmfd%phi(idx:idx+(ng-1)))*vol
-              cmfd %cmfd_scatsrc(ng-g+1,i,j,k) = sum(cmfd%scattxs(:,g,i,j,k) * &
-                   cmfd%phi(idx:idx+(ng-1)))*vol
-
+              if (fcpi_active) then
+                cmfd %cmfd_scatsrc(ng-g+1,i,j,k) = sum(cmfd%scattxs(:,g,i,j,k) * &
+                    cmfd%phi(idx:idx+(ng-1)))*vol
+              end if
             end do GROUP
 
           end do XLOOP
@@ -348,8 +349,10 @@ contains
       ! normalize source such that it sums to 1.0
       cmfd%cmfd_src = cmfd%cmfd_src/sum(cmfd%cmfd_src)
       ! same with scattering source
-      cmfd%cmfd_scatsrc = cmfd%cmfd_scatsrc/sum(cmfd%cmfd_scatsrc)      
-
+      if(fcpi_active) then
+        cmfd%cmfd_scatsrc = cmfd%cmfd_scatsrc/sum(cmfd%cmfd_scatsrc)      
+      end if
+      
       ! compute entropy
       if (entropy_on) then
 
@@ -374,8 +377,9 @@ contains
 
       ! normalize source so average is 1.0
       cmfd%cmfd_src = cmfd%cmfd_src/sum(cmfd%cmfd_src)*cmfd%norm
-      cmfd%cmfd_scatsrc = cmfd%cmfd_scatsrc/sum(cmfd%cmfd_scatsrc)*cmfd%norm
-      
+      if(fcpi_active) then
+        cmfd%cmfd_scatsrc = cmfd%cmfd_scatsrc/sum(cmfd%cmfd_scatsrc)*cmfd%norm
+      end if
     end if
 
     ! broadcast full source to all procs
@@ -465,31 +469,17 @@ contains
       call count_bank_sites(m, source_bank, cmfd%sourcecounts, egrid, &
            sites_outside=outside, part_type=FISS_P, size_bank=work)
 
-           
       ! if fcpi is active, count scattering source particles too
       if(fcpi_active) then
            call count_bank_sites(m, source_bank, cmfd%scat_sourcecounts, egrid, &
-           sites_outside=outside, part_type=SCAT_P, size_bank=work)
-           
-                 
-                ! print *, cmfd%scat_sourcecounts
-                ! if(current_batch == 26) then
-                !   message = "stahp"
-                !   call fatal_error()
-                ! end if
+           sites_outside=outside, part_type=SCAT_P, size_bank=work)            
       end if
            
-      !let's try flipping this around:
-      !   if(ng > 1) then
-      !      allocate(temp_cmfd_src(ng,nx,ny,nz))
-      !      do s = 1, ng
-      !        temp_cmfd_src(s,:,:,:) = cmfd%cmfd_src(ng-s+1,:,:,:)
-      !    end do
-      !    cmfd%cmfd_src = temp_cmfd_src
-      !   end if
-           !print *,cmfd%sourcecounts
-           print *,cmfd%cmfd_src    
-           print *,cmfd%cmfd_scatsrc
+     !print *,"mc sites in fiss src: ", cmfd%sourcecounts
+     !print *,"cmfd fiss src shape: ", cmfd%cmfd_src    
+     !print *,"mc sites in scat src: ", cmfd%scat_sourcecounts
+     !print *,"cmfd scat src shape: ",cmfd%cmfd_scatsrc
+
       ! check for sites outside of the mesh
       if (master .and. outside) then
         message = "Source sites outside of the CMFD mesh!"
@@ -502,6 +492,13 @@ contains
           cmfd%weightfactors = cmfd%cmfd_src/sum(cmfd%cmfd_src)* &
                                sum(cmfd%sourcecounts) / cmfd%sourcecounts
         end where
+        ! do this for scattering source too, if fcpi is active
+        if  (fcpi_active) then
+          where(cmfd%cmfd_scatsrc > ZERO .and. cmfd%scat_sourcecounts > ZERO)
+            cmfd%scat_weightfactors = cmfd%cmfd_scatsrc/sum(cmfd%cmfd_scatsrc)* &
+                                 sum(cmfd%scat_sourcecounts) / cmfd%scat_sourcecounts 
+         end where
+        end if
       end if
 
       !print *,"WEIGHT FACTORS:    ",cmfd%weightfactors 
@@ -547,9 +544,20 @@ contains
       end if
 
       ! reweight particle
-      source_bank(i)%wgt = source_bank(i)%wgt * &
-           cmfd%weightfactors(e_bin,ijk(1),ijk(2),ijk(3))
+      if(source_bank(i)%type == FISS_P) then
+        source_bank(i)%wgt = source_bank(i)%wgt * &
+             cmfd%weightfactors(e_bin,ijk(1),ijk(2),ijk(3))
+      else
+        ! it's a scatter particle!
+        ! this should ONLY happen if fcpi is active-- add a check!!! 
+        if(.not. fcpi_active) then
+          message = "WHOA NO NO NO"
+          call fatal_error()
+        end if
+        source_bank(i)%wgt = source_bank(i)%wgt * &
+             cmfd%scat_weightfactors(e_bin,ijk(1),ijk(2),ijk(3))        
            !print *,source_bank(i)%wgt ,cmfd%weightfactors(e_bin,ijk(1),ijk(2),ijk(3))
+             end if
     end do
 
     ! deallocate

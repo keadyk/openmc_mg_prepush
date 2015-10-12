@@ -216,7 +216,7 @@ contains
     end if
     ! If this is the LAST gen before active cycles, and fcpi is enabled,
     ! we need to bump up the source bank size!
-    if(fcpi_on .and. overall_gen == n_inactive*gen_per_batch) then
+    if(fcpi_on .and. overall_gen == n_inactive*gen_per_batch-int(n_inactive/2)) then
       n_particles = n_particles * act_mult
       ! Recalculate the work per proc/max worked allowed:
       call calculate_work()
