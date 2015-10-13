@@ -496,11 +496,13 @@ contains
 
     ! If fcpi is enabled, use the global keff estimate
     ! otherwise, use the standard (track-length)
-    if(fcpi_active) then
-      this_keff = keff_g
-    else
-      this_keff = keff
-    end if
+    !if(fcpi_active) then
+    !  this_keff = keff_g
+    !else
+    !  this_keff = keff
+    !end if
+    
+    this_keff = sample_keff
     !print *,"-----------------------------------------------------------------------------------"
     !print *, " sampling w keff ", this_keff
     

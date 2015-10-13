@@ -198,6 +198,20 @@ contains
 
     ! Store current value of tracklength k
     keff_generation = global_tallies(K_TRACKLENGTH) % value
+    
+    ! Set sample keff for this generation
+    if(fcpi_active) then
+      ! if running fcpi and using cmfd feedback, use cmfd k
+      if(cmfd_feedback) then
+        sample_keff = cmfd % keff
+      else
+        sample_keff = keff_g
+      end if
+    else
+      ! sample keff is just the usual keff
+      sample_keff = keff
+    end if
+    !print *, "sample using:", sample_keff
 
   end subroutine initialize_generation
 
@@ -207,26 +221,19 @@ contains
 
   subroutine finalize_generation()
 
-    ! If we have ONE gen before active cycles and fcpi is enabled,
-    ! we need to enable fcpi transport
+    ! If fcpi is enabled, get it rollin'
     if (fcpi_on .and. overall_gen == n_inactive*gen_per_batch-int(n_inactive/2)) then
       fcpi_active = .true.
-      message = "FCPI enabled: Max_coll set to " // trim(to_str(max_coll)) // "!"
-      call warning()
-    end if
-    ! If this is the LAST gen before active cycles, and fcpi is enabled,
-    ! we need to bump up the source bank size!
-    if(fcpi_on .and. overall_gen == n_inactive*gen_per_batch-int(n_inactive/2)) then
+      ! Increase the source bank size
       n_particles = n_particles * act_mult
       ! Recalculate the work per proc/max worked allowed:
       call calculate_work()
+      
+      message = "FCPI enabled: Max_coll set to " // trim(to_str(max_coll)) // "!"
+      call warning()
+
       message = "FCPI enabled: Source weight increased to " // trim(to_str(n_particles)) // "!"
       call warning()
-    end if
-    
-    if(overall_gen == n_inactive*gen_per_batch+1) then
-      !message = "stahp"
-      !call fatal_error()
     end if
     
     ! Distribute fission bank across processors evenly
@@ -398,7 +405,7 @@ contains
     index_temp = 0_8
     if (.not. allocated(temp_sites)) allocate(temp_sites(3*work))
     
-    if(fcpi_on .and. overall_gen == n_inactive*gen_per_batch) then
+    if(fcpi_active) then
       ! We need to deallocate/reallocate temp sites array!!
       deallocate(temp_sites)
       allocate(temp_sites(3*work))

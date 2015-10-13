@@ -307,7 +307,6 @@ contains
     if (allocated(this % sourcecounts))  deallocate(this % sourcecounts)
     if (allocated(this % weightfactors)) deallocate(this % weightfactors)
     if (allocated(this % cmfd_src))      deallocate(this % cmfd_src)
-    if (allocated(this % cmfd_scatsrc))      deallocate(this % cmfd_scatsrc)
     if (allocated(this % openmc_src))    deallocate(this % openmc_src)
     
   end subroutine deallocate_cmfd

@@ -411,12 +411,13 @@ contains
     n = size(t % filters(i) % real_bins)
 
     ! set correct keff
-    if (fcpi_active) then
-      this_keff = keff_g
-    else
-      this_keff = keff
-    end if
+    !if (fcpi_active) then
+    !  this_keff = keff_g
+    !else
+    !  this_keff = keff
+    !end if
     !print *, "storing w ", this_keff
+    this_keff = sample_keff
     
     ! Since the creation of fission sites is weighted such that it is
     ! expected to create n_particles sites, we need to multiply the

@@ -178,14 +178,12 @@ module global
   ! External source
   type(ExtSource), target :: external_source
 
-  ! Source and fission bank (and scatter, for FCPI method
+  ! Source and fission bank 
   type(Bank), allocatable, target :: source_bank(:)
   type(Bank), allocatable, target :: fission_bank(:)
   integer(8) :: n_bank       ! # of sites in fission bank
   integer(8) :: bank_first   ! index of first particle in bank
-  integer(8) :: sbank_first !
   integer(8) :: bank_last    ! index of last particle in bank
-  integer(8) :: sbank_last  ! index of last particle in scatter bank
   
   integer(8) :: work         ! number of particles per processor
   integer(8) :: maxwork      ! maximum number of particles per processor
@@ -193,6 +191,7 @@ module global
   
   ! Temporary k-effective values
   real(8), allocatable :: k_generation(:) ! single-generation estimates of k
+  real(8) :: sample_keff = ONE ! keff used for sampling fission sites
   real(8) :: keff = ONE       ! average k over active batches
   real(8) :: keff_g = ONE   ! "global" keff value (for fcpi method)
   real(8) :: keff_std         ! standard deviation of average k
@@ -202,11 +201,14 @@ module global
   real(8) :: k_abs_tra = ZERO ! sum over batches of k_absorption * k_tracklength
   real(8) :: k_combined(2)    ! combined best estimate of k-effective
 
-  ! Shannon entropy
+  ! Shannon entropy:
   logical :: entropy_on = .false.
+  ! For fission bank
   real(8), allocatable :: entropy(:)         ! shannon entropy at each generation
   real(8), allocatable :: entropy_p(:,:,:,:) ! % of source sites in each cell
   type(StructuredMesh), pointer :: entropy_mesh
+  ! For scattering bank
+  
 
   ! Uniform fission source weighting
   logical :: ufs = .false.
