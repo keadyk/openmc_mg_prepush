@@ -150,7 +150,9 @@ contains
       ! Allocate array for batch keff and entropy
       allocate(k_generation(n_batches*gen_per_batch))
       allocate(entropy(n_batches*gen_per_batch))
+      allocate(s_entropy(n_batches*gen_per_batch))      
       entropy = ZERO
+      s_entropy = ZERO
     end if
 
     ! Fixed source calculation information

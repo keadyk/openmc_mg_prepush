@@ -242,7 +242,13 @@ contains
     call time_bank % stop()
 
     ! Calculate shannon entropy
-    if (entropy_on) call shannon_entropy()
+    if (entropy_on) then
+       call shannon_entropy(FISS_P)
+       if(fcpi_active) then
+         ! Calc scattering src shannon ent
+         call shannon_entropy(SCAT_P)
+       end if
+    end if
 
     ! Collect results and statistics
     call calculate_generation_keff()
@@ -587,8 +593,11 @@ contains
 ! distribution to assess source convergence
 !===============================================================================
 
-  subroutine shannon_entropy()
+  subroutine shannon_entropy(particle_type)
 
+    integer, optional :: particle_type ! type of particle to bin
+    
+    integer :: p_type      ! particle type for sorting
     integer :: ent_idx        ! entropy index
     integer :: i, j, k        ! index for bank sites
     integer :: n              ! # of boxes in each dimension
@@ -597,6 +606,14 @@ contains
 
     ! Get pointer to entropy mesh
     m => entropy_mesh
+    
+    ! Figure out what type of particle we're calcing entropy for!
+    if(present(particle_type)) then
+      p_type = particle_type
+    else
+      ! Default to fission particle
+      p_type = FISS_P
+    end if
 
     ! On the first pass through this subroutine, we need to determine how big
     ! the entropy mesh should be in each direction and then allocate a
@@ -627,7 +644,7 @@ contains
 
     ! count number of fission sites over mesh
     call count_bank_sites(m, fission_bank, entropy_p, &
-         size_bank=n_bank, sites_outside=sites_outside)
+         size_bank=n_bank, part_type=p_type, sites_outside=sites_outside)
 
     ! display warning message if there were sites outside entropy box
     if (sites_outside) then
@@ -641,17 +658,34 @@ contains
       entropy_p = entropy_p / sum(entropy_p)
 
       ent_idx = current_gen + gen_per_batch*(current_batch - 1)
-      entropy(ent_idx) = ZERO
-      do i = 1, m % dimension(1)
-        do j = 1, m % dimension(2)
-          do k = 1, m % dimension(3)
-            if (entropy_p(1,i,j,k) > ZERO) then
-              entropy(ent_idx) = entropy(ent_idx) - &
-                   entropy_p(1,i,j,k) * log(entropy_p(1,i,j,k))/log(TWO)
-            end if
+      if(p_type == FISS_P) then
+        ! This is a regular fission src entropy calc
+        entropy(ent_idx) = ZERO
+        do i = 1, m % dimension(1)
+          do j = 1, m % dimension(2)
+            do k = 1, m % dimension(3)
+              if (entropy_p(1,i,j,k) > ZERO) then
+                entropy(ent_idx) = entropy(ent_idx) - &
+                     entropy_p(1,i,j,k) * log(entropy_p(1,i,j,k))/log(TWO)
+              end if
+            end do
           end do
         end do
-      end do
+      else
+        ! this is a scattering source entropy calc
+        s_entropy(ent_idx) = ZERO
+         do i = 1, m % dimension(1)
+          do j = 1, m % dimension(2)
+            do k = 1, m % dimension(3)
+              if (entropy_p(1,i,j,k) > ZERO) then
+                s_entropy(ent_idx) = s_entropy(ent_idx) - &
+                     entropy_p(1,i,j,k) * log(entropy_p(1,i,j,k))/log(TWO)
+              end if
+            end do
+          end do
+        end do
+      end if
+
     end if
 
   end subroutine shannon_entropy

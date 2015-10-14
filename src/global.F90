@@ -205,6 +205,7 @@ module global
   logical :: entropy_on = .false.
   ! For fission bank
   real(8), allocatable :: entropy(:)         ! shannon entropy at each generation
+  real(8), allocatable :: s_entropy(:)         ! shannon scattering source entropy at each generation
   real(8), allocatable :: entropy_p(:,:,:,:) ! % of source sites in each cell
   type(StructuredMesh), pointer :: entropy_mesh
   ! For scattering bank
