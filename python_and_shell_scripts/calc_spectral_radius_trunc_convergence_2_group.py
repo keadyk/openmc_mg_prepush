@@ -9,34 +9,34 @@ execfile(sys.argv[1])
 if M > 0:
     execfile("weights_mus.inp")
 else:
-    print "Uh-oh, we didn't get a valid value for M from " + sys.argv[1] + "!"
+    print( "Uh-oh, we didn't get a valid value for M from " + sys.argv[1] + "!")
     sys.exit(1)
 
-#print out relevant data:
-print "----------Relevant data:----------"
-print "     Slab size: " + str(X)
-print " Total x-sects: " 
-print "             1: " + str(sigT[0])
-print "             2: " + str(sigT[1])
-print " Scat. x-sects: " 
-print "        1 -> 1: " + str(sigS[0][0])
-print "        1 -> 2: " + str(sigS[0][1])
-print "        2 -> 1: " + str(sigS[1][0])
-print "        2 -> 2: " + str(sigS[1][1])
-print "    Ang. order: " + str(M)
-print "Fine grid size: " + str(h_k)
-print "Crs. grid size: " + str(h_j)
-print "  Fine per crs: " + str(fperc)
-print "    # inner its: " + str(n_in)
-print "-----------------------------------"
+#print( out relevant data:
+print( "----------Relevant data:----------")
+print( "     Slab size: " + str(X))
+print( " Total x-sects: " )
+print( "             1: " + str(sigT[0]))
+print( "             2: " + str(sigT[1]))
+print( " Scat. x-sects: " )
+print( "        1 -> 1: " + str(sigS[0][0]))
+print( "        1 -> 2: " + str(sigS[0][1]))
+print( "        2 -> 1: " + str(sigS[1][0]))
+print( "        2 -> 2: " + str(sigS[1][1]))
+print( "    Ang. order: " + str(M))
+print( "Fine grid size: " + str(h_k))
+print( "Crs. grid size: " + str(h_j))
+print( "  Fine per crs: " + str(fperc))
+print( "    # inner its: " + str(n_in))
+print( "-----------------------------------")
 
-print "---------Mus and weights:----------"
+print( "---------Mus and weights:----------")
 for i in range(M/2):
-    print "Mu: " + str(mus.item(i)) + " Wt: " + str(wts.item(i))
-print "-----------------------------------"
+    print( "Mu: " + str(mus.item(i)) + " Wt: " + str(wts.item(i)))
+print( "-----------------------------------")
 
 if(sigS[1][0] != 0.0):
-    print "We assume no upscattering. SigS 2 -> 1 must = 0.0!"
+    print( "We assume no upscattering. SigS 2 -> 1 must = 0.0!")
     exit(1)
 
 #Calculated alphas for
@@ -46,11 +46,11 @@ for g in range(2):
         this_mu = mus.item(math.floor(float(i)/2))*math.pow(-1.0,i+1)
         #alfas.append(0)
         #if i==0:
-        #   print "USING DIAMOND DIFFERENCE ALPHA!"
+        #   print( "USING DIAMOND DIFFERENCE ALPHA!")
         alfas[g].append((1+math.exp(-sigT[g]*h_k/this_mu))/(1-math.exp(-sigT[g]*h_k/this_mu)) - 2.0*this_mu/(sigT[g]*h_k))
         if i==0 and g==0:
-            print "USING STEP CHARACTERISTIC ALPHA!"
-        print "Mu: " + str(this_mu) + ", alpha[" + str(g+1) + "]: " + str(alfas[g][-1]) 
+            print( "USING STEP CHARACTERISTIC ALPHA!")
+        print( "Mu: " + str(this_mu) + ", alpha[" + str(g+1) + "]: " + str(alfas[g][-1]) )
 
 #initialize max eig, f-value and corresponding lambda:
 max_lambda = 0.0
@@ -65,7 +65,7 @@ lambda_range = npy.arange((2*math.pi)/X, (X/h_j - 1)*(2*math.pi)/X+0.001, (2*mat
 #lambda_range = npy.arange(0.01, 2*math.pi, 0.005)
 
 for this_lambda in lambda_range:
-    #print "\r ****Running lambda =  {0:5.3f}; current max = {1:7.5f} @ {2:7.5f}****".format(this_lambda, max_eig, max_lambda),
+    #print( "\r ****Running lambda =  {0:5.3f}; current max = {1:7.5f} @ {2:7.5f}****".format(this_lambda, max_eig, max_lambda),)
     sys.stdout.flush()
     
     #allocate arrays:
@@ -87,7 +87,7 @@ for this_lambda in lambda_range:
         this_wt = wts.item(math.floor((this_m-1)/2))  
         alfa0 = alfas[0][int(this_m-1)]
         alfa1 = alfas[1][int(this_m-1)]
-        #print "\nmu= " + str(this_mu) + " wt= " + str(this_wt) + " alfa= " + str(alfa) 
+        #print( "\nmu= " + str(this_mu) + " wt= " + str(this_wt) + " alfa= " + str(alfa) )
         #Using the periodicity condition from Kelley and Larsen:
         if(this_f == fperc):
             M_1[i][i] += -this_mu/(sigT[0]*h_k) + 0.5*(1 - alfa0)
@@ -100,7 +100,7 @@ for this_lambda in lambda_range:
             
             M_2[M*fperc+i][M*fperc+i] += 0.5*(1 - alfa1)*this_wt
             M_2[M*fperc+i][M*fperc+(this_m-1)*fperc] += 0.5*(1 + alfa1)*this_wt*complex(math.cos(this_lambda*h_j), math.sin(this_lambda*h_j))           
-            #print " crs term: " + str(math.cos(sigT*this_lambda*h_j)) + " " + str(math.sin(sigT*this_lambda*h_j))
+            #print( " crs term: " + str(math.cos(sigT*this_lambda*h_j)) + " " + str(math.sin(sigT*this_lambda*h_j)))
             
         else:
             M_1[i][i] += -this_mu/(sigT[0]*h_k) + 0.5*(1 - alfa0)
@@ -118,25 +118,25 @@ for this_lambda in lambda_range:
     #Invert M_1 matrix   
     M_1_inv = npy.matrix(M_1).I
        
-    #print "...Matrix M_1 inv..."
+    #print( "...Matrix M_1 inv...")
     #for i in range(M*fperc): 
     #   line_string = ""        
     #   for c in range(M*fperc):
     #        line_string += '{0:7.5f}\t'.format(M_1_inv.item(i,c))     
-    #   print line_string 
+    #   print( line_string )
        
-    #print "...Matrix M_1..."
+    #print( "...Matrix M_1...")
     for i in range(2*M*fperc): 
        line_string = ""        
        for c in range(2*M*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(M_1.item(i,c).real, M_1.item(i,c).imag)     
-    #   print line_string 
-    #print "...Matrix M_2..."
+    #   print( line_string )
+    #print( "...Matrix M_2...")
     for i in range(2*M*fperc): 
        line_string = ""        
        for c in range(2*M*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(M_2.item(i,c).real, M_2.item(i,c).imag)    
-    #   print line_string    
+    #   print( line_string    )
     M2_M1i = npy.matrix(M_2)*M_1_inv
 
     #SUMS OVER M::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::   
@@ -144,7 +144,7 @@ for this_lambda in lambda_range:
     for i in range(M*fperc):
         for j in range(fperc):
             for m in range(M):
-                #print "*mu and wt: " + str(this_mu) + " " + str(this_wt)
+                #print( "*mu and wt: " + str(this_mu) + " " + str(this_wt))
                 M3[i][j] += M2_M1i.item(i, j+m*fperc)
                 mu_wt_M3[i][j] += M_1_inv.item(i, j+m*fperc)
 
@@ -165,18 +165,18 @@ for this_lambda in lambda_range:
                 mu_wt_M1i_sum[fperc+j][fperc+r] += this_mu * this_wt *  mu_wt_M3.item((M*fperc+j+m*fperc, fperc+r))
     #SUMS OVER M:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
 
-    #print "\n...Matrix M2*M1 inverse, summed over m..."
+    #print( "\n...Matrix M2*M1 inverse, summed over m...")
     for i in range(2*fperc): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(M2_M1i_sum.item(i,c).real, M2_M1i_sum.item(i,c).imag)     
-    #   print line_string
-    #print "\n...Matrix mu_wt_M1 inverse, summed over m..."
+    #   print( line_string)
+    #print( "\n...Matrix mu_wt_M1 inverse, summed over m...")
     for i in range(2*fperc): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(mu_wt_M1i_sum.item(i,c).real, mu_wt_M1i_sum.item(i,c).imag)     
-    #   print line_string
+    #   print( line_string)
     #Calculate S matrix
     for r in range(fperc):
         #Group 1 eqns for this r:
@@ -191,23 +191,23 @@ for this_lambda in lambda_range:
         #2->2 coupling
         S[fperc+r][fperc+r] += sigS[1][1]/sigT[1]
 
-    #print "\n...Matrix S..."
+    #print( "\n...Matrix S...")
     for i in range(2*fperc): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(S.item(i,c).real, S.item(i,c).imag)     
-    #   print line_string
+    #   print( line_string)
 
     #Now, calculate H and Q (sans E_r):
     #DOUBLE CHECK THIS!!!
     H = npy.matrix(M2_M1i_sum)*0.5*npy.matrix(S)
 
-    #print "\n...Matrix H..."
+    #print( "\n...Matrix H...")
     for i in range(2*fperc): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(H.item(i,c).real, H.item(i,c).imag)     
-    #   print line_string
+    #   print( line_string)
 
     H_k1 = npy.identity(2*fperc, dtype=complex)
     
@@ -223,25 +223,25 @@ for this_lambda in lambda_range:
     Final_coeffs = npy.matrix(H_k)
     Final_J_coeffs = 0.5*npy.matrix(mu_wt_M1i_sum)*npy.matrix(S)*H_k1
 
-    #print "...H_k1..."
+    #print( "...H_k1...")
     for i in range(2*fperc): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(H_k1.item(i,c).real, H_k1.item(i,c).imag)    
-    #   print line_string 
+    #   print( line_string )
      
-    #print "...Final scalar flux error matrix..."
+    #print( "...Final scalar flux error matrix...")
     for i in range(2*fperc): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(Final_coeffs.item(i,c).real, Final_coeffs.item(i,c).imag)    
-    #   print line_string          
-    #print "...Final current error matrix..."
+    #   print( line_string          )
+    #print( "...Final current error matrix...")
     for i in range(2*fperc): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(Final_J_coeffs.item(i,c).real, Final_J_coeffs.item(i,c).imag)    
-    #   print line_string          
+    #   print( line_string )         
     
     #NOW! We have the error matrices that relate the current and scalar flux error to the fission source error.
     
@@ -251,7 +251,7 @@ for this_lambda in lambda_range:
 
     Z = [const0/(math.cos(this_lambda*h_j)-1), const1/(math.cos(this_lambda*h_j)-1)]
     G = [Z[0]*(complex(math.cos(this_lambda*h_j), math.sin(this_lambda*h_j))-1), Z[1]*(complex(math.cos(this_lambda*h_j), math.sin(this_lambda*h_j))-1)]
-    #print "...Constants...\n" + '{0:7.5f} + {1:7.5f}i, {2:7.5f} + {3:7.5f}i, {4:7.5f} + {5:7.5f}i, {6:7.5f} + {7:7.5f}i'.format(Z[0].real, Z[0].imag, Z[1].real, Z[1].imag, G[0].real, G[0].imag, G[1].real, G[1].imag) 
+    #print( "...Constants...\n" + '{0:7.5f} + {1:7.5f}i, {2:7.5f} + {3:7.5f}i, {4:7.5f} + {5:7.5f}i, {6:7.5f} + {7:7.5f}i'.format(Z[0].real, Z[0].imag, Z[1].real, Z[1].imag, G[0].real, G[0].imag, G[1].real, G[1].imag)) 
 
     #Allocate and fill the L-matrix (coefficients of I_g from low-order equations)
     L = npy.zeros((2, 2), dtype=complex)
@@ -271,27 +271,27 @@ for this_lambda in lambda_range:
             T[0][b] += 1.0/fperc * Final_coeffs.item(a,b)
             T[1][b] += 1.0/fperc * Final_coeffs.item(fperc+a,b)
 
-    #print "...L matrix..."
+    #print( "...L matrix...")
     for i in range(2): 
        line_string = ""        
        for c in range(2):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(L.item(i,c).real, L.item(i,c).imag)    
-    #   print line_string  
-    #print "...T matrix..."
+    #   print( line_string  )
+    #print( "...T matrix...")
     for i in range(2): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(T.item(i,c).real, T.item(i,c).imag)    
-    #   print line_string  
+    #   print( line_string  )
 
     L_inv_T = npy.matrix(L).I * npy.matrix(T)
 
-    #print "...L_inv * T matrix..."
+    #print( "...L_inv * T matrix...")
     for i in range(2): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(L_inv_T.item(i,c).real, L_inv_T.item(i,c).imag)    
-       #print line_string     
+       #print( line_string     )
 
     #Allocate the K-matrix
     K = npy.zeros((2*fperc, 2*fperc), dtype=complex)
@@ -309,32 +309,32 @@ for this_lambda in lambda_range:
                 #Coefficients relating (1/p * sum_r'=1^fperc F_r',g) to E_r,g
                 K[c][b] += -1.0/fperc * Final_coeffs.item(a,b)
                 K[fperc+c][b] += -1.0/fperc * Final_coeffs.item(fperc+a,b)
-    #print "...K matrix..."
+    #print( "...K matrix...")
     for i in range(2*fperc): 
        line_string = ""        
        for c in range(2*fperc):
             line_string += '{0:7.5f} + {1:7.5f}i\t'.format(K.item(i,c).real, K.item(i,c).imag)    
-       #print line_string     
+       #print( line_string   )  
   
     #Now, FINALLY, calculate the eigenvalues!
     eigs = npy.linalg.eigvals(K)
     
-    #print '\n'
+    #print( '\n')
     for h in range(fperc):
         if math.fabs(eigs.item(h).real) > max_eig:
             max_eig = math.fabs(eigs.item(h).real)
             max_eig_imag = math.fabs(eigs.item(h).imag)
             max_lambda = this_lambda 
             max_f = h+1
-        #print '{0:7.5f}: {1:7.5f} + {2:7.5f}i'.format(this_lambda, eigs.item(h).real, eigs.item(h).imag)
+        #print( '{0:7.5f}: {1:7.5f} + {2:7.5f}i'.format(this_lambda, eigs.item(h).real, eigs.item(h).imag))
     #exit(1)  
 
-print "\n"        
-print "Spectral radius = " + str(max_eig)
+print( "\n")
+print( "Spectral radius = " + str(max_eig))
 if(max_eig_imag > 1e-7):
-    print "...uh oh, there's an imaginary part: " + str(max_eig_imag)
-print "   ...at lambda = " + str(max_lambda)
-print "    ...and cell = " + str(max_f)      
+    print( "...uh oh, there's an imaginary part: " + str(max_eig_imag))
+print( "   ...at lambda = " + str(max_lambda))
+print( "    ...and cell = " + str(max_f))
             
         
     
