@@ -1349,6 +1349,8 @@ contains
     ! write out entropy info
     if (entropy_on) write(UNIT=OUTPUT_UNIT, FMT='(3X, F8.5)', ADVANCE='NO') &
          entropy(current_batch*gen_per_batch)
+    if (entropy_on .and. fcpi_active) write(UNIT=OUTPUT_UNIT, FMT='(3X, F8.5)', ADVANCE='NO') &
+         s_entropy(current_batch*gen_per_batch)         
 
     ! write out accumulated k-effective if after first active batch
     if (overall_gen - n_inactive*gen_per_batch > 1) then 
@@ -1363,8 +1365,8 @@ contains
     if (cmfd_on) write(UNIT=OUTPUT_UNIT, FMT='(3X, F8.5)', ADVANCE='NO') &
          cmfd % keff 
     ! write out global keff if it is active
-    if (fcpi_on) write(UNIT=OUTPUT_UNIT, FMT='(3X, F8.5)', ADVANCE='NO') &
-         keff_g 
+    !if (fcpi_on) write(UNIT=OUTPUT_UNIT, FMT='(3X, F8.5)', ADVANCE='NO') &
+    !     keff_g 
 
     ! write out cmfd entropy
     if (cmfd_on .and. entropy_on) write(UNIT=OUTPUT_UNIT, &

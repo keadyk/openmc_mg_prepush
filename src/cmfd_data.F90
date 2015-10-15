@@ -215,7 +215,7 @@ contains
 
                 end if
                 
-                print *,"total xs: ",ng-h+1,"mesh:",i,j,"=",cmfd % totalxs(h,i,j,k)
+                !print *,"total xs: ",ng-h+1,"mesh:",i,j,"=",cmfd % totalxs(h,i,j,k)
                 
                 ! calculate diffusion coefficient
                 cmfd % diffcof(h,i,j,k) = ONE/(3.0_8*(cmfd % totalxs(h,i,j,k) - &
@@ -257,12 +257,12 @@ contains
                     ! get scattering
                     cmfd % scattxs(h,g,i,j,k) = t % results(1,score_index) % sum /&
                          cmfd % flux(h,i,j,k)
-                         print *,"scattxs ",ng-g+1,"-->",ng-h+1,"mesh:",i,j,"=",cmfd % scattxs(h,g,i,j,k)
+                         !print *,"scattxs ",ng-g+1,"-->",ng-h+1,"mesh:",i,j,"=",cmfd % scattxs(h,g,i,j,k)
 
                     ! get nu-fission
                     cmfd % nfissxs(h,g,i,j,k) = t % results(2,score_index) % sum /&
                          cmfd % flux(h,i,j,k)
-                          print *,"nfissxs ",ng-g+1,"-->",ng-h+1,"mesh:",i,j,"=",cmfd % nfissxs(h,g,i,j,k)
+                          !print *,"nfissxs ",ng-g+1,"-->",ng-h+1,"mesh:",i,j,"=",cmfd % nfissxs(h,g,i,j,k)
                   end if
 
                   ! bank source
