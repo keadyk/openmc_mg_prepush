@@ -304,6 +304,9 @@ module global
   ! Mode to run in (fixed source, eigenvalue, plotting, etc)
   integer :: run_mode = NONE
 
+  ! Spectral radius calc?
+  logical :: spec_rad_on = .true.
+  
   ! Restart run
   logical :: restart_run = .false.
   integer :: restart_batch

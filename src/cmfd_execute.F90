@@ -37,7 +37,8 @@ contains
                                       cmfd_act_flush, cmfd_multiset,            & 
                                       cmfd_set_size, current_batch, keff,       &
                                       n_batches, message, master, mpi_err,      &
-                                      rank, cmfd_accum, n_inactive, path_output
+                                      rank, cmfd_accum, n_inactive, path_output, &
+                                      spec_rad_on
     ! BEGIN VARIABLES ADDED BY K.KEADY ON 12/10/2013 
     use string,                 only: to_str
     integer :: i                          ! iteration counter for x
@@ -100,6 +101,9 @@ contains
           cmfd % phi_final = cmfd % phi
         end if
       end if
+      
+      ! If calcing spectral radius, do it now!
+      if (spec_rad_on) call calc_spec_rad()
       
       ! if not accumulating tallies, accum sum and sum sq
       ! for this batch
@@ -565,6 +569,30 @@ contains
 
   end subroutine cmfd_reweight
 
+!===============================================================================
+! CALC_SPEC_RAD estimates the spectral radius of the iteration scheme
+!===============================================================================
+  subroutine calc_spec_rad()
+    
+    use global, only: cmfd, overall_gen
+    
+    real(8) :: spec_rad  ! The spectral radius estimate
+    real(8) :: norm_num
+    real(8) :: norm_denom
+    
+    norm_num = 0.0
+    norm_denom = 0.0
+    
+    if(overall_gen > 3) then
+      norm_num = sum((cmfd % flux - cmfd % flux_old)*(cmfd % flux - cmfd % flux_old))
+      norm_denom = sum((cmfd % flux_old - cmfd % flux_old_old)*(cmfd % flux_old - cmfd % flux_old_old))
+      
+      spec_rad = sqrt(norm_num)/sqrt(norm_denom)
+      print *,"Spectral radius estimate: ", spec_rad
+    end if
+    
+  end subroutine calc_spec_rad
+  
 !===============================================================================
 ! GET_MATRIX_IDX takes (x,y,z,g) indices and computes location in matrix
 !===============================================================================

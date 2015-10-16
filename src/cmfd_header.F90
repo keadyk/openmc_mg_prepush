@@ -52,6 +52,7 @@ module cmfd_header
     ! LAST CYCLE data-- (K. Keady, 10/5)---------------------------------------
     ! cross sections
     real(8), allocatable :: flux_old(:,:,:,:)
+    real(8), allocatable :: flux_old_old(:,:,:,:)
     real(8), allocatable :: totalxs_old(:,:,:,:)
     real(8), allocatable :: p1scattxs_old(:,:,:,:)
     real(8), allocatable :: scattxs_old(:,:,:,:,:)
@@ -144,6 +145,7 @@ contains
 
     ! allocate "last cycle" values
     if (.not. allocated(this % flux_old))       allocate(this % flux_old(ng,nx,ny,nz))
+    if (.not. allocated(this % flux_old_old))   allocate(this % flux_old_old(ng,nx,ny,nz))
     if (.not. allocated(this % totalxs_old))    allocate(this % totalxs_old(ng,nx,ny,nz))
     if (.not. allocated(this % p1scattxs_old))  allocate(this % p1scattxs_old(ng,nx,ny,nz))
     if (.not. allocated(this % scattxs_old))    allocate(this % scattxs_old(ng,ng,nx,ny,nz))
@@ -177,6 +179,7 @@ contains
     this % nfissxs       = ZERO
     ! Initialize old values (flux to one, everything else to zero)
     this % flux_old          = ONE
+    this % flux_old_old      = ONE
     this % totalxs_old       = ZERO
     this % p1scattxs_old     = ZERO
     this % scattxs_old       = ZERO

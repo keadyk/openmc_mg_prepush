@@ -472,7 +472,8 @@ contains
     if (associated(t)) nullify(t)
     if (associated(m)) nullify(m)
     
-    ! save xs for next cycle
+    ! save xs for next cycle (and spec rad if you're calculating it)
+    cmfd % flux_old_old     = cmfd % flux_old
     cmfd % flux_old          = cmfd % flux
     cmfd % totalxs_old       = cmfd % totalxs
     cmfd % p1scattxs_old     = cmfd % p1scattxs
