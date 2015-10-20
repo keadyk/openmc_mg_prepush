@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<settings>
+	<cross_sections>
+		/home/keadyk/OpenMC/data/cross_sections_ascii.xml
+	</cross_sections>
+	<eigenvalue>
+		<batches>100</batches>
+		<inactive>30</inactive>
+		<particles>100000</particles>
+	</eigenvalue>
+	<output>summary cross_sections</output>
+	<output_path>/home/keadyk/OpenMC/output/C5G7_benchmark</output_path>
+	<source>
+		<space type="box" parameters="0.0 21.42 0.0  42.84 64.26 10" />
+	</source>
+	<entropy>
+		<lower_left>0 0 0</lower_left>
+		<upper_right>64.26 64.26 10</upper_right>
+		<dimension>6 6 1</dimension>
+	</entropy>
+	<run_cmfd>true</run_cmfd>
+	<survival_biasing>false</survival_biasing>
+	<verbosity>
+		5
+	</verbosity>
+	<fcpi_method>
+		<enabled>true</enabled>
+		<active_multiplier>5</active_multiplier>
+		<collision_limit>15</collision_limit>
+	</fcpi_method>
+</settings>
+

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<tallies>
+
+  <tally id="1">
+    <filter type="cell" bins="1" />
+    <scores>total</scores>
+  </tally>
+</tallies>

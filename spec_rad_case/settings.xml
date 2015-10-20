@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<settings>
+
+  <cross_sections>
+    /home/keadyk/OpenMC/data/cross_sections_ascii.xml
+  </cross_sections>
+
+  <!-- Parameters for k-eigenvalue calculation -->
+  <eigenvalue>
+    <batches>5</batches>
+    <inactive>3</inactive>
+    <particles>1000000</particles>
+  </eigenvalue>
+
+  <seed>5</seed>
+  <!-- Starting source -->
+  <source>
+    <space type="box">
+      <parameters>0.0 -1.0 -1.0  150.0  1.0  1.0</parameters>
+    </space>
+  </source>
+
+	<entropy>
+		<lower_left>0 -1 -1</lower_left>
+		<upper_right>150 1 1</upper_right>
+		<dimension>150 1 1</dimension>
+	</entropy>
+
+	<run_cmfd>true</run_cmfd>
+
+	<fcpi_method>
+		<enabled>false</enabled>
+		<active_multiplier>5</active_multiplier>
+		<collision_limit>10</collision_limit>
+	</fcpi_method>
+
+</settings>
