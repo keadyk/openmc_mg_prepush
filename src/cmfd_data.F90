@@ -106,6 +106,10 @@ contains
     nz = cmfd % indices(3)
     ng = cmfd % indices(4)
 
+    !  set fluxes to old values
+    cmfd % flux_old_old     = cmfd % flux_old
+    cmfd % flux_old          = cmfd % flux
+    
     ! set flux object and source distribution to all zeros
     cmfd % flux = ZERO
     cmfd % openmc_src = ZERO
@@ -473,8 +477,6 @@ contains
     if (associated(m)) nullify(m)
     
     ! save xs for next cycle (and spec rad if you're calculating it)
-    cmfd % flux_old_old     = cmfd % flux_old
-    cmfd % flux_old          = cmfd % flux
     cmfd % totalxs_old       = cmfd % totalxs
     cmfd % p1scattxs_old     = cmfd % p1scattxs
     cmfd % scattxs_old       = cmfd % scattxs

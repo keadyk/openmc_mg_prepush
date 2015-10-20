@@ -586,6 +586,7 @@ contains
     if(overall_gen > 3) then
       norm_num = sum((cmfd % flux - cmfd % flux_old)*(cmfd % flux - cmfd % flux_old))
       norm_denom = sum((cmfd % flux_old - cmfd % flux_old_old)*(cmfd % flux_old - cmfd % flux_old_old))
+      !print *, cmfd % flux,  cmfd % flux_old
       
       spec_rad = sqrt(norm_num)/sqrt(norm_denom)
       print *,"Spectral radius estimate: ", spec_rad
