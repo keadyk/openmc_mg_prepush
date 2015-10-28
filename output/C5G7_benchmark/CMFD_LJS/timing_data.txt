@@ -1,0 +1,635 @@
+
+       .d88888b.                             888b     d888  .d8888b.
+      d88P" "Y88b                            8888b   d8888 d88P  Y88b
+      888     888                            88888b.d88888 888    888
+      888     888 88888b.   .d88b.  88888b.  888Y88888P888 888       
+      888     888 888 "88b d8P  Y8b 888 "88b 888 Y888P 888 888       
+      888     888 888  888 88888888 888  888 888  Y8P  888 888    888
+      Y88b. .d88P 888 d88P Y8b.     888  888 888   "   888 Y88b  d88P
+       "Y88888P"  88888P"   "Y8888  888  888 888       888  "Y8888P"
+__________________888______________________________________________________
+                  888
+                  888
+
+
+                         888b     d888  .d8888b.   d88888b            
+                         8888b   d8888 d88P  Y88b  Y88888P            
+                         88888b.d88888 888    888   Y888P             
+                         888Y88888P888 888           Y8P              
+                         888 Y888P 888 888    8888b                   
+.888.    .888.   .888.   888  Y8P  888 888    888   .888.             
+88888    88888   88888   888   "   888 Y88b  d88P   88888             
+"888"    "888"   "888"   888       888  "Y8888P"    "888"             
+
+      Copyright:     2011-2013 Massachusetts Institute of Technology
+      License:       http://mit-crpg.github.io/openmc/license.html
+      Version:       0.5.2
+      Git SHA1:      2b41c4ec7c0040a1450311beab524be419d932a4
+      Date/Time:     2015-10-26 19:20:46
+      MPI Processes: 1
+
+ ===========================================================================
+ ========================>     INITIALIZATION     <=========================
+ ===========================================================================
+
+ Reading settings XML file...
+ Reading cross sections XML file...
+ Reading geometry XML file...
+ Reading materials XML file...
+ Reading tallies XML file...
+ Reading CMFD XML file...
+CMFD Running on 1  processors.
+ Building neighboring cells lists for each surface...
+
+ ===========================================================================
+ ====================>     K EIGENVALUE SIMULATION     <====================
+ ===========================================================================
+
+  Bat./Gen.      k       Entropy         Average k          CMFD k    CMFD Ent/F
+  =========   ========   ========   ====================   ========   ==========
+        1/1    1.10798    3.98839                           1.18182    1.72256 F
+        2/1    1.13725    3.96762                           1.19236    1.68168 F
+        3/1    1.19292    3.73570                           1.16840    1.84520 F
+ Spectral radius estimate:   0.93944360411424144     
+        4/1    1.17995    3.80888                           1.17334    1.84094 F
+ Spectral radius estimate:    1.0026169361814847     
+        5/1    1.18810    3.80636                           1.17565    1.84395 F
+ Spectral radius estimate:    3.7988875322676812     
+        6/1    1.19706    3.80474                           1.19189    1.83826 T
+ Spectral radius estimate:   0.26435083787009023     
+        7/1    1.18424    3.80584                           1.19019    1.84421 F
+ Spectral radius estimate:    1.0004643552294836     
+        8/1    1.19528    3.80991                           1.18858    1.85757 F
+ Spectral radius estimate:   0.98725583353226187     
+        9/1    1.18688    3.81496                           1.18773    1.85164 F
+ Spectral radius estimate:    1.0054074886114202     
+       10/1    1.18344    3.81620                           1.18885    1.85752 F
+ Spectral radius estimate:    4.0144192233133360     
+       11/1    1.18150    3.81944                           1.18172    1.87202 T
+ Spectral radius estimate:   0.24771331342315947     
+       12/1    1.18853    3.82034                           1.18413    1.87005 F
+ Spectral radius estimate:   0.99023489933117670     
+       13/1    1.18721    3.83166                           1.18649    1.86456 F
+ Spectral radius estimate:    1.0056923484425002     
+       14/1    1.17928    3.82563                           1.18607    1.86058 F
+ Spectral radius estimate:    1.0025405318798122     
+       15/1    1.18430    3.82669                           1.18525    1.86466 F
+ Spectral radius estimate:    3.9936952348735195     
+       16/1    1.19156    3.82693                           1.18432    1.85816 T
+ Spectral radius estimate:   0.25162090738589127     
+       17/1    1.18074    3.82854                           1.18199    1.87019 F
+ Spectral radius estimate:   0.99350162173401735     
+       18/1    1.17608    3.83071                           1.18287    1.87000 F
+ Spectral radius estimate:    1.0001519020084442     
+       19/1    1.18956    3.83161                           1.18271    1.86925 F
+ Spectral radius estimate:   0.99696178478363551     
+       20/1    1.17940    3.83097                           1.18301    1.86742 F
+ Spectral radius estimate:    4.0148725631646025     
+       21/1    1.18608    3.83097                           1.18417    1.86686 T
+ Spectral radius estimate:   0.24894191301252272     
+       22/1    1.18029    3.83239                           1.18578    1.86891 F
+ Spectral radius estimate:    1.0010314273763754     
+       23/1    1.18259    3.82993                           1.18637    1.87120 F
+ Spectral radius estimate:    1.0039850228065166     
+       24/1    1.17978    3.83106                           1.18760    1.86218 F
+ Spectral radius estimate:   0.99987462287121731     
+       25/1    1.17799    3.82212                           1.18675    1.86126 F
+ Spectral radius estimate:    3.9906643314901684     
+       26/1    1.19200    3.82113                           1.19220    1.87078 T
+ Spectral radius estimate:   0.25014467698315751     
+       27/1    1.18117    3.81658                           1.18847    1.85010 F
+ Spectral radius estimate:    1.0115032299927831     
+       28/1    1.19195    3.81234                           1.18990    1.85077 F
+ Spectral radius estimate:   0.99653564353418134     
+       29/1    1.18816    3.81432                           1.18923    1.85744 F
+ Spectral radius estimate:   0.99364854289046767     
+       30/1    1.18682    3.81691                           1.18975    1.85511 F
+ Spectral radius estimate:    4.0122940801276759     
+       31/1    1.18344    3.81628                           1.18145    1.87080 T
+ Spectral radius estimate:   0.25004305962516793     
+       32/1    1.19228    3.81275                           1.18435    1.84842 F
+ Spectral radius estimate:    1.0027078527014599     
+       33/1    1.19124    3.81144                           1.18612    1.85156 F
+ Spectral radius estimate:    1.0041548777261238     
+       34/1    1.18058    3.81750                           1.18455    1.86150 F
+ Spectral radius estimate:   0.99469093099959971     
+       35/1    1.18474    3.82149                           1.18663    1.85643 F
+ Spectral radius estimate:    4.0048875208704677     
+       36/1    1.18135    3.82169                           1.17879    1.88371 T
+ Spectral radius estimate:   0.24851601199270301     
+       37/1    1.17989    3.82488                           1.18275    1.87581 F
+ Spectral radius estimate:   0.99459687932349194     
+       38/1    1.17551    3.83372                           1.18043    1.85923 F
+ Spectral radius estimate:    1.0091742249962898     
+       39/1    1.18108    3.82106                           1.18049    1.85527 F
+ Spectral radius estimate:   0.99836027542732764     
+       40/1    1.19006    3.81547                           1.18350    1.85626 F
+ Spectral radius estimate:    3.9895775325277283     
+       41/1    1.18901    3.81619                           1.18669    1.84439 T
+ Spectral radius estimate:   0.25150125350497893     
+       42/1    1.18089    3.82276                           1.18360    1.86970 F
+ Spectral radius estimate:   0.99078666464913767     
+       43/1    1.17853    3.83108                           1.18271    1.86792 F
+ Spectral radius estimate:   0.99892027201645328     
+       44/1    1.18811    3.82932                           1.18415    1.86611 F
+ Spectral radius estimate:    1.0031882176837914     
+       45/1    1.18410    3.82276                           1.18435    1.86001 F
+ Spectral radius estimate:    4.0074863152910440     
+       46/1    1.17867    3.82176                           1.18410    1.82876 T
+ Spectral radius estimate:   0.25055048907678634     
+       47/1    1.18386    3.82422                           1.18420    1.86800 F
+ Spectral radius estimate:   0.99762308376279185     
+       48/1    1.19060    3.82644                           1.18661    1.85849 F
+ Spectral radius estimate:   0.99936628749684808     
+       49/1    1.18114    3.82066                           1.18674    1.85599 F
+ Spectral radius estimate:    1.0058203984597189     
+       50/1    1.19165    3.81966                           1.18533    1.86057 F
+ Spectral radius estimate:    3.9844014579845979     
+       51/1    1.17416    3.81712                           1.19205    1.84375 T
+ Spectral radius estimate:   0.25144474132988837     
+       52/1    1.18258    3.82396    1.17837 +/- 0.00421    1.19089    1.86003 F
+ Spectral radius estimate:   0.99482113364925495     
+       53/1    1.19022    3.81904    1.18232 +/- 0.00464    1.18997    1.85602 F
+ Spectral radius estimate:   0.99962341342654515     
+       54/1    1.17794    3.81635    1.18123 +/- 0.00346    1.18859    1.85512 F
+ Spectral radius estimate:    1.0043748585552499     
+       55/1    1.18171    3.81285    1.18132 +/- 0.00268    1.18802    1.85094 F
+ Spectral radius estimate:    3.9892301998836843     
+       56/1    1.18809    3.81213    1.18245 +/- 0.00246    1.18611    1.84219 T
+ Spectral radius estimate:   0.25216224295538525     
+       57/1    1.19398    3.81133    1.18410 +/- 0.00265    1.18386    1.86322 F
+ Spectral radius estimate:   0.98593844480347315     
+       58/1    1.17956    3.82201    1.18353 +/- 0.00237    1.18443    1.85747 F
+ Spectral radius estimate:    1.0047892705889101     
+       59/1    1.19104    3.82170    1.18436 +/- 0.00225    1.18753    1.86194 F
+ Spectral radius estimate:   0.99902708490400904     
+       60/1    1.18551    3.82366    1.18448 +/- 0.00201    1.18865    1.86083 F
+ Spectral radius estimate:    4.0123911854269316     
+       61/1    1.18668    3.82021    1.18468 +/- 0.00183    1.19029    1.84192 T
+ Spectral radius estimate:   0.24904169361057205     
+       62/1    1.18568    3.82102    1.18476 +/- 0.00168    1.18940    1.86424 F
+ Spectral radius estimate:    1.0003361420002794     
+       63/1    1.18484    3.81888    1.18477 +/- 0.00154    1.18931    1.84774 F
+ Spectral radius estimate:    1.0113924954922042     
+       64/1    1.18611    3.81114    1.18486 +/- 0.00143    1.18802    1.85560 F
+ Spectral radius estimate:   0.99238059124911648     
+       65/1    1.19480    3.81595    1.18553 +/- 0.00149    1.18849    1.85532 F
+ Spectral radius estimate:    3.9941627851291495     
+       66/1    1.18963    3.82145    1.18578 +/- 0.00141    1.19278    1.88546 T
+ Spectral radius estimate:   0.24984510886310216     
+       67/1    1.18739    3.82273    1.18588 +/- 0.00133    1.19266    1.86654 F
+ Spectral radius estimate:   0.99453036938119654     
+       68/1    1.18324    3.82682    1.18573 +/- 0.00126    1.19056    1.85828 F
+ Spectral radius estimate:    1.0072546701085796     
+       69/1    1.18111    3.82439    1.18549 +/- 0.00122    1.18771    1.86649 F
+ Spectral radius estimate:   0.99547049185328951     
+       70/1    1.19242    3.82865    1.18583 +/- 0.00121    1.18806    1.86614 F
+ Spectral radius estimate:    4.0092036600164018     
+       71/1    1.18738    3.82392    1.18591 +/- 0.00115    1.18709    1.82796 T
+ Spectral radius estimate:   0.25081859038106841     
+       72/1    1.19066    3.82140    1.18612 +/- 0.00112    1.18662    1.84405 F
+ Spectral radius estimate:    1.0076832500738246     
+       73/1    1.18144    3.80499    1.18592 +/- 0.00109    1.18487    1.84419 F
+ Spectral radius estimate:   0.99591664459801843     
+       74/1    1.18955    3.80196    1.18607 +/- 0.00105    1.18573    1.84555 F
+ Spectral radius estimate:    1.0079026000344433     
+       75/1    1.19995    3.80521    1.18663 +/- 0.00115    1.18685    1.84222 F
+ Spectral radius estimate:    3.9669034118826318     
+       76/1    1.18714    3.80415    1.18665 +/- 0.00111    1.18011    1.86741 T
+ Spectral radius estimate:   0.25041562709240800     
+       77/1    1.19078    3.80606    1.18680 +/- 0.00108    1.18101    1.86270 F
+ Spectral radius estimate:   0.99120417015868267     
+       78/1    1.18785    3.81948    1.18684 +/- 0.00104    1.18201    1.85712 F
+ Spectral radius estimate:    1.0027694253422663     
+       79/1    1.18941    3.81939    1.18693 +/- 0.00101    1.18155    1.86261 F
+ Spectral radius estimate:   0.99540105955618496     
+       80/1    1.18755    3.81757    1.18695 +/- 0.00097    1.18210    1.85420 F
+ Spectral radius estimate:    4.0244495804336902     
+       81/1    1.18972    3.81141    1.18704 +/- 0.00094    1.19540    1.83321 T
+ Spectral radius estimate:   0.25047976119120741     
+       82/1    1.19196    3.81499    1.18719 +/- 0.00093    1.18799    1.85729 F
+ Spectral radius estimate:   0.99540444840824571     
+       83/1    1.18794    3.81898    1.18721 +/- 0.00090    1.18647    1.85635 F
+ Spectral radius estimate:    1.0050993304043996     
+       84/1    1.18149    3.81497    1.18704 +/- 0.00089    1.18685    1.85242 F
+ Spectral radius estimate:   0.99986354860623838     
+       85/1    1.19567    3.81311    1.18729 +/- 0.00090    1.18667    1.85477 F
+ Spectral radius estimate:    3.9907936323824922     
+       86/1    1.18605    3.81386    1.18726 +/- 0.00087    1.19113    1.84157 T
+ Spectral radius estimate:   0.24934207624373297     
+       87/1    1.18757    3.81635    1.18726 +/- 0.00085    1.18783    1.85428 F
+ Spectral radius estimate:    1.0028720488350391     
+       88/1    1.19122    3.81395    1.18737 +/- 0.00083    1.18868    1.84813 F
+ Spectral radius estimate:    1.0048342141473654     
+       89/1    1.18795    3.80782    1.18738 +/- 0.00081    1.18918    1.84774 F
+ Spectral radius estimate:    1.0004930006695931     
+       90/1    1.19267    3.80742    1.18752 +/- 0.00080    1.18819    1.84416 F
+ Spectral radius estimate:    3.9857347381675696     
+       91/1    1.18792    3.80446    1.18753 +/- 0.00078    1.18487    1.86340 T
+ Spectral radius estimate:   0.25063176179519320     
+       92/1    1.17999    3.80852    1.18735 +/- 0.00078    1.18557    1.86662 F
+ Spectral radius estimate:   0.98974032027877301     
+       93/1    1.18492    3.81843    1.18729 +/- 0.00077    1.18940    1.84506 F
+ Spectral radius estimate:    1.0102302871234385     
+       94/1    1.18525    3.80692    1.18724 +/- 0.00075    1.18878    1.85046 F
+ Spectral radius estimate:   0.99904175306209486     
+       95/1    1.18899    3.81524    1.18728 +/- 0.00074    1.18881    1.85532 F
+ Spectral radius estimate:    3.9969514096213361     
+       96/1    1.18773    3.81859    1.18729 +/- 0.00072    1.18304    1.86212 T
+ Spectral radius estimate:   0.24839342807728643     
+       97/1    1.18958    3.82033    1.18734 +/- 0.00071    1.18859    1.86719 F
+ Spectral radius estimate:   0.99162172997742559     
+       98/1    1.17836    3.81976    1.18715 +/- 0.00072    1.18911    1.84652 F
+ Spectral radius estimate:    1.0149638779272725     
+       99/1    1.18482    3.81536    1.18711 +/- 0.00070    1.18600    1.85926 F
+ Spectral radius estimate:   0.99596384826478879     
+      100/1    1.19037    3.81660    1.18717 +/- 0.00069    1.18547    1.85853 F
+ Spectral radius estimate:    3.9881650397758710     
+      101/1    1.18736    3.81419    1.18718 +/- 0.00068    1.19418    1.84365 T
+ Spectral radius estimate:   0.25115357052472254     
+      102/1    1.19483    3.81733    1.18732 +/- 0.00068    1.18815    1.84789 F
+ Spectral radius estimate:    1.0033740738543699     
+      103/1    1.18517    3.80779    1.18728 +/- 0.00067    1.19135    1.84358 F
+ Spectral radius estimate:    1.0018871636256301     
+      104/1    1.18323    3.80190    1.18721 +/- 0.00066    1.18841    1.84056 F
+ Spectral radius estimate:    1.0041737251950245     
+      105/1    1.18956    3.80149    1.18725 +/- 0.00065    1.18903    1.84251 F
+ Spectral radius estimate:    3.9752800514338684     
+      106/1    1.18686    3.80641    1.18724 +/- 0.00064    1.18839    1.88016 T
+ Spectral radius estimate:   0.24977710330648026     
+      107/1    1.19339    3.81150    1.18735 +/- 0.00064    1.18710    1.87098 F
+ Spectral radius estimate:   0.98929714310804240     
+      108/1    1.17618    3.82867    1.18716 +/- 0.00065    1.18877    1.85516 F
+ Spectral radius estimate:    1.0089806443844631     
+      109/1    1.18759    3.81589    1.18717 +/- 0.00064    1.18838    1.85506 F
+ Spectral radius estimate:    1.0006750337002903     
+      110/1    1.18953    3.80908    1.18720 +/- 0.00063    1.18819    1.85235 F
+ Spectral radius estimate:    3.9937438169295256     
+      111/1    1.18224    3.80797    1.18712 +/- 0.00063    1.19401    1.82676 T
+ Spectral radius estimate:   0.25177878596947190     
+      112/1    1.19053    3.81169    1.18718 +/- 0.00062    1.18872    1.84931 F
+ Spectral radius estimate:   0.99673622399674400     
+      113/1    1.18107    3.80720    1.18708 +/- 0.00062    1.19150    1.84503 F
+ Spectral radius estimate:    1.0003140099272634     
+      114/1    1.18974    3.80525    1.18712 +/- 0.00061    1.19029    1.84614 F
+ Spectral radius estimate:    1.0057278838955792     
+      115/1    1.19305    3.80645    1.18721 +/- 0.00061    1.19006    1.84704 F
+ Spectral radius estimate:    3.9838662206955084     
+      116/1    1.18283    3.80733    1.18715 +/- 0.00060    1.18535    1.85881 T
+ Spectral radius estimate:   0.24919031926685106     
+      117/1    1.18693    3.81249    1.18714 +/- 0.00059    1.18789    1.86739 F
+ Spectral radius estimate:   0.98951745297081672     
+      118/1    1.17930    3.82574    1.18703 +/- 0.00059    1.18775    1.85228 F
+ Spectral radius estimate:    1.0089889260990894     
+      119/1    1.18768    3.81288    1.18704 +/- 0.00059    1.18734    1.85227 F
+ Spectral radius estimate:   0.99777817519519729     
+      120/1    1.18501    3.81424    1.18701 +/- 0.00058    1.18773    1.85462 F
+ Spectral radius estimate:    4.0013349480573668     
+      121/1    1.19010    3.81699    1.18705 +/- 0.00057    1.18913    1.85651 T
+ Spectral radius estimate:   0.25095798422849930     
+      122/1    1.17933    3.81998    1.18695 +/- 0.00057    1.18865    1.86314 F
+ Spectral radius estimate:   0.99172775546314007     
+      123/1    1.19155    3.82498    1.18701 +/- 0.00057    1.18679    1.86444 F
+ Spectral radius estimate:   0.99990902859841890     
+      124/1    1.18184    3.82459    1.18694 +/- 0.00057    1.18663    1.85962 F
+ Spectral radius estimate:    1.0032330945446126     
+      125/1    1.18080    3.82275    1.18686 +/- 0.00056    1.18466    1.86025 F
+ Spectral radius estimate:    4.0032235672095959     
+      126/1    1.18631    3.81893    1.18685 +/- 0.00056    1.19218    1.85059 T
+ Spectral radius estimate:   0.25048650142141354     
+      127/1    1.18237    3.82172    1.18679 +/- 0.00055    1.19295    1.85397 F
+ Spectral radius estimate:    1.0002377809176268     
+      128/1    1.18966    3.81473    1.18683 +/- 0.00055    1.18726    1.85942 F
+ Spectral radius estimate:   0.99590123596601765     
+      129/1    1.18584    3.81286    1.18682 +/- 0.00054    1.18767    1.84937 F
+ Spectral radius estimate:    1.0082916294715409     
+      130/1    1.18705    3.81022    1.18682 +/- 0.00053    1.18795    1.84717 F
+ Spectral radius estimate:    3.9768357213969296     
+      131/1    1.18481    3.80933    1.18679 +/- 0.00053    1.18715    1.87402 T
+ Spectral radius estimate:   0.25162755235309092     
+      132/1    1.19202    3.81603    1.18686 +/- 0.00052    1.18806    1.87658 F
+ Spectral radius estimate:   0.98143381489434411     
+      133/1    1.17800    3.83368    1.18675 +/- 0.00053    1.18815    1.86301 F
+ Spectral radius estimate:    1.0084149738445682     
+      134/1    1.18234    3.82818    1.18670 +/- 0.00053    1.18664    1.86481 F
+ Spectral radius estimate:   0.99733321266346786     
+      135/1    1.18027    3.82893    1.18662 +/- 0.00052    1.18585    1.86560 F
+ Spectral radius estimate:    4.0236154126337595     
+      136/1    1.17148    3.82708    1.18645 +/- 0.00055    1.18328    1.87319 T
+ Spectral radius estimate:   0.24830494079422130     
+      137/1    1.18082    3.82374    1.18638 +/- 0.00055    1.18412    1.85114 F
+ Spectral radius estimate:    1.0088922851449675     
+      138/1    1.19503    3.81275    1.18648 +/- 0.00055    1.18559    1.85446 F
+ Spectral radius estimate:    1.0018261098223873     
+      139/1    1.18593    3.81185    1.18647 +/- 0.00054    1.18667    1.84945 F
+ Spectral radius estimate:    1.0045002385039026     
+      140/1    1.18650    3.81365    1.18647 +/- 0.00054    1.18435    1.85765 F
+ Spectral radius estimate:    3.9611189553797335     
+      141/1    1.19734    3.81244    1.18659 +/- 0.00054    1.19129    1.84210 T
+ Spectral radius estimate:   0.25103778107376179     
+      142/1    1.18561    3.81434    1.18658 +/- 0.00054    1.18708    1.84322 F
+ Spectral radius estimate:    1.0083684205371459     
+      143/1    1.18553    3.80298    1.18657 +/- 0.00053    1.18548    1.84597 F
+ Spectral radius estimate:   0.99852054924803324     
+      144/1    1.19215    3.80669    1.18663 +/- 0.00053    1.18684    1.84693 F
+ Spectral radius estimate:   0.99711450803577983     
+      145/1    1.18806    3.81013    1.18665 +/- 0.00052    1.18631    1.85075 F
+ Spectral radius estimate:    4.0049948899682501     
+      146/1    1.18855    3.80957    1.18667 +/- 0.00052    1.18481    1.84952 T
+ Spectral radius estimate:   0.24988064254674508     
+      147/1    1.18007    3.81189    1.18660 +/- 0.00052    1.18163    1.84783 F
+ Spectral radius estimate:   0.99402510944383915     
+      148/1    1.18361    3.81043    1.18657 +/- 0.00051    1.18223    1.85946 F
+ Spectral radius estimate:    1.0016908666343474     
+      149/1    1.17704    3.81374    1.18647 +/- 0.00052    1.18328    1.84895 F
+ Spectral radius estimate:    1.0056780449835470     
+      150/1    1.19791    3.81171    1.18659 +/- 0.00052    1.18428    1.85255 F
+ Spectral radius estimate:    3.9865506274082687     
+      151/1    1.18511    3.81146    1.18657 +/- 0.00052    1.19172    1.84295 T
+ Spectral radius estimate:   0.25053866632368393     
+      152/1    1.19064    3.80986    1.18661 +/- 0.00052    1.18896    1.84695 F
+ Spectral radius estimate:   0.99863314359296529     
+      153/1    1.18390    3.80752    1.18658 +/- 0.00051    1.18762    1.85205 F
+ Spectral radius estimate:   0.99803000975725242     
+      154/1    1.18896    3.81351    1.18661 +/- 0.00051    1.18764    1.85397 F
+ Spectral radius estimate:   0.99977595832347477     
+      155/1    1.18429    3.81571    1.18659 +/- 0.00050    1.18645    1.85375 F
+ Spectral radius estimate:    4.0054398040145198     
+      156/1    1.18332    3.81540    1.18655 +/- 0.00050    1.18861    1.86437 T
+ Spectral radius estimate:   0.24873727253548103     
+      157/1    1.18928    3.81638    1.18658 +/- 0.00050    1.18904    1.86393 F
+ Spectral radius estimate:   0.99545679731289549     
+      158/1    1.17570    3.82580    1.18648 +/- 0.00050    1.18883    1.85543 F
+ Spectral radius estimate:    1.0082825203659203     
+      159/1    1.18838    3.81659    1.18650 +/- 0.00050    1.18896    1.85341 F
+ Spectral radius estimate:   0.99756163098525441     
+      160/1    1.18517    3.81876    1.18648 +/- 0.00049    1.18728    1.85920 F
+ Spectral radius estimate:    4.0043476569293430     
+      161/1    1.18408    3.81952    1.18646 +/- 0.00049    1.18332    1.85001 T
+ Spectral radius estimate:   0.24929313434675227     
+      162/1    1.18979    3.82042    1.18649 +/- 0.00048    1.18872    1.86113 F
+ Spectral radius estimate:   0.99819761727404133     
+      163/1    1.18262    3.81904    1.18646 +/- 0.00048    1.18608    1.85393 F
+ Spectral radius estimate:    1.0044297943313556     
+      164/1    1.18805    3.81677    1.18647 +/- 0.00048    1.18634    1.85984 F
+ Spectral radius estimate:   0.99613700755125534     
+      165/1    1.18757    3.82022    1.18648 +/- 0.00047    1.18597    1.86226 F
+ Spectral radius estimate:    4.0030884557284194     
+      166/1    1.18100    3.81931    1.18643 +/- 0.00047    1.19017    1.83924 T
+ Spectral radius estimate:   0.24995816545447308     
+      167/1    1.18479    3.81510    1.18642 +/- 0.00047    1.19095    1.82504 F
+ Spectral radius estimate:    1.0218011077162934     
+      168/1    1.19199    3.79165    1.18647 +/- 0.00047    1.18543    1.84936 F
+ Spectral radius estimate:   0.98465648850761245     
+      169/1    1.19047    3.80770    1.18650 +/- 0.00046    1.18780    1.85061 F
+ Spectral radius estimate:   0.99911648604928960     
+      170/1    1.17777    3.81173    1.18643 +/- 0.00047    1.18804    1.85189 F
+ Spectral radius estimate:    4.0038699160289486     
+      171/1    1.18886    3.81854    1.18645 +/- 0.00046    1.17973    1.88676 T
+ Spectral radius estimate:   0.24902785526730170     
+      172/1    1.19463    3.82102    1.18652 +/- 0.00046    1.18213    1.87832 F
+ Spectral radius estimate:   0.98645293819953361     
+      173/1    1.17693    3.83010    1.18644 +/- 0.00047    1.18571    1.84960 F
+ Spectral radius estimate:    1.0147016723996558     
+      174/1    1.18404    3.81636    1.18642 +/- 0.00046    1.18424    1.85584 F
+ Spectral radius estimate:   0.99786179527294983     
+      175/1    1.18460    3.81802    1.18640 +/- 0.00046    1.18428    1.85734 F
+ Spectral radius estimate:    3.9973998317831709     
+      176/1    1.18238    3.81587    1.18637 +/- 0.00046    1.18412    1.85007 T
+ Spectral radius estimate:   0.25025518502164706     
+      177/1    1.18570    3.81751    1.18637 +/- 0.00045    1.18526    1.85576 F
+ Spectral radius estimate:    1.0014487192392667     
+      178/1    1.17538    3.81661    1.18628 +/- 0.00046    1.18585    1.85631 F
+ Spectral radius estimate:   0.99661134755624781     
+      179/1    1.18946    3.81819    1.18631 +/- 0.00045    1.18649    1.85800 F
+ Spectral radius estimate:    1.0040108318268159     
+      180/1    1.18891    3.82015    1.18633 +/- 0.00045    1.18726    1.85409 F
+ Spectral radius estimate:    3.9884337976734092     
+      181/1    1.19544    3.81549    1.18640 +/- 0.00045    1.19563    1.84589 T
+ Spectral radius estimate:   0.25077928650502879     
+      182/1    1.18884    3.82104    1.18641 +/- 0.00045    1.18650    1.87185 F
+ Spectral radius estimate:   0.98737017368332125     
+      183/1    1.18582    3.83354    1.18641 +/- 0.00045    1.18735    1.86117 F
+ Spectral radius estimate:    1.0063867376802464     
+      184/1    1.18016    3.82323    1.18636 +/- 0.00045    1.18576    1.86039 F
+ Spectral radius estimate:    1.0062325009841737     
+      185/1    1.18503    3.82532    1.18635 +/- 0.00044    1.18401    1.86377 F
+ Spectral radius estimate:    3.9852724505979578     
+      186/1    1.18097    3.82213    1.18631 +/- 0.00044    1.18541    1.84174 T
+ Spectral radius estimate:   0.24947151259539627     
+      187/1    1.18504    3.82290    1.18630 +/- 0.00044    1.18609    1.84940 F
+ Spectral radius estimate:    1.0062265270368547     
+      188/1    1.19393    3.81299    1.18636 +/- 0.00044    1.18722    1.85755 F
+ Spectral radius estimate:   0.99895148866462202     
+      189/1    1.18306    3.81546    1.18634 +/- 0.00044    1.18860    1.85160 F
+ Spectral radius estimate:    1.0015004495181334     
+      190/1    1.17733    3.81573    1.18627 +/- 0.00044    1.18521    1.85654 F
+ Spectral radius estimate:    3.9891000690737481     
+      191/1    1.18548    3.81492    1.18627 +/- 0.00043    1.18644    1.84378 T
+ Spectral radius estimate:   0.25041262056677044     
+      192/1    1.18955    3.81697    1.18629 +/- 0.00043    1.18902    1.85129 F
+ Spectral radius estimate:    1.0010458031834164     
+      193/1    1.18980    3.81164    1.18631 +/- 0.00043    1.18835    1.84638 F
+ Spectral radius estimate:    1.0024593177848549     
+      194/1    1.18064    3.81602    1.18627 +/- 0.00043    1.18618    1.85559 F
+ Spectral radius estimate:   0.99238603871220288     
+      195/1    1.17957    3.81470    1.18623 +/- 0.00043    1.18607    1.85432 F
+ Spectral radius estimate:    4.0184350210104407     
+      196/1    1.17859    3.81621    1.18618 +/- 0.00043    1.17835    1.86319 T
+ Spectral radius estimate:   0.24973432994059414     
+      197/1    1.18653    3.81904    1.18618 +/- 0.00043    1.18218    1.86695 F
+ Spectral radius estimate:   0.99229043404829720     
+      198/1    1.18331    3.82677    1.18616 +/- 0.00042    1.18556    1.86222 F
+ Spectral radius estimate:    1.0014946194474259     
+      199/1    1.17949    3.82190    1.18611 +/- 0.00042    1.18572    1.86331 F
+ Spectral radius estimate:    1.0031115253202429     
+      200/1    1.19318    3.82452    1.18616 +/- 0.00042    1.18484    1.86233 F
+ Spectral radius estimate:    3.9957739391763720     
+      201/1    1.19051    3.82439    1.18619 +/- 0.00042    1.19081    1.84237 T
+ Spectral radius estimate:   0.25059846362118143     
+      202/1    1.19054    3.81814    1.18622 +/- 0.00042    1.18983    1.82790 F
+ Spectral radius estimate:    1.0156227103500581     
+      203/1    1.18962    3.79647    1.18624 +/- 0.00042    1.18655    1.85542 F
+ Spectral radius estimate:   0.98988701635884591     
+      204/1    1.18885    3.81051    1.18626 +/- 0.00041    1.18915    1.84247 F
+ Spectral radius estimate:    1.0029449433452251     
+      205/1    1.18541    3.80479    1.18625 +/- 0.00041    1.18773    1.84811 F
+ Spectral radius estimate:    3.9904348292858698     
+      206/1    1.18504    3.80675    1.18624 +/- 0.00041    1.18858    1.85227 T
+ Spectral radius estimate:   0.24982995340430939     
+      207/1    1.18222    3.80701    1.18622 +/- 0.00041    1.18911    1.84554 F
+ Spectral radius estimate:    1.0050466399494817     
+      208/1    1.18532    3.81461    1.18621 +/- 0.00040    1.18813    1.86349 F
+ Spectral radius estimate:   0.98871584266435220     
+      209/1    1.18161    3.82450    1.18618 +/- 0.00040    1.18692    1.86376 F
+ Spectral radius estimate:   0.99972478740610471     
+      210/1    1.18397    3.82717    1.18617 +/- 0.00040    1.18567    1.86385 F
+ Spectral radius estimate:    4.0221007657458490     
+      211/1    1.18697    3.83004    1.18618 +/- 0.00040    1.18576    1.87357 T
+ Spectral radius estimate:   0.24851387338350930     
+      212/1    1.18997    3.82555    1.18620 +/- 0.00040    1.18676    1.85501 F
+ Spectral radius estimate:    1.0041929389618673     
+      213/1    1.19387    3.82103    1.18625 +/- 0.00040    1.18733    1.86598 F
+ Spectral radius estimate:   0.99558092276276522     
+      214/1    1.18476    3.82138    1.18624 +/- 0.00039    1.18863    1.85360 F
+ Spectral radius estimate:   0.99901577923284501     
+      215/1    1.18320    3.81498    1.18622 +/- 0.00039    1.18753    1.85465 F
+ Spectral radius estimate:    4.0027509091541642     
+      216/1    1.19278    3.81258    1.18626 +/- 0.00039    1.18773    1.86411 T
+ Spectral radius estimate:   0.25134404879005562     
+      217/1    1.18156    3.82076    1.18623 +/- 0.00039    1.18465    1.87327 F
+ Spectral radius estimate:   0.98817580350574785     
+      218/1    1.19722    3.83257    1.18629 +/- 0.00039    1.18654    1.86858 F
+ Spectral radius estimate:    1.0001033594104574     
+      219/1    1.18829    3.82706    1.18631 +/- 0.00039    1.18698    1.85947 F
+ Spectral radius estimate:    1.0072818920067661     
+      220/1    1.18150    3.82286    1.18628 +/- 0.00039    1.18585    1.85884 F
+ Spectral radius estimate:    3.9973631406290120     
+      221/1    1.17973    3.81947    1.18624 +/- 0.00039    1.18263    1.84267 T
+ Spectral radius estimate:   0.25041536140490928     
+      222/1    1.18313    3.81855    1.18622 +/- 0.00039    1.18684    1.84561 F
+ Spectral radius estimate:    1.0060039809343440     
+      223/1    1.18789    3.80946    1.18623 +/- 0.00039    1.18631    1.85345 F
+ Spectral radius estimate:    1.0002687571305577     
+      224/1    1.19743    3.81501    1.18630 +/- 0.00039    1.18591    1.86029 F
+ Spectral radius estimate:   0.99832122575375515     
+      225/1    1.18198    3.81420    1.18627 +/- 0.00039    1.18667    1.85013 F
+ Spectral radius estimate:    3.9886806034685711     
+      226/1    1.18870    3.81046 WARNING: CMFD multi-set method overrides all other CMFD tally
+          flush/accumulation options!
+ WARNING: Using analog estimators for CMFD.
+ WARNING: Cross-section output not supported in multigroup mode!
+ WARNING: Batch 1 feedback OFF
+ WARNING: Batch 6 feedback OFF
+ WARNING: Batch 11 feedback OFF
+ WARNING: Batch 16 feedback OFF
+ WARNING: Batch 21 feedback OFF
+ WARNING: Batch 26 feedback OFF
+ WARNING: Batch 31 feedback OFF
+ WARNING: Batch 36 feedback OFF
+ WARNING: Batch 41 feedback OFF
+ WARNING: Batch 46 feedback OFF
+ WARNING: Batch 51 feedback OFF
+ WARNING: Batch 56 feedback OFF
+ WARNING: Batch 61 feedback OFF
+ WARNING: Batch 66 feedback OFF
+ WARNING: Batch 71 feedback OFF
+ WARNING: Batch 76 feedback OFF
+ WARNING: Batch 81 feedback OFF
+ WARNING: Batch 86 feedback OFF
+ WARNING: Batch 91 feedback OFF
+ WARNING: Batch 96 feedback OFF
+ WARNING: Batch 101 feedback OFF
+ WARNING: Batch 106 feedback OFF
+ WARNING: Batch 111 feedback OFF
+ WARNING: Batch 116 feedback OFF
+ WARNING: Batch 121 feedback OFF
+ WARNING: Batch 126 feedback OFF
+ WARNING: Batch 131 feedback OFF
+ WARNING: Batch 136 feedback OFF
+ WARNING: Batch 141 feedback OFF
+ WARNING: Batch 146 feedback OFF
+ WARNING: Batch 151 feedback OFF
+ WARNING: Batch 156 feedback OFF
+ WARNING: Batch 161 feedback OFF
+ WARNING: Batch 166 feedback OFF
+ WARNING: Batch 171 feedback OFF
+ WARNING: Batch 176 feedback OFF
+ WARNING: Batch 181 feedback OFF
+ WARNING: Batch 186 feedback OFF
+ WARNING: Batch 191 feedback OFF
+ WARNING: Batch 196 feedback OFF
+ WARNING: Batch 201 feedback OFF
+ WARNING: Batch 206 feedback OFF
+ WARNING: Batch 211 feedback OFF
+ WARNING: Batch 216 feedback OFF
+ WARNING: Batch 221 feedback OFF
+ WARNING: Batch 226 feedback OFF
+ WARNING: Batch 231 feedback OFF
+ WARNING: Batch 236 feedback OFF
+ WARNING: Batch 241 feedback OFF
+ WARNING: Batch 246 feedback OFF
+ WARNING: Statepoint files not yet supported in multigroup mode!
+    1.18629 +/- 0.00039    1.18912    1.86263 T
+ Spectral radius estimate:   0.25159037467673978     
+      227/1    1.19553    3.81370    1.18634 +/- 0.00039    1.18748    1.86323 F
+ Spectral radius estimate:   0.99012196808875907     
+      228/1    1.18721    3.81992    1.18634 +/- 0.00039    1.18878    1.85505 F
+ Spectral radius estimate:    1.0048709405862386     
+      229/1    1.18413    3.81615    1.18633 +/- 0.00038    1.18995    1.85548 F
+ Spectral radius estimate:   0.99874577189649361     
+      230/1    1.18492    3.81760    1.18632 +/- 0.00038    1.18908    1.85763 F
+ Spectral radius estimate:    4.0054160234797074     
+      231/1    1.18866    3.81071    1.18634 +/- 0.00038    1.19608    1.80979 T
+ Spectral radius estimate:   0.25034050526611457     
+      232/1    1.18407    3.81354    1.18632 +/- 0.00038    1.19166    1.83444 F
+ Spectral radius estimate:    1.0090366298051108     
+      233/1    1.18131    3.79657    1.18630 +/- 0.00038    1.19054    1.84932 F
+ Spectral radius estimate:   0.99224094274089714     
+      234/1    1.18102    3.80862    1.18627 +/- 0.00038    1.18870    1.85027 F
+ Spectral radius estimate:    1.0015211226819489     
+      235/1    1.18499    3.80974    1.18626 +/- 0.00037    1.18724    1.85224 F
+ Spectral radius estimate:    4.0018739923346427     
+      236/1    1.19895    3.81319    1.18633 +/- 0.00038    1.18980    1.86265 T
+ Spectral radius estimate:   0.25089000599245265     
+      237/1    1.19124    3.80979    1.18635 +/- 0.00038    1.19195    1.84634 F
+ Spectral radius estimate:   0.99766656660063646     
+      238/1    1.19205    3.80904    1.18638 +/- 0.00038    1.19050    1.85259 F
+ Spectral radius estimate:   0.99714505029533795     
+      239/1    1.18761    3.81046    1.18639 +/- 0.00037    1.18942    1.85002 F
+ Spectral radius estimate:   0.99925290822210000     
+      240/1    1.18867    3.81151    1.18640 +/- 0.00037    1.18885    1.84974 F
+ Spectral radius estimate:    4.0089371230711910     
+      241/1    1.18870    3.81109    1.18641 +/- 0.00037    1.18007    1.85998 T
+ Spectral radius estimate:   0.25138613960157469     
+      242/1    1.18798    3.81802    1.18642 +/- 0.00037    1.18650    1.86630 F
+ Spectral radius estimate:   0.98084802824631390     
+      243/1    1.18304    3.82659    1.18641 +/- 0.00037    1.18688    1.86487 F
+ Spectral radius estimate:   0.99960914388375621     
+      244/1    1.18247    3.81799    1.18639 +/- 0.00037    1.18735    1.85083 F
+ Spectral radius estimate:    1.0135764316205400     
+      245/1    1.17939    3.81516    1.18635 +/- 0.00037    1.18465    1.85774 F
+ Spectral radius estimate:    3.9857948356238788     
+      246/1    1.18362    3.81581    1.18634 +/- 0.00036    1.18320    1.84683 T
+ Spectral radius estimate:   0.24953155530731388     
+      247/1    1.18755    3.81834    1.18634 +/- 0.00036    1.18064    1.86148 F
+ Spectral radius estimate:   0.99585597178005214     
+      248/1    1.18140    3.81822    1.18632 +/- 0.00036    1.18332    1.86086 F
+ Spectral radius estimate:    1.0012217430274788     
+      249/1    1.18263    3.81843    1.18630 +/- 0.00036    1.18368    1.85955 F
+ Spectral radius estimate:    1.0020114746302027     
+      250/1    1.18070    3.81905    1.18627 +/- 0.00036    1.18419    1.85737 F
+
+ ===========================================================================
+ ======================>     SIMULATION FINISHED     <======================
+ ===========================================================================
+
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     =  2.4000E-01 seconds
+   Reading cross sections          =  3.0000E-03 seconds
+   Unionizing energy grid          =  0.0000E+00 seconds
+ Total time in simulation          =  3.8865E+03 seconds
+   Time in transport only          =  3.8403E+03 seconds
+ Total CMFD time                   =  4.1353E+01 seconds
+   Time in inactive batches        =  5.3788E+02 seconds
+   Time in active batches          =  3.3486E+03 seconds
+   Time synchronizing fission bank =  2.3510E+00 seconds
+     Sampling source sites         =  1.3360E+00 seconds
+     SEND/RECV source sites        =  1.0120E+00 seconds
+   Time accumulating tallies       =  9.5000E-02 seconds
+ Total time for finalization       =  5.8000E-01 seconds
+ Total time elapsed                =  3.8873E+03 seconds
+ Calculation Rate (inactive)       =  9295.74 neutrons/second
+ Calculation Rate (active)         =  5972.65 neutrons/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     =  1.18619 +/-  0.00029
+ k-effective (Track-length)  =  1.18627 +/-  0.00036
+ k-effective (Absorption)    =  1.18618 +/-  0.00019
+ Combined k-effective        =  1.18619 +/-  0.00019
+ k-effective (CMFD)          =  1.18724 +/-  0.00021
+ Leakage Fraction            =  0.00181 +/-  0.00001
+
