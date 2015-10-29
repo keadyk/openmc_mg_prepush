@@ -816,7 +816,7 @@ contains
     
     if(fcpi_on) then
       ! Allocate intermediate fission bank
-      allocate(int_fbank(adj_maxwork), STAT=alloc_err)
+      allocate(int_fbank(3*adj_maxwork), STAT=alloc_err)
       ! Check for allocation errors 
       if (alloc_err /= 0) then
         message = "Failed to allocate intermediate fission bank."

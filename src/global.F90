@@ -272,6 +272,7 @@ module global
   integer(8) :: n_fbank                                         ! Particles in intermediate fission bank
   integer(8) :: max_coll = 10000                         ! Max # of permissible collisions
   integer(8) :: act_mult                                        ! Active-cycle multiplier
+  integer(8) :: start_batch                                    ! Batch to start FCPI method!
   integer(8) :: current_fiss                                   ! Index of current int. fiss part
   
   

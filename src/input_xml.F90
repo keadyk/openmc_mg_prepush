@@ -387,9 +387,13 @@ contains
         fcpi_on = .true.
         max_coll = fcpi_method_(1) % collision_limit
         act_mult = fcpi_method_(1) %  active_multiplier
-        message = "FCPI method enabled, with coll limit " // &
+        start_batch = fcpi_method_(1) % start
+        message = "FCPI method enabled, with start batch " // trim(to_str(start_batch)) // ", coll limit " // &
              trim(to_str(max_coll)) // " and multiplier " // trim(to_str(act_mult)) // "!!"
         call write_message(5)
+        if(start_batch == 0) then
+          fcpi_active = .true.
+        end if
       end if
     end if
 

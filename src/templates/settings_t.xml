@@ -36,6 +36,7 @@
   
   <typedef name="fcpi_method_xml">
     <component name="enabled" type="word" length="5" default="'false'" />
+    <component name="start" type="integer" default="0" />
     <component name="collision_limit" type="integer" default="10000" />
     <component name="active_multiplier" type="integer" default="1" />
   </typedef>

@@ -401,7 +401,6 @@ contains
     integer :: i_filter      ! index for matching filter bin combination
     real(8) :: score         ! actual score
     real(8) :: E_out         ! energy of fission bank site
-    real(8) :: this_keff     ! use correct keff!!
 
     ! save original outgoing energy bin and score index
     i = t % find_filter(FILTER_ENERGYOUT)
@@ -409,15 +408,6 @@ contains
 
     ! Get number of energies on filter
     n = size(t % filters(i) % real_bins)
-
-    ! set correct keff
-    !if (fcpi_active) then
-    !  this_keff = keff_g
-    !else
-    !  this_keff = keff
-    !end if
-    !print *, "storing w ", this_keff
-    this_keff = sample_keff
     
     ! Since the creation of fission sites is weighted such that it is
     ! expected to create n_particles sites, we need to multiply the
@@ -429,13 +419,13 @@ contains
         !print *, p % n_bank
         ! the sites will be in the intermediate bank
         ! determine score based on bank site weight and keff
-        score = this_keff * int_fbank(n_fbank - p % n_bank + k) % wgt
+        score = sample_keff * int_fbank(n_fbank - p % n_bank + k) % wgt
         ! determine outgoing energy from fission bank
         E_out = int_fbank(n_fbank - p % n_bank + k) % E
       else
         ! the sites will be in the usual bank
         ! determine score based on bank site weight and keff
-        score = this_keff * fission_bank(n_bank - p % n_bank + k) % wgt
+        score = sample_keff * fission_bank(n_bank - p % n_bank + k) % wgt
         ! determine outgoing energy from fission bank
         E_out = fission_bank(n_bank - p % n_bank + k) % E
       end if
@@ -455,7 +445,6 @@ contains
            t % results(i_score, i_filter) % value + score
     end do
 
-    !print *,"-----------------------------------------------------------------------------------"
     ! reset outgoing energy bin and score index
     t % matching_bins(i) = bin_energyout
 

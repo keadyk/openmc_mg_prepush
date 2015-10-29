@@ -319,10 +319,10 @@ contains
 
       ! Add disappearance cross-section to prob
       prob = prob + micro_xs(i_nuclide) % absorption 
-           
-!          message = "abs: " // trim(to_str(micro_xs(i_nuclide) % absorption)) // " and fission: " //  &
-!           trim(to_str(micro_xs(i_nuclide) % fission)) // "."
-!           call warning()
+
+          !message = "abs: " // trim(to_str(micro_xs(i_nuclide) % absorption)) // " and fission: " //  &
+          ! trim(to_str(micro_xs(i_nuclide) % fission)) // "."
+          ! call warning()
 
       ! See if disappearance reaction happens
       if (prob > cutoff) then
@@ -458,7 +458,6 @@ contains
     real(8) :: xi           ! random number
     real(8) :: prob         ! cumulative probability
     real(8) :: weight       ! weight adjustment for ufs method
-    real(8) :: this_keff    ! set track, or global keff if fcpi
     logical :: in_mesh      ! source site in ufs mesh?
     type(Nuclide),    pointer :: nuc
 
@@ -493,27 +492,14 @@ contains
     else
       weight = ONE
     end if
-
-    ! If fcpi is enabled, use the global keff estimate
-    ! otherwise, use the standard (track-length)
-    !if(fcpi_active) then
-    !  this_keff = keff_g
-    !else
-    !  this_keff = keff
-    !end if
-    
-    this_keff = sample_keff
-    !print *,"-----------------------------------------------------------------------------------"
-    !print *, " sampling w keff ", this_keff
-    
     
     ! Sample number of neutrons produced
     if (survival_biasing) then
       ! Need to use the weight before survival biasing
       nu_t = (p % wgt + p % absorb_wgt) * micro_xs(i_nuclide) % fission / &
-           (this_keff * micro_xs(i_nuclide) % total) * nu_t * weight
+           (sample_keff * micro_xs(i_nuclide) % total) * nu_t * weight
     else 
-      nu_t = p % wgt / this_keff * nu_t * weight
+      nu_t = p % wgt / sample_keff * nu_t * weight
     end if
     if (prn() > nu_t - int(nu_t)) then
       nu = int(nu_t)
@@ -523,7 +509,7 @@ contains
 
     ! tally global k numerator (neutron production)
     global_tallies(K_GLOBAL_NUM) % value = &
-         global_tallies(K_GLOBAL_NUM) % value + nu * this_keff     
+         global_tallies(K_GLOBAL_NUM) % value + nu * sample_keff     
     
     ! Edited by K.Keady on 10/10-- I TRIED TO MAKE THIS ELEGANT
     ! BUT NOTHING WORKS RIGHT WHEN EVERYTHING IS GLOBAL!!!!!
@@ -532,7 +518,10 @@ contains
     if(fcpi_active .and. p % n_collision < max_coll) then
       if (nu == 0 .or. n_fbank == 3*work) return
       do i = int(n_fbank,4) + 1, int(min(n_fbank + nu, 3*work),4)
-        !print *, p%id, " going into fiss bank w mult ", nu, " and coll ", p%n_collision 
+        ! print *, p%id, " going into fiss bank w mult ", nu, " and coll ", p%n_collision
+        if(nu < 0) then
+          call fatal_error()
+        end if
         ! Bank source neutrons by copying particle data
         int_fbank(i) % xyz = p % coord0 % xyz
         ! intermed. bank needs to know collision number

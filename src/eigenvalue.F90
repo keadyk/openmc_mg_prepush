@@ -211,7 +211,7 @@ contains
       ! sample keff is just the usual keff
       sample_keff = keff
     end if
-    !print *, "sample using:", sample_keff
+    ! print *, "sample using:", sample_keff
 
   end subroutine initialize_generation
 
@@ -222,11 +222,11 @@ contains
   subroutine finalize_generation()
 
     ! If fcpi is enabled, get it rollin'
-    if (fcpi_on .and. overall_gen == n_inactive*gen_per_batch-int(n_inactive/2)) then
+    if (fcpi_on .and. overall_gen == (start_batch-1)*gen_per_batch) then
       fcpi_active = .true.
       ! Increase the source bank size
       n_particles = n_particles * act_mult
-      ! Recalculate the work per proc/max worked allowed:
+      ! Recalculate the work per proc/max work allowed:
       call calculate_work()
       
       message = "FCPI enabled: Max_coll set to " // trim(to_str(max_coll)) // "!"

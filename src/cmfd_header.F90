@@ -85,7 +85,7 @@ module cmfd_header
     real(8), allocatable :: k_gen_cmfd(:)
     real(8) :: keff_sum = ZERO
     real(8) :: keff_std = ZERO
-    real(8) :: keff = ZERO
+    real(8) :: keff = ONE
     
     ! accumulated eigenvector/eigenvector_sq from cmfd run
     ! (only used if .not. cmfd_accum)

@@ -589,7 +589,7 @@ contains
       !print *, cmfd % flux,  cmfd % flux_old
       
       spec_rad = sqrt(norm_num)/sqrt(norm_denom)
-      print *,"Spectral radius estimate: ", spec_rad
+      !print *,"Spectral radius estimate: ", spec_rad
     end if
     
   end subroutine calc_spec_rad
