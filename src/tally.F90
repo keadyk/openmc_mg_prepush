@@ -49,6 +49,7 @@ contains
     integer :: score_bin            ! scoring bin, e.g. SCORE_FLUX
     integer :: i_nuclide            ! index in nuclides array
     integer :: score_index          ! scoring bin index
+    integer :: fcpi_wt                 ! wt factor for fcpi tallies!
     real(8) :: score                ! analog tally score
     real(8) :: last_wgt             ! pre-collision particle weight
     real(8) :: wgt                  ! post-collision particle weight
@@ -71,6 +72,21 @@ contains
       i_tally = active_analog_tallies % get_item(i)
       t => tallies(i_tally)
 
+      ! Ok, we're going to try to be clever here. If you're using fcpi, you
+      ! need only tally data from the LAST collision to be used for the cmfd system
+      ! So, if fcpi is active and the tally id is larger than the # of user tallies (indicating
+      ! a cmfd tally), we apply a weighting factor that is ZERO if the number of collisions is 
+      ! less than max_coll, and ONE if the number of collisions is equal to max_coll!
+      if(fcpi_active .and. t % id > n_user_tallies) then
+        fcpi_wt = int(p % n_collision / max_coll)
+        !print *, p%id,"normal tally ",p%n_collision, max_coll, t % id, fcpi_wt
+      else
+        fcpi_wt = 1
+      end if
+        
+      ! If this is a cmfd tally and we're not supposed to tally it, skip it
+      !if(fcpi_wt == 0) cycle
+      
       ! =======================================================================
       ! DETERMINE SCORING BIN COMBINATION
 
@@ -399,9 +415,20 @@ contains
     integer :: k             ! loop index for bank sites
     integer :: bin_energyout ! original outgoing energy bin
     integer :: i_filter      ! index for matching filter bin combination
+    integer :: fcpi_wt     ! weight for fcpi case
     real(8) :: score         ! actual score
     real(8) :: E_out         ! energy of fission bank site
 
+    if(fcpi_active .and. t % id > n_user_tallies) then
+      fcpi_wt = int(p % n_collision / max_coll)
+      !print *, "fission!", p%n_collision, max_coll, t % id, fcpi_wt
+    else
+      fcpi_wt = 1
+    end if
+    
+    ! If this is a cmfd tally and we're not supposed to tally it, skip it
+    !if(fcpi_wt == 0) return
+    
     ! save original outgoing energy bin and score index
     i = t % find_filter(FILTER_ENERGYOUT)
     bin_energyout = t % matching_bins(i)
@@ -1549,6 +1576,7 @@ contains
     integer :: score_bin            ! scoring bin, e.g. SCORE_FLUX
     integer :: dir_index            ! direction index for generic case
     integer :: score_index          ! scoring bin index
+    integer :: fcpi_wt               ! weight for fcpi case
     real(8) :: uvw(3)               ! cosine of angle of particle
     real(8) :: xyz0(3)              ! starting/intermediate coordinates
     real(8) :: xyz1(3)              ! ending coordinates of particle
@@ -1585,6 +1613,24 @@ contains
       i_tally = active_current_tallies % get_item(i)
       t => tallies(i_tally)
 
+      if(fcpi_active .and. t % id > n_user_tallies) then
+        if(p % event == EVENT_LATTICE .or. p % event == EVENT_SURFACE) then
+          ! Not a collision-- still, we tally if it's on its last "leg"
+          fcpi_wt = int(p % n_collision / (max_coll-1))
+                  !print *,p%id, "surface xing ", p%n_collision, max_coll, t % id, fcpi_wt
+        else
+          ! Collision! Tally if that was its LAST
+          fcpi_wt = int(p % n_collision / max_coll)
+                  !print *,p%id, "coll surf  ", p%n_collision, max_coll, t % id, fcpi_wt
+        end if
+
+      else
+        fcpi_wt = 1
+      end if      
+      
+      ! If this is a cmfd tally and we're not supposed to tally it, skip it
+     ! if(fcpi_wt == 0) cycle
+      
       ! Get index for mesh and surface filters
       i_filter_mesh = t % find_filter(FILTER_MESH)
       i_filter_surf = t % find_filter(FILTER_SURFACE)
@@ -2013,6 +2059,7 @@ contains
     integer :: i_filter_ein         ! index of energy-in filter in filters
     integer :: i_filter_eout        ! index of energy-out filter in filters
     integer :: score_index          ! scoring bin index
+    integer :: fcpi_wt             ! scoring bin index
     real(8) :: xyz0(3)              ! starting/intermediate coordinates
     real(8) :: xyz1(3)              ! ending coordinates of particle
     real(8) :: uvw(3)               ! pre-reflect angle of particle
@@ -2030,9 +2077,20 @@ contains
     
     ! TO DO-- FIND A BETTER WAY TO SKIP THIS IF WE KNOW THERE ISN'T A 
     ! CMFD MESH SURFACE COINCIDENT WITH THE REFLECTING BOUNDARY
-
+    
     ! associate cmfd curr/mu_sq tallies and mesh
     t => cmfd_tallies(3)
+    
+    if(fcpi_active) then
+      fcpi_wt = int(p % n_collision / (max_coll-1))
+      !print *,p%id, "musq: ",p%n_collision, max_coll, t % id, fcpi_wt
+    else
+      fcpi_wt = 1
+    end if
+    
+    !if(fcpi_wt == 0) return
+    
+    
     i_mesh = t % filters(t % find_filter(FILTER_MESH)) % int_bins(1)
     m => meshes(i_mesh)
 

@@ -505,8 +505,9 @@ contains
         end if
       end if
 
-      !print *,"WEIGHT FACTORS:    ",cmfd%weightfactors 
-
+      print *,"WEIGHT FACTORS:    ",cmfd%weightfactors 
+      print *,"WEIGHT FACTORS:    ",cmfd%scat_weightfactors 
+      
       ! broadcast weight factors to all procs
       call MPI_BCAST(cmfd%weightfactors, ng*nx*ny*nz, MPI_REAL8, 0, &
            MPI_COMM_WORLD, mpi_err)

@@ -391,7 +391,7 @@ contains
         message = "FCPI method enabled, with start batch " // trim(to_str(start_batch)) // ", coll limit " // &
              trim(to_str(max_coll)) // " and multiplier " // trim(to_str(act_mult)) // "!!"
         call write_message(5)
-        if(start_batch == 0) then
+        if(fcpi_on .and. start_batch == 0) then
           fcpi_active = .true.
         end if
       end if

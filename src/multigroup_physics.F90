@@ -130,13 +130,15 @@ contains
         if (lattice_crossed /= NONE) then
           ! Particle crosses lattice boundary
           p % surface = NONE
+                    p % event = EVENT_LATTICE
           call cross_lattice(lattice_crossed)
-          p % event = EVENT_LATTICE
+
         else
           ! Particle crosses surface
           p % surface = surface_crossed
+                    p % event = EVENT_SURFACE 
           call cross_surface(last_cell)
-          p % event = EVENT_SURFACE        
+       
         end if
         
         if (roi_on .and. active_batches) then
@@ -144,7 +146,7 @@ contains
           ! If particle survives, tally its track in the new cell 
           if (p % alive) track_dist(p % coord % cell) = track_dist(p % coord % cell) + 1
         end if   
-      else       
+      else     
         ! ====================================================================
         ! PARTICLE HAS COLLISION
         ! Score collision estimate of keff
@@ -153,6 +155,8 @@ contains
              material_xs % nu_fission / material_xs % total
 
         p % surface = NONE
+        p % event = NONE
+        
         call collision()
 
         ! Save coordinates for tallying purposes
@@ -500,6 +504,7 @@ contains
            (sample_keff * micro_xs(i_nuclide) % total) * nu_t * weight
     else 
       nu_t = p % wgt / sample_keff * nu_t * weight
+      !print *,"sample k ", sample_keff, p % wgt, nu_t, weight
     end if
     if (prn() > nu_t - int(nu_t)) then
       nu = int(nu_t)
@@ -516,10 +521,14 @@ contains
     ! Bank source neutrons
     ! If you're under max_coll and fcpi is activated, bank in intermed. bank
     if(fcpi_active .and. p % n_collision < max_coll) then
-      if (nu == 0 .or. n_fbank == 3*work) return
-      do i = int(n_fbank,4) + 1, int(min(n_fbank + nu, 3*work),4)
-        ! print *, p%id, " going into fiss bank w mult ", nu, " and coll ", p%n_collision
+      if (nu == 0 .or. n_fbank == work) return
+      
+      !print *, p%id, " going into fiss bank w mult ", nu, " and coll ", p%n_collision
+      do i = int(n_fbank,4) + 1, int(min(n_fbank + nu, work),4)
         if(nu < 0) then
+          call fatal_error()
+        end if
+        if(nu > 100) then
           call fatal_error()
         end if
         ! Bank source neutrons by copying particle data
@@ -631,6 +640,7 @@ contains
     if (fcpi_active .and. p % n_collision == max_coll) then
       ! Store it, then kill it
       call bank_fcpi_scatter()
+      !print *, p%id, "banked"
     end if
 
   end subroutine multigroup_scatter

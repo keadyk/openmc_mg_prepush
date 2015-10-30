@@ -114,7 +114,11 @@ contains
     end select
 
 #ifdef MULTIGROUP
-    site % E = 1 ! this is arbitrary, just for now!
+    if(fcpi_active) then
+      site % E = 1 + int(prn()*n_groups)
+    else
+      site % E = 1 ! this is arbitrary, just for now!
+    end if
 #else
     ! Sample energy distribution
     select case (external_source % type_energy)
