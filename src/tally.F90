@@ -85,7 +85,7 @@ contains
       end if
         
       ! If this is a cmfd tally and we're not supposed to tally it, skip it
-      !if(fcpi_wt == 0) cycle
+      if(fcpi_wt == 0) cycle
       
       ! =======================================================================
       ! DETERMINE SCORING BIN COMBINATION
@@ -427,7 +427,7 @@ contains
     end if
     
     ! If this is a cmfd tally and we're not supposed to tally it, skip it
-    !if(fcpi_wt == 0) return
+    if(fcpi_wt == 0) return
     
     ! save original outgoing energy bin and score index
     i = t % find_filter(FILTER_ENERGYOUT)
@@ -501,6 +501,7 @@ contains
     integer :: i_energy             ! index in nuclide energy grid
     integer :: score_bin            ! scoring type, e.g. SCORE_FLUX
     integer :: score_index          ! scoring bin index
+    integer :: fcpi_wt          ! trigger for fcpi method tallies
     real(8) :: f                    ! interpolation factor  
     real(8) :: flux                 ! tracklength estimate of flux
     real(8) :: score                ! actual score (e.g., flux*xs)
@@ -524,6 +525,18 @@ contains
       i_tally = active_tracklength_tallies % get_item(i)
       t => tallies(i_tally)
 
+      ! This is ALWAYS called before the number of collisions is updated, so be sure
+      ! to tally on the LAST leg (when p % n_coll == max_coll - 1
+      if(fcpi_active .and. t % id > n_user_tallies) then
+        fcpi_wt = int(p % n_collision / (max_coll-1))
+      else
+        fcpi_wt = 1
+      end if      
+        
+      ! If this is a cmfd tally and we're not supposed to tally it, skip it
+      if(fcpi_wt == 0) cycle      
+      
+      
       ! Check if this tally has a mesh filter -- if so, we treat it separately
       ! since multiple bins can be scored to with a single track
 
@@ -531,6 +544,8 @@ contains
         call score_tl_on_mesh(i_tally, distance)
         cycle
       end if
+      
+      
 
       ! =======================================================================
       ! DETERMINE SCORING BIN COMBINATION
@@ -1629,7 +1644,7 @@ contains
       end if      
       
       ! If this is a cmfd tally and we're not supposed to tally it, skip it
-     ! if(fcpi_wt == 0) cycle
+      if(fcpi_wt == 0) cycle
       
       ! Get index for mesh and surface filters
       i_filter_mesh = t % find_filter(FILTER_MESH)
@@ -2088,7 +2103,7 @@ contains
       fcpi_wt = 1
     end if
     
-    !if(fcpi_wt == 0) return
+    if(fcpi_wt == 0) return
     
     
     i_mesh = t % filters(t % find_filter(FILTER_MESH)) % int_bins(1)

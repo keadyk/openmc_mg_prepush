@@ -403,15 +403,15 @@ contains
         
 #ifdef MULTIGROUP
         ! set tally estimator to tracklength if we wanna
-         !t % estimator = ESTIMATOR_TRACKLENGTH
-         !message = "Using track-length estimators for CMFD."
-         !call warning()
+         t % estimator = ESTIMATOR_TRACKLENGTH
+         message = "Using track-length estimators for CMFD."
+         call warning()
         ! WARNING: IF YOU WANT TO REVERT TO TRACKLENGTH, DON'T FORGET
         ! TO CHANGE YOUR SCORE BINS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ! Analog is much cheaper, easier:
-         t % estimator = ESTIMATOR_ANALOG      
-         message = "Using analog estimators for CMFD."
-         call warning()
+         !t % estimator = ESTIMATOR_ANALOG      
+         !message = "Using analog estimators for CMFD."
+         !call warning()
 #else
         ! set tally estimator to analog
         t % estimator = ESTIMATOR_ANALOG
@@ -445,7 +445,9 @@ contains
         t % score_bins(1)  = SCORE_FLUX
         t % score_bins(2)  = SCORE_TOTAL
 #ifdef MULTIGROUP
+        ! Use score_scatter for isotropic/tracklength tallies
         t % score_bins(3) = SCORE_SCATTER
+        !can't use this for tracklength tallies
         !t % score_bins(3)  = SCORE_SCATTER_N
         t % scatt_order(3) = 1
 #else
@@ -467,8 +469,8 @@ contains
 
 #ifdef MULTIGROUP
         ! set tally estimator to tracklength
-        !t % estimator = ESTIMATOR_TRACKLENGTH
-        t % estimator = ESTIMATOR_ANALOG
+        t % estimator = ESTIMATOR_TRACKLENGTH
+        !t % estimator = ESTIMATOR_ANALOG
         ! WARNING-- TRACKLENGTH WON'T WORK FOR ANISO SCATTERING OR MG
 #else 
         ! set tally estimator to analog
@@ -514,8 +516,10 @@ contains
 
         ! set macro_bins
 #ifdef MULTIGROUP
-        !t % score_bins(1) = SCORE_SCATTER
-        t % score_bins(1) = SCORE_NU_SCATTER
+        ! if you're only using one group/tracklength tallies:
+        t % score_bins(1) = SCORE_SCATTER
+        ! if you're ACTUALLY running multigroup:
+        !t % score_bins(1) = SCORE_NU_SCATTER
 #else
         t % score_bins(1) = SCORE_NU_SCATTER
 #endif

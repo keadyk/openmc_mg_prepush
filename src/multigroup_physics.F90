@@ -141,6 +141,12 @@ contains
        
         end if
         
+        if(.not. p % alive) then
+          ! It must've escaped! Tally it and sally forth...
+                  global_tallies(K_GLOBAL_DENOM) % value = &
+             global_tallies(K_GLOBAL_DENOM) % value + p % wgt    
+        end if
+        
         if (roi_on .and. active_batches) then
           if (p % alive) call check_cell(last_cell)
           ! If particle survives, tally its track in the new cell 
@@ -554,7 +560,7 @@ contains
         ! set energy of fission neutron
         int_fbank(i) % E = E_out
       end do
-      n_fbank = min(n_fbank + nu, 3*work)
+      n_fbank = min(n_fbank + nu, work)
       
     ! else, bank in final "end-of-cycle" bank
     else
@@ -650,12 +656,18 @@ contains
 !===============================================================================
   subroutine bank_fcpi_scatter()
     integer :: i  ! index of this particle in bank
+    integer :: n ! number of particles to bank
+    
     ! YES, I KNOW IT'S CALLED THE FISSION BANK AND WE'RE PUTTING SCATTERS IN IT
     ! DEAL WITH IT
-    ! print *, "banking scatter with ncoll = ", p % id, p % n_collision, (int(n_bank,4) + 1)
+    n = int(p % wgt + prn())
+    p % wgt = 1.0
+    !print *, "banking scatter with ncoll = ", p % id, p % n_collision, n
     !print *, p%id, " going into scatter bank"
-    i = int(n_bank,4) + 1
-    if(i <= 3*work) then
+
+    if (n == 0 .or. n_bank == 3*work) return
+    do i = int(n_bank,4) + 1, int(min(n_bank + n, 3*work),4)     
+     
       ! Bank scattered neutron by copying particle data
       fission_bank(i) % xyz = p % coord0 % xyz
       ! Final bank needs to know particle type for cmfd sorting
@@ -663,10 +675,10 @@ contains
       fission_bank(i) % uvw = p % coord0 % uvw 
       fission_bank(i) % E = p % E 
       fission_bank(i) % wgt = p % wgt
-    end if
+    end do
     
     ! Update size of bank
-    n_bank = min(n_bank + 1, 3*work)
+    n_bank = min(n_bank + n, 3*work)
     
     p % alive = .false.
     
