@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<plots>
+	<plot>
+		<id>601</id>
+		<filename>C5G7_geometry</filename>
+		<color>material</color>
+		<origin>11.34 11.34 0.5</origin>
+		<width>21.42 21.42</width>
+		<type>slice</type>
+		<col_spec id="22" rgb="255 0 0"/>
+		<pixels>1000 1000</pixels>
+	</plot>
+</plots>

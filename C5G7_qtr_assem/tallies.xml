@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<tallies>
+
+<!-- PIN CELL mesh for monte carlo tallies -->
+  <mesh id="1">
+    <type>rectangular</type>
+		<lower_left>0.63 5.985 0</lower_left>
+		<upper_right>16.695 22.05 1.0</upper_right>
+		<dimension>10 10 1</dimension>
+  </mesh>
+
+<!-- Energy filter (GROUPS) -->
+  <tally id="1">
+    <filter type="mesh" bins="1" />
+    <scores>flux</scores>
+	<filter type="energy" bins="1 2 3 4 5 6 7 8"/>
+  </tally>
+
+  <tally id="2">
+    <filter type="mesh" bins="1" />
+    <scores>fission</scores>
+  </tally>
+
+</tallies>
+

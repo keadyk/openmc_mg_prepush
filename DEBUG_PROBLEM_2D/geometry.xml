@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<geometry>
+
+  <!-- Definition of Cells -->
+  <cell id="1">
+    <universe>0</universe>
+    <material>1</material>
+    <surfaces>1 -7 8 -4 5 -6</surfaces>
+  </cell>
+
+  <cell id="2">
+    <universe>0</universe>
+    <material>2</material>
+    <surfaces>7 -2 8 -4 5 -6</surfaces>
+  </cell>
+
+  <cell id="3">
+    <universe>0</universe>
+    <material>2</material>
+    <surfaces>7 -2 3 -8 5 -6</surfaces>
+  </cell>
+
+  <cell id="4">
+    <universe>0</universe>
+    <material>2</material>
+    <surfaces>1 -7 3 -8 5 -6</surfaces>
+  </cell>
+
+  <!-- Defition of Surfaces -->
+  <surface id="1" type="x-plane" coeffs="0" boundary="reflective" />
+  <surface id="2" type="x-plane" coeffs="10" boundary="vacuum" />
+  <surface id ="7" type = "x-plane" coeffs="5"/>
+  <surface id ="8" type = "y-plane" coeffs="5"/>
+  <surface id="3" type="y-plane" coeffs="0" boundary="vacuum" />
+  <surface id="4" type="y-plane" coeffs="10" boundary="reflective" />
+  <surface id="5" type="z-plane" coeffs="0" boundary="reflective" /> 
+  <surface id="6" type="z-plane" coeffs="1" boundary="reflective" />
+    
+</geometry>

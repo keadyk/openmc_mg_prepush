@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<cmfd>
+	<feedback>true</feedback>
+	<mesh>
+		<type>rectangular</type>
+		<lower_left>0.63 5.985 0</lower_left>
+		<upper_right>16.695 22.05 1.0</upper_right>
+		<dimension>10 10 1</dimension>
+		<albedo>1.0 0.0 0.0 1.0 1.0 1.0</albedo>
+		<!-- <energy>1 4 8</energy> -->
+	</mesh>
+	<use_functs>true</use_functs>
+</cmfd>

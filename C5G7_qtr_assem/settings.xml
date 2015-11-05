@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<settings>
+	<cross_sections>
+		/home/keadyk/OpenMC/data/cross_sections_ascii.xml
+	</cross_sections>
+	<eigenvalue>
+		<batches>100</batches>
+		<inactive>50</inactive>
+		<particles>1000000</particles>
+	</eigenvalue>
+	<output>summary cross_sections</output>
+	<output_path>/home/keadyk/OpenMC/output/C5G7_benchmark/CMFD_FCPI/</output_path>
+	<source>
+        <!-- for normal cmfd-mc or joint runs: -->
+		<!-- <space type="box" parameters="0.0 21.42 0.0  42.84 64.26 10" /> -->
+        <!-- for fcpi-only runs -->
+        <space type="box" parameters="0.63 5.985 0.0  16.695 22.05 1.0" />  
+	</source>
+	<entropy>
+		<lower_left>0.63 5.985 0</lower_left>
+		<upper_right>16.695 22.05 1.0</upper_right>
+		<dimension>10 10 1</dimension>
+	</entropy>
+	<run_cmfd>true</run_cmfd>
+	<survival_biasing>false</survival_biasing>
+	<verbosity>
+		5
+	</verbosity>
+	<fcpi_method>
+		<enabled>true</enabled>
+        <start>0</start>
+		<active_multiplier>1</active_multiplier>
+		<collision_limit>10</collision_limit>
+	</fcpi_method>
+</settings>
+

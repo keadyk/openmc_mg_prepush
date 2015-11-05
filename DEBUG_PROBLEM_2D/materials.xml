@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<materials>
+<!-- 02m is 7 group... 34m is collapsed, 3 in fast, 4 in thermal-->
+  <default_xs>02m</default_xs>
+
+  <material id="1">
+    <density value="1.0" units="atom/b-cm" />
+    <!-- <nuclide name="UO2k" ao="1.0" /> -->
+    <nuclide name="MOX7k" ao="1.0" />
+  </material>
+
+  <material id="2">
+    <density value="1.0" units="atom/b-cm" />
+<!--    <nuclide name="Modk" ao="1.0" /> -->
+    <nuclide name="H20k" ao="1.0" />
+  </material>
+
+</materials>
