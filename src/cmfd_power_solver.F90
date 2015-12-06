@@ -13,7 +13,7 @@ module cmfd_power_solver
   private
   public :: cmfd_power_execute 
 
-# include <finclude/petsc.h90>
+# include <petsc/finclude/petsc.h90>
 
   type(loss_operator) :: loss   ! M loss matrix
   type(prod_operator) :: prod   ! F production matrix
@@ -26,7 +26,8 @@ module cmfd_power_solver
   KSP     :: sub_krylov           ! sub-ksp for bjacobi
   PC      :: prec                 ! preconditioner for krylov
   PC      :: sub_prec             ! sub-prec for bjacobi
-  integer :: ierr                 ! error flag
+  !integer :: ierr                 ! error flag
+  PetscErrorCode :: ierr
   integer :: nlocal
   integer :: first
   real(8) :: k_n                  ! new k-eigenvalue
@@ -60,6 +61,12 @@ contains
     ! check for adjoint execution
     if (present(adjoint)) adjoint_calc = adjoint
 
+    ! added by k. keady Nov 6th
+    !ktol = 1.e-8_8
+    !stol = 1.e-8_8
+    !adjoint_calc = .false.
+
+
     ! check for physical adjoint
     if (adjoint_calc .and. trim(cmfd_adjoint_type) == 'physical') &
         physical_adjoint = .true.
@@ -81,7 +88,9 @@ contains
         call compute_adjoint()
 
     ! set up krylov info
-    call KSPSetOperators(krylov, loss%M, loss%M, SAME_NONZERO_PATTERN, ierr)
+    ! call KSPSetOperators(krylov, loss%M, loss%M, SAME_NONZERO_PATTERN, ierr)
+    ! as of petsc 3.5, kspsetoperators no longer takes MatStructure argument
+    call KSPSetOperators(krylov, loss%M, loss%M, ierr)
 
     ! precondition matrix
     call precondition_matrix()
@@ -147,7 +156,7 @@ contains
 
     ! set up krylov solver
     call KSPCreate(PETSC_COMM_WORLD, krylov, ierr)
-    call KSPSetTolerances(krylov, rtol, atol, PETSC_DEFAULT_DOUBLE_PRECISION, &
+    call KSPSetTolerances(krylov, rtol, atol, PETSC_DEFAULT_REAL, &
          PETSC_DEFAULT_INTEGER, ierr)
     call KSPSetType(krylov, KSPGMRES, ierr)
     call KSPSetInitialGuessNonzero(krylov, PETSC_TRUE, ierr)

@@ -409,9 +409,9 @@ contains
         ! WARNING: IF YOU WANT TO REVERT TO TRACKLENGTH, DON'T FORGET
         ! TO CHANGE YOUR SCORE BINS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ! Analog is much cheaper, easier:
-         !t % estimator = ESTIMATOR_ANALOG      
-         !message = "Using analog estimators for CMFD."
-         !call warning()
+        ! t % estimator = ESTIMATOR_ANALOG      
+        ! message = "Using analog estimators for CMFD."
+        ! call warning()
 #else
         ! set tally estimator to analog
         t % estimator = ESTIMATOR_ANALOG
@@ -446,7 +446,7 @@ contains
         t % score_bins(2)  = SCORE_TOTAL
 #ifdef MULTIGROUP
         ! Use score_scatter for isotropic/tracklength tallies
-        t % score_bins(3) = SCORE_SCATTER
+         t % score_bins(3) = SCORE_SCATTER
         !can't use this for tracklength tallies
         !t % score_bins(3)  = SCORE_SCATTER_N
         t % scatt_order(3) = 1

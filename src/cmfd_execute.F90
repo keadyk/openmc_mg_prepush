@@ -10,7 +10,7 @@ module cmfd_execute
   public :: execute_cmfd, cmfd_init_batch
 
 # ifdef PETSC
-#   include <finclude/petsc.h90>
+#   include <petsc/finclude/petsc.h90>
 # endif
 
 contains
@@ -76,7 +76,7 @@ contains
 
       ! call solver
       if (trim(cmfd_solver_type) == 'power') then
-        call cmfd_power_execute()
+        call cmfd_power_execute(k_tol=1e-8_8, s_tol=1e-8_8, adjoint=.false.)
       elseif (trim(cmfd_solver_type) == 'jfnk') then
         call cmfd_snes_execute()
       else

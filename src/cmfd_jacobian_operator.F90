@@ -10,7 +10,7 @@ module cmfd_jacobian_operator
   private
   public :: init_J_operator, build_jacobian_matrix, destroy_J_operator
 
-# include <finclude/petsc.h90>
+# include <petsc/finclude/petsc.h90>
 
   integer  :: nx   ! maximum number of x cells
   integer  :: ny   ! maximum number of y cells

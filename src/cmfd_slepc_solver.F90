@@ -8,9 +8,9 @@ module cmfd_slepc_solver
 
   implicit none
 
-#include <finclude/petsc.h90>
-#include <finclude/slepcsys.h>
-#include <finclude/slepceps.h>
+#include <petsc/finclude/petsc.h90>
+#include <petsc/finclude/slepcsys.h>
+#include <petsc/finclude/slepceps.h>
 
   type(loss_operator) :: loss
   type(prod_operator) :: prod

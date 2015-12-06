@@ -1011,9 +1011,9 @@ contains
     call MPI_TYPE_SIZE(MPI_BANK, size_bank, mpi_err)
     offset = offset + size_bank*maxwork*rank
 
-    ! Write all source sites
-    call MPI_FILE_WRITE_AT(mpi_fh, offset, source_bank(1), work, MPI_BANK, &
-         MPI_STATUS_IGNORE, mpiio_err)
+     ! Write all source sites
+     call MPI_FILE_WRITE_AT(mpi_fh, offset, source_bank(1), work, MPI_BANK, &
+        MPI_STATUS_IGNORE, mpiio_err)
 
 #else
 

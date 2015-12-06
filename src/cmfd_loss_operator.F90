@@ -6,7 +6,7 @@ module cmfd_loss_operator
   private
   public :: init_M_operator, build_loss_matrix, destroy_M_operator
 
-# include <finclude/petsc.h90>
+# include <petsc/finclude/petsc.h90>
 
   integer  :: nx   ! maximum number of x cells
   integer  :: ny   ! maximum number of y cells

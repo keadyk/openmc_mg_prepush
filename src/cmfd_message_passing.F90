@@ -8,7 +8,7 @@ module cmfd_message_passing
   private
   public :: petsc_init_mpi, cmfd_bcast 
 
-# include <finclude/petsc.h90>
+# include "petsc/finclude/petsc.h90"
 
 contains
 

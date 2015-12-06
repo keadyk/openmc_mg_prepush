@@ -6,7 +6,7 @@ module cmfd_prod_operator
   private
   public :: init_F_operator,build_prod_matrix,destroy_F_operator
 
-# include <finclude/petsc.h90>
+# include <petsc/finclude/petsc.h90>
 
   integer  :: nx   ! maximum number of x cells
   integer  :: ny   ! maximum number of y cells

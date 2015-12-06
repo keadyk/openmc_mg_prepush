@@ -16,7 +16,7 @@ module cmfd_snes_solver
   private
   public :: cmfd_snes_execute
 
-# include <finclude/petsc.h90>
+# include <petsc/finclude/petsc.h90>
 
   type(jacobian_operator) :: jac_prec
   type(operators) :: ctx

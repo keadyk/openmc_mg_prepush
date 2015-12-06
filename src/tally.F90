@@ -85,7 +85,7 @@ contains
       end if
         
       ! If this is a cmfd tally and we're not supposed to tally it, skip it
-      if(fcpi_wt == 0) cycle
+      !if(fcpi_wt == 0) cycle
       
       ! =======================================================================
       ! DETERMINE SCORING BIN COMBINATION
@@ -427,7 +427,7 @@ contains
     end if
     
     ! If this is a cmfd tally and we're not supposed to tally it, skip it
-    if(fcpi_wt == 0) return
+    !if(fcpi_wt == 0) return
     
     ! save original outgoing energy bin and score index
     i = t % find_filter(FILTER_ENERGYOUT)
@@ -534,7 +534,7 @@ contains
       end if      
         
       ! If this is a cmfd tally and we're not supposed to tally it, skip it
-      if(fcpi_wt == 0) cycle      
+      !if(fcpi_wt == 0) cycle      
       
       
       ! Check if this tally has a mesh filter -- if so, we treat it separately
@@ -1644,7 +1644,7 @@ contains
       end if      
       
       ! If this is a cmfd tally and we're not supposed to tally it, skip it
-      if(fcpi_wt == 0) cycle
+      !if(fcpi_wt == 0) cycle
       
       ! Get index for mesh and surface filters
       i_filter_mesh = t % find_filter(FILTER_MESH)
@@ -2103,7 +2103,7 @@ contains
       fcpi_wt = 1
     end if
     
-    if(fcpi_wt == 0) return
+    !if(fcpi_wt == 0) return
     
     
     i_mesh = t % filters(t % find_filter(FILTER_MESH)) % int_bins(1)
